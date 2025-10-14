@@ -1,0 +1,91 @@
+@model Sector_13_Welfare_Society___Digital_Management_System.Models.GalleryViewModel
+
+@{
+    ViewData["Title"] = "Manage Gallery";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<style>
+    .gallery-card {
+        transition: transform 0.2s;
+    }
+
+        .gallery-card:hover {
+            transform: scale(1.05);
+        }
+
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        opacity: 0;
+        transition: opacity 0.2s;
+        border-radius: 0.25rem 0.25rem 0 0;
+    }
+
+    .gallery-card:hover .overlay {
+        opacity: 1;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-primary"><i class="fas fa-images me-2"></i>Manage Gallery</h3>
+        <a class="btn btn-success" href="@Url.Action("Upload", "Gallery")">
+            <i class="fas fa-upload me-1"></i> Upload New Image
+        </a>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-3">
+        @foreach (var item in Model.Galleries)
+        {
+            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card shadow-sm h-100 gallery-card border-0 rounded">
+                    <div class="position-relative">
+                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                        {
+                            <img src="@item.ImageUrl" style="height:100%; width:100%; object-fit:cover; border-radius:8px;" />
+                        }
+                        else
+                        {
+                            <div class="d-flex align-items-center justify-content-center bg-light rounded" style="height:60px; width:60px;">
+                                <i class="bi bi-image text-muted"></i>
+                            </div>
+                        }
+                        <div class="overlay d-flex justify-content-center align-items-center gap-2">
+                            <a class="btn btn-sm btn-light" href="@Url.Action("EditGallery", "Gallery", new { id = item.Id })">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form method="post" asp-action="DeleteGallery" asp-route-id="@item.Id" onsubmit="return confirm('Delete this image?');">
+                                <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card-body p-2 text-center">
+                        <div class="fw-semibold small text-truncate">@item.Title</div>
+                        <div class="text-muted small">@item.Category?.Name</div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

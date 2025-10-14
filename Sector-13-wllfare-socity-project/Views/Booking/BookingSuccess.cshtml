@@ -1,0 +1,208 @@
+@model Sector_13_Welfare_Society___Digital_Management_System.Models.Booking
+@{
+    ViewData["Title"] = "Booking Confirmed";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body text-center p-5">
+                    <!-- Success Icon -->
+                    <div class="mb-4">
+                        <div class="success-icon mx-auto">
+                            <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Success Message -->
+                    <h2 class="text-success mb-3">Booking Confirmed!</h2>
+                    <p class="text-muted mb-4">
+                        Thank you, <strong>@Model.CustomerName</strong>, for choosing E-Group services. 
+                        Your booking has been successfully confirmed and payment processed.
+                    </p>
+
+                    <!-- Booking Details -->
+                    <div class="booking-details bg-light rounded p-4 mb-4">
+                        <h5 class="text-primary mb-3">Booking Details</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="detail-item mb-2">
+                                    <strong>Booking Number:</strong><br>
+                                    <span class="text-primary">@Model.BookingNumber</span>
+                                </div>
+                                <div class="detail-item mb-2">
+                                    <strong>Booking Date:</strong><br>
+                                    <span>@Model.BookingDate.ToString("dd MMM yyyy, hh:mm tt")</span>
+                                </div>
+                                <div class="detail-item mb-2">
+                                    <strong>Payment Status:</strong><br>
+                                    <span class="badge bg-success">@Model.PaymentStatus</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="detail-item mb-2">
+                                    <strong>Total Amount:</strong><br>
+                                    <span class="text-success h5">@Model.Currency @Model.TotalAmount.ToString("F2")</span>
+                                </div>
+                                <div class="detail-item mb-2">
+                                    <strong>Payment Method:</strong><br>
+                                    <span>@Model.PaymentMethod</span>
+                                </div>
+                                @if (!string.IsNullOrEmpty(Model.TransactionId))
+                                {
+                                    <div class="detail-item mb-2">
+                                        <strong>Transaction ID:</strong><br>
+                                        <span class="text-muted small">@Model.TransactionId</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Services Booked -->
+                    @if (Model.BookingItems != null && Model.BookingItems.Any())
+                    {
+                        <div class="services-booked mb-4">
+                            <h5 class="text-primary mb-3">Services Booked</h5>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Service</th>
+                                            <th>Type</th>
+                                            <th>Details</th>
+                                            <th>Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.BookingItems)
+                                        {
+                                            <tr>
+                                                <td>@item.ServiceName</td>
+                                                <td>@item.ServiceType</td>
+                                                <td>
+                                                    @if (item.WorkforceSize.HasValue)
+                                                    {
+                                                        <small>Workforce: @item.WorkforceSize workers</small><br>
+                                                    }
+                                                    @if (item.ManDaysRequired.HasValue)
+                                                    {
+                                                        <small>Man-Days: @item.ManDaysRequired</small><br>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(item.Location))
+                                                    {
+                                                        <small>Location: @item.Location</small>
+                                                    }
+                                                </td>
+                                                <td class="text-end">@item.Currency @item.TotalAmount.ToString("F2")</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Next Steps -->
+                    <div class="next-steps bg-info bg-opacity-10 rounded p-4 mb-4">
+                        <h6 class="text-info mb-3">
+                            <i class="fas fa-info-circle me-2"></i>What's Next?
+                        </h6>
+                        <ul class="list-unstyled text-start">
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                You will receive a confirmation email shortly
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-phone text-primary me-2"></i>
+                                Our team will contact you within 24 hours to schedule your services
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-calendar text-warning me-2"></i>
+                                We will coordinate with you to set up the service date
+                            </li>
+                            <li>
+                                <i class="fas fa-file-alt text-info me-2"></i>
+                                All necessary documentation will be provided before the service
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="contact-info mb-4">
+                        <h6 class="text-primary mb-3">Need Help?</h6>
+                        <p class="text-muted mb-3">
+                            If you have any questions about your booking or need to make changes, 
+                            please don't hesitate to contact us.
+                        </p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="contact-item">
+                                    <i class="fas fa-envelope text-primary me-2"></i>
+                                    <strong>Email:</strong> info@egroup.com
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="contact-item">
+                                    <i class="fas fa-phone text-primary me-2"></i>
+                                    <strong>Phone:</strong> +880-XXX-XXXXXXX
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <a href="@Url.Action("Index", "Booking")" class="btn btn-primary me-2">
+                            <i class="fas fa-plus me-2"></i>Book Another Service
+                        </a>
+                        <a href="/" class="btn btn-outline-secondary">
+                            <i class="fas fa-home me-2"></i>Back to Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.success-icon {
+    animation: bounceIn 0.6s ease-out;
+}
+
+@@keyframes bounceIn {
+    0% {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    70% {
+        transform: scale(0.9);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.booking-details {
+    border-left: 4px solid #0d6efd;
+}
+
+.detail-item {
+    text-align: left;
+}
+
+.contact-item {
+    margin-bottom: 0.5rem;
+}
+
+.action-buttons {
+    margin-top: 2rem;
+}
+</style>

@@ -1,0 +1,268 @@
+@model Sector_13_Welfare_Society___Digital_Management_System.Models.Shift
+
+@{
+    ViewData["Title"] = "Edit Shift";
+    Layout = "_DashboardLayout";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h4><i class="fas fa-edit"></i> Edit Shift: @Model.Name</h4>
+                </div>
+                <div class="card-body">
+                    @if (TempData["ShiftCreateError"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @TempData["ShiftCreateError"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form asp-action="Edit" method="post" id="shiftForm">
+                        <input asp-for="ShiftId" type="hidden" />
+                        <input asp-for="CreatedAt" type="hidden" />
+                        
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Name" class="form-label">Shift Name <span class="text-danger">*</span></label>
+                                    <input asp-for="Name" class="form-control" placeholder="e.g., Morning Shift" />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Quick Templates</label>
+                                    <select id="templateSelect" class="form-select">
+                                        <option value="">Select a template...</option>
+                                        <option value="morning">Morning Shift (8 AM - 4 PM)</option>
+                                        <option value="evening">Evening Shift (4 PM - 12 AM)</option>
+                                        <option value="night">Night Shift (12 AM - 8 AM)</option>
+                                        <option value="day">Day Shift (9 AM - 5 PM)</option>
+                                        <option value="part-morning">Part-time Morning (8 AM - 12 PM)</option>
+                                        <option value="part-afternoon">Part-time Afternoon (1 PM - 5 PM)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="StartTime" class="form-label">Start Time <span class="text-danger">*</span></label>
+                                    <input asp-for="StartTime" type="time" class="form-control" id="startTime" />
+                                    <span asp-validation-for="StartTime" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="EndTime" class="form-label">End Time <span class="text-danger">*</span></label>
+                                    <input asp-for="EndTime" type="time" class="form-control" id="endTime" />
+                                    <span asp-validation-for="EndTime" class="text-danger"></span>
+                                    <div id="durationDisplay" class="form-text"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="3" placeholder="Optional description for this shift"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                                <label asp-for="IsActive" class="form-check-label">
+                                    Active (this shift is currently available for assignment)
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Created At</label>
+                                    <input type="text" class="form-control" value="@Model.CreatedAt.ToString("g")" readonly />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Last Updated</label>
+                                    <input type="text" class="form-control" value="@(Model.UpdatedAt?.ToString("g") ?? "Never")" readonly />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="@Url.Action("Index")" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Shifts
+                            </a>
+                            <div>
+                                <button type="button" class="btn btn-outline-primary me-2" id="previewBtn">
+                                    <i class="fas fa-eye"></i> Preview Changes
+                                </button>
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="fas fa-save"></i> Update Shift
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Preview Modal -->
+<div class="modal fade" id="previewModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Shift Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-6"><strong>Name:</strong></div>
+                    <div class="col-6" id="previewName"></div>
+                </div>
+                <div class="row">
+                    <div class="col-6"><strong>Start Time:</strong></div>
+                    <div class="col-6" id="previewStart"></div>
+                </div>
+                <div class="row">
+                    <div class="col-6"><strong>End Time:</strong></div>
+                    <div class="col-6" id="previewEnd"></div>
+                </div>
+                <div class="row">
+                    <div class="col-6"><strong>Duration:</strong></div>
+                    <div class="col-6" id="previewDuration"></div>
+                </div>
+                <div class="row">
+                    <div class="col-6"><strong>Description:</strong></div>
+                    <div class="col-6" id="previewDescription"></div>
+                </div>
+                <div class="row">
+                    <div class="col-6"><strong>Status:</strong></div>
+                    <div class="col-6" id="previewStatus"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-warning" id="confirmUpdate">Update Shift</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Template selection
+            $('#templateSelect').change(function() {
+                var template = $(this).val();
+                var templates = {
+                    'morning': { start: '08:00', end: '16:00', name: 'Morning Shift', desc: '8 AM to 4 PM' },
+                    'evening': { start: '16:00', end: '00:00', name: 'Evening Shift', desc: '4 PM to 12 AM' },
+                    'night': { start: '00:00', end: '08:00', name: 'Night Shift', desc: '12 AM to 8 AM' },
+                    'day': { start: '09:00', end: '17:00', name: 'Day Shift', desc: '9 AM to 5 PM' },
+                    'part-morning': { start: '08:00', end: '12:00', name: 'Part-time Morning', desc: '8 AM to 12 PM' },
+                    'part-afternoon': { start: '13:00', end: '17:00', name: 'Part-time Afternoon', desc: '1 PM to 5 PM' }
+                };
+
+                if (template && templates[template]) {
+                    $('#Name').val(templates[template].name);
+                    $('#StartTime').val(templates[template].start);
+                    $('#EndTime').val(templates[template].end);
+                    $('#Description').val(templates[template].desc);
+                    updateDuration();
+                }
+            });
+
+            // Duration calculation
+            function updateDuration() {
+                var startTime = $('#StartTime').val();
+                var endTime = $('#EndTime').val();
+                
+                if (startTime && endTime) {
+                    var start = new Date('2000-01-01T' + startTime);
+                    var end = new Date('2000-01-01T' + endTime);
+                    
+                    if (end < start) {
+                        end.setDate(end.getDate() + 1); // Handle overnight shifts
+                    }
+                    
+                    var duration = end - start;
+                    var hours = Math.floor(duration / (1000 * 60 * 60));
+                    var minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
+                    
+                    $('#durationDisplay').text('Duration: ' + hours + ' hours ' + minutes + ' minutes');
+                }
+            }
+
+            $('#StartTime, #EndTime').on('change', updateDuration);
+            
+            // Initial duration calculation
+            updateDuration();
+
+            // Preview functionality
+            $('#previewBtn').click(function() {
+                var name = $('#Name').val() || 'Not specified';
+                var startTime = $('#StartTime').val() || 'Not specified';
+                var endTime = $('#EndTime').val() || 'Not specified';
+                var description = $('#Description').val() || 'No description';
+                var isActive = $('#IsActive').is(':checked');
+
+                $('#previewName').text(name);
+                $('#previewStart').text(startTime);
+                $('#previewEnd').text(endTime);
+                $('#previewDescription').text(description);
+                $('#previewStatus').html('<span class="badge ' + (isActive ? 'bg-success' : 'bg-danger') + '">' + (isActive ? 'Active' : 'Inactive') + '</span>');
+
+                // Calculate and display duration
+                if (startTime !== 'Not specified' && endTime !== 'Not specified') {
+                    var start = new Date('2000-01-01T' + startTime);
+                    var end = new Date('2000-01-01T' + endTime);
+                    
+                    if (end < start) {
+                        end.setDate(end.getDate() + 1);
+                    }
+                    
+                    var duration = end - start;
+                    var hours = Math.floor(duration / (1000 * 60 * 60));
+                    var minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
+                    
+                    $('#previewDuration').text(hours + ' hours ' + minutes + ' minutes');
+                } else {
+                    $('#previewDuration').text('Not specified');
+                }
+
+                var modal = new bootstrap.Modal(document.getElementById('previewModal'));
+                modal.show();
+            });
+
+            // Confirm update from preview
+            $('#confirmUpdate').click(function() {
+                $('#shiftForm').submit();
+            });
+
+            // Form validation
+            $('#shiftForm').on('submit', function(e) {
+                var startTime = $('#StartTime').val();
+                var endTime = $('#EndTime').val();
+                
+                if (startTime && endTime && startTime === endTime) {
+                    e.preventDefault();
+                    alert('Start time and end time cannot be the same.');
+                    return false;
+                }
+            });
+        });
+    </script>
+}

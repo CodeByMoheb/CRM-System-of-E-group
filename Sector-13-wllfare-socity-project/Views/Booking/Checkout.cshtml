@@ -1,0 +1,245 @@
+@model Sector_13_Welfare_Society___Digital_Management_System.Models.Booking
+@{
+    ViewData["Title"] = "Checkout";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var bookingItems = ViewBag.BookingItems as List<Sector_13_Welfare_Society___Digital_Management_System.Models.BookingItemCalculation>;
+    var totalAmount = (decimal)ViewBag.TotalAmount;
+    var currency = ViewBag.Currency as string ?? "USD";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box">
+                <h4 class="page-title">Checkout</h4>
+                <div class="page-title-right">
+                    <ol class="breadcrumb m-0">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Booking")">Book Services</a></li>
+                        <li class="breadcrumb-item active">Checkout</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form asp-action="ProcessBooking" method="post" id="checkoutForm">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Customer Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CustomerName" class="form-label">Full Name *</label>
+                                    <input asp-for="CustomerName" class="form-control" required placeholder="Enter your full name">
+                                    <span asp-validation-for="CustomerName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CustomerEmail" class="form-label">Email Address *</label>
+                                    <input asp-for="CustomerEmail" type="email" class="form-control" required placeholder="Enter your email">
+                                    <span asp-validation-for="CustomerEmail" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CustomerPhone" class="form-label">Phone Number *</label>
+                                    <input asp-for="CustomerPhone" class="form-control" required placeholder="Enter your phone number">
+                                    <span asp-validation-for="CustomerPhone" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CompanyName" class="form-label">Company Name</label>
+                                    <input asp-for="CompanyName" class="form-control" placeholder="Enter your company name">
+                                    <span asp-validation-for="CompanyName" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CustomerAddress" class="form-label">Address</label>
+                            <textarea asp-for="CustomerAddress" class="form-control" rows="3" placeholder="Enter your address"></textarea>
+                            <span asp-validation-for="CustomerAddress" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="SpecialRequirements" class="form-label">Special Requirements</label>
+                            <textarea asp-for="SpecialRequirements" class="form-control" rows="3" placeholder="Any special requirements or notes"></textarea>
+                            <span asp-validation-for="SpecialRequirements" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ServiceDate" class="form-label">Preferred Service Date</label>
+                            <input asp-for="ServiceDate" type="date" class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")">
+                            <span asp-validation-for="ServiceDate" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Order Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (bookingItems != null && bookingItems.Any())
+                        {
+                            @foreach (var item in bookingItems)
+                            {
+                                <div class="order-item mb-3 pb-3 border-bottom">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h6 class="mb-1">@item.ServiceName</h6>
+                                            <small class="text-muted">@item.ServiceType</small>
+                                            @if (item.WorkforceSize.HasValue)
+                                            {
+                                                <br><small class="text-muted">Workforce: @item.WorkforceSize workers</small>
+                                            }
+                                            @if (!string.IsNullOrEmpty(item.Location))
+                                            {
+                                                <br><small class="text-muted">Location: @item.Location</small>
+                                            }
+                                        </div>
+                                        <div class="text-end">
+                                            <strong>@item.Currency @item.TotalAmount.ToString("F2")</strong>
+                                        </div>
+                                    </div>
+                                    
+                                    @if (item.WorkforceSize.HasValue && item.ManDaysRequired.HasValue)
+                                    {
+                                        <div class="mt-2">
+                                            <small class="text-muted">
+                                                @if (item.ManDaysRequired.HasValue)
+                                                {
+                                                    <span>Man-Days: @item.ManDaysRequired</span>
+                                                }
+                                                @if (item.UnitPrice > 0)
+                                                {
+                                                    <span> | Unit Price: @item.Currency @item.UnitPrice.ToString("F2")</span>
+                                                }
+                                                @if (item.TravelAllowance.HasValue)
+                                                {
+                                                    <span> | Travel: @item.Currency @item.TravelAllowance.Value.ToString("F2")</span>
+                                                }
+                                                @if (item.VatAmount.HasValue)
+                                                {
+                                                    <span> | VAT: @item.Currency @item.VatAmount.Value.ToString("F2")</span>
+                                                }
+                                            </small>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        }
+
+                        <div class="order-total">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Total Amount:</h5>
+                                <h5 class="mb-0 text-primary">@currency @totalAmount.ToString("F2")</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Payment Method</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="PaymentMethod" id="sslCommerz" value="SSLCommerz" checked>
+                                <label class="form-check-label" for="sslCommerz">
+                                    <i class="fas fa-credit-card me-2"></i> Online Payment (SSL Commerz)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="PaymentMethod" id="manual" value="Manual">
+                                <label class="form-check-label" for="manual">
+                                    <i class="fas fa-hand-holding-usd me-2"></i> Manual Payment
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-lock me-2"></i> Complete Booking
+                            </button>
+                            <a href="@Url.Action("Index", "Booking")" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i> Back to Services
+                            </a>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <small class="text-muted">
+                                <i class="fas fa-shield-alt me-1"></i>
+                                Your payment information is secure and encrypted.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hidden fields for service data -->
+        @if (bookingItems != null)
+        {
+            @for (int i = 0; i < bookingItems.Count; i++)
+            {
+                <input type="hidden" name="serviceIds[@i]" value="@bookingItems[i].ServiceId" />
+                <input type="hidden" name="quantities[@i]" value="@bookingItems[i].Quantity" />
+                @if (bookingItems[i].WorkforceSize.HasValue)
+                {
+                    <input type="hidden" name="workforceSizes[@i]" value="@bookingItems[i].WorkforceSize.Value" />
+                }
+                @if (!string.IsNullOrEmpty(bookingItems[i].Location))
+                {
+                    <input type="hidden" name="locations[@i]" value="@bookingItems[i].Location" />
+                }
+            }
+        }
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('checkoutForm');
+    
+    form.addEventListener('submit', function(e) {
+        const requiredFields = form.querySelectorAll('[required]');
+        let isValid = true;
+        
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                isValid = false;
+                field.classList.add('is-invalid');
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+        
+        if (!isValid) {
+            e.preventDefault();
+            alert('Please fill in all required fields.');
+        }
+    });
+});
+</script>
+
+

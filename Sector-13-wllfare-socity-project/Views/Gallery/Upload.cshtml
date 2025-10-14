@@ -1,0 +1,149 @@
+@model GalleryViewModel
+@{
+    ViewData["Title"] = "Upload Gallery Image";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="container mt-4" style="max-width: 720px;">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-primary"><i class="fas fa-images me-2"></i>Upload Gallery Image</h2>
+        <p class="text-muted">Add new images to your gallery efficiently.</p>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="text-white d-flex justify-content-between align-items-center fw-semibold gap-2 px-3 py-2 rounded-top shadow-sm" style="background: linear-gradient(90deg, #0d6efd, #6f42c1); font-size: 1.1rem; letter-spacing: 0.3px;">
+            <h5 class="mb-0">
+                <i class="fas @(Model.Gallery.Id == 0 ? "fa-plus-circle" : "fa-edit") me-1"></i>
+                @(Model.Gallery.Id == 0 ? "Add New Image" : "Edit Image")
+            </h5>
+            <span class="badge bg-light text-success">
+                @(Model.Gallery.Id == 0 ? "New" : $"ID: {Model.Gallery.Id}")
+            </span>
+        </div>
+
+        <div class="card-body">
+            <form enctype="multipart/form-data" method="post" asp-action="SaveGallery" asp-controller="Gallery">
+               
+                <input type="hidden" asp-for="Gallery.Id" />
+
+                <div class="mb-3">
+                    <label asp-for="Gallery.Title" class="form-label fw-semibold">Title</label>
+                    <input asp-for="Gallery.Title" class="form-control" placeholder="Enter image title..." />
+                    <span asp-validation-for="Gallery.Title" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Gallery.CategoryId" class="form-label fw-semibold">Category</label>
+                    <select asp-for="Gallery.CategoryId"
+                            asp-items="@(new SelectList(Model.Categories, "Id", "Name"))"
+                            class="form-select">
+                        <option value="">-- Select Category --</option>
+                    </select>
+                    <span asp-validation-for="Gallery.CategoryId" class="text-danger small"></span>
+                </div>
+
+
+                <div class="mb-3">
+                    <label asp-for="Gallery.ImageFile" class="form-label fw-semibold">
+                        Image <span class="text-danger">*</span>
+                    </label><br />
+
+                    <div class="position-relative d-inline-block" style="height:240px; width:240px;">
+                        <img id="imagePreview"
+                        src="@(string.IsNullOrEmpty(Model.Gallery.ExistingImageUrl) ? "/photos/default.png" : Model.Gallery.ExistingImageUrl)"
+                             class="img-thumbnail"
+                             style="height:100%; width:100%; object-fit:cover;"
+                             alt="Image Preview" />
+
+                        <!-- Clear button inside image -->
+                        <span id="clearImageBtn"
+                              class="position-absolute top-0 end-0 badge rounded-circle text-danger"
+                              style="cursor:pointer; display:none; width:24px; height:24px; line-height:20px; font-size:20px; padding:0;background-color:whitesmoke">
+                            &times;
+                        </span>
+                    </div>
+
+                    <input asp-for="Gallery.ImageFile" type="file" class="form-control mt-2" id="imageInput" accept="image/*" />
+                </div>
+
+                <div class="d-flex gap-2 flex-column flex-sm-row">
+                    <button type="submit" class="btn btn-success w-100 w-sm-50">
+                        <i class="fas @(Model.Gallery.Id == 0 ? "fa-save" : "fa-sync-alt") me-1"></i>
+                        @(Model.Gallery.Id == 0 ? "Save" : "Update")
+                    </button>
+                    <a asp-action="Upload" asp-controller="Gallery" class="btn btn-outline-secondary w-100 w-sm-50">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Show SweetAlert for Success
+        @if (TempData["Success"] != null)
+        {
+            <text>
+                Swal.fire({
+                    icon: 'success',
+                title: 'Success',
+                text: '@TempData["Success"]',
+                confirmButtonColor: '#3085d6'
+                    });
+            </text>
+        }
+
+        // Show SweetAlert for Error
+        @if (TempData["Error"] != null)
+        {
+            <text>
+                Swal.fire({
+                    icon: 'error',
+                title: 'Error',
+                text: '@TempData["Error"]',
+                confirmButtonColor: '#d33'
+                    });
+            </text>
+        }
+
+        // Live image preview
+
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const clearBtn = document.getElementById('clearImageBtn');
+
+        function toggleClearBtn() {
+            if (!imagePreview.src.includes('Default.png')) {
+                clearBtn.style.display = 'block';
+            } else {
+                clearBtn.style.display = 'none';
+            }
+        }
+
+        // Initial check if existing image exists
+        toggleClearBtn();
+
+        // When user selects a file
+        imageInput.addEventListener('change', function () {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    imagePreview.src = e.target.result;
+                    toggleClearBtn();
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
+        // Clear button functionality
+        clearBtn.addEventListener('click', function () {
+            imageInput.value = '';
+            imagePreview.src = '/photos/default.png';
+            toggleClearBtn();
+        });
+    </script>
+}

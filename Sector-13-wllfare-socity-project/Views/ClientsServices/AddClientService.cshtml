@@ -1,0 +1,145 @@
+﻿@model ClientsServices
+@{
+    ViewData["Title"] = "Add New Client Services";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <!-- Page Header -->
+            <div class="text-center mb-4">
+                <h2 class="fw-bold text-primary">
+                    <i class="fas fa-images me-2"></i> Add Client Service
+                </h2>
+                <p class="text-muted">Fill out the form below to create or update a client service entry.</p>
+            </div>
+
+            <!-- Card -->
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header d-flex justify-content-between align-items-center text-white fw-semibold rounded-top"
+                     style="background: linear-gradient(90deg, #0d6efd, #6f42c1); font-size: 1.05rem;">
+                    <span>
+                        <i class="fas @(Model.Id == 0 ? "fa-plus-circle" : "fa-edit") me-2"></i>
+
+                        @if (Model.Id == 0)
+                        {
+                            <span class="text-warning fw-bold">Add New Service</span> <!-- Highlighted -->
+                        }
+                        else
+                        {
+                            <span class="text-info fw-bold">Edit Service</span> <!-- Different color for edit -->
+                        }
+                    </span>
+
+                    <span class="badge bg-light text-success">
+                        @(Model.Id == 0 ? "New" : $"ID: {Model.Id}")
+                    </span>
+                </div>
+
+
+                <div class="card-body p-4">
+
+                    <form enctype="multipart/form-data" method="post" asp-action="SaveClientService" asp-controller="ClientsServices">
+
+
+                        <input type="hidden" asp-for="Id" />
+
+                        <!-- Title -->
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label fw-semibold">Title</label>
+                            <input asp-for="Title" class="form-control" placeholder="Enter service title..." />
+                            <span asp-validation-for="Title" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Image Upload -->
+                        <div class="mb-3">
+                            <label asp-for="ImageFile" class="form-label fw-semibold">Image <span class="text-danger">*</span></label>
+
+                            <div class="d-flex flex-column flex-md-row align-items-start gap-3">
+                                <!-- Image Preview -->
+                                <div class="position-relative" style="height: 240px; width: 240px;">
+                                    <img id="imagePreview"
+                                         src="@(string.IsNullOrEmpty(Model.ExistingImageUrl) ? "/photos/default.png" : Model.ExistingImageUrl)"
+                                         class="img-thumbnail rounded shadow-sm"
+                                         style="height:100%; width:100%; object-fit:cover;"
+                                         alt="Image Preview" />
+
+                                    <span id="clearImageBtn"
+                                          class="position-absolute top-0 end-0 badge rounded-circle text-danger"
+                                          style="cursor:pointer; display:none; width:28px; height:28px; font-size:20px; background-color:white; line-height:24px;">
+                                        &times;
+                                    </span>
+                                </div>
+
+                                <!-- Upload Input -->
+                                <div class="flex-fill">
+                                    <input asp-for="ImageFile" type="file" class="form-control" id="imageInput" accept="image/*" />
+                                    <small class="text-muted">Supported formats: JPG, PNG, GIF</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-semibold">Description</label>
+                            <textarea asp-for="Description" rows="4" class="form-control" placeholder="Enter service description..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <!-- IsApproved Toggle -->
+                        <div class="mb-3 form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="isApprovedSwitch" asp-for="IsApproved">
+                            <label class="form-check-label" for="isApprovedSwitch">@Html.DisplayNameFor(m => m.IsApproved)</label>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-2 flex-column flex-sm-row justify-content-end mt-3">
+                            <!-- Back Button -->
+                            <a asp-action="Index" asp-controller="ClientsServices"
+                               class="btn btn-outline-secondary w-100 w-sm-25 d-flex align-items-center justify-content-center">
+                                <i class="fas fa-arrow-left me-1"></i> Back
+                            </a>
+
+                            <!-- Save / Update Button -->
+                            <button type="submit"
+                                    class="btn btn-success w-100 w-sm-50 d-flex align-items-center justify-content-center">
+                                <i class="fas @(Model.Id == 0 ? "fa-save" : "fa-sync-alt") me-1"></i>
+                                @(Model.Id == 0 ? "Save" : "Update")
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const clearBtn = document.getElementById('clearImageBtn');
+
+        imageInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imagePreview.src = e.target.result;
+                    clearBtn.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        clearBtn.addEventListener('click', function () {
+            imageInput.value = null;
+            imagePreview.src = '/photos/default.png';
+            this.style.display = 'none';
+        });
+    </script>
+}

@@ -1,0 +1,237 @@
+@model Sector_13_Welfare_Society___Digital_Management_System.Models.Booking
+@{
+    ViewData["Title"] = "Payment Processing - " + Model.BookingNumber;
+}
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Invoice Summary -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-receipt me-2"></i>Invoice Summary
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-primary">Booking Details</h6>
+                            <p><strong>Booking Number:</strong> @Model.BookingNumber</p>
+                            <p><strong>Date:</strong> @Model.BookingDate.ToString("MMMM dd, yyyy")</p>
+                            <p><strong>Customer:</strong> @Model.CustomerName</p>
+                            <p><strong>Email:</strong> @Model.CustomerEmail</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-primary">Service Details</h6>
+                            @foreach (var item in Model.BookingItems)
+                            {
+                                <p><strong>Service:</strong> @item.ServiceName</p>
+                                <p><strong>Type:</strong> @item.ServiceType</p>
+                                @if (item.WorkforceSize.HasValue)
+                                {
+                                    <p><strong>Workforce Size:</strong> @item.WorkforceSize workers</p>
+                                }
+                                @if (item.ManDaysRequired.HasValue)
+                                {
+                                    <p><strong>Man-Days:</strong> @item.ManDaysRequired man-days</p>
+                                }
+                            }
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="text-center">
+                        <h3 class="text-primary">
+                            <strong>Total Amount: @Model.Currency @Model.TotalAmount.ToString("N2")</strong>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Options -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-credit-card me-2"></i>Payment Options
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <button id="payNowBtn" class="btn btn-success btn-lg px-5">
+                            <i class="fas fa-bolt me-2"></i>Pay Now
+                        </button>
+                    </div>
+                    <div class="row">
+                        <!-- SSLCommerz Payment -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 border-primary">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-credit-card fa-3x text-primary mb-3"></i>
+                                    <h5 class="card-title">Online Payment</h5>
+                                    <p class="card-text">Pay securely using SSLCommerz payment gateway. Accepts all major credit cards, mobile banking, and digital wallets.</p>
+                                    <div class="mb-3">
+                                        <small class="text-muted">Supported: Visa, Mastercard, bKash, Rocket, Nagad, and more</small>
+                                    </div>
+                                    <form method="post" action="@Url.Action("ProcessSSLCommerz", "Booking")">
+                                        <button type="submit" class="btn btn-primary btn-lg">
+                                            <i class="fas fa-lock me-2"></i>Pay Securely Online
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Manual Payment -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 border-warning">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-university fa-3x text-warning mb-3"></i>
+                                    <h5 class="card-title">Bank Transfer</h5>
+                                    <p class="card-text">Make a direct bank transfer and upload the payment receipt. We'll verify and confirm your payment.</p>
+                                    <div class="mb-3">
+                                        <small class="text-muted">Bank details will be provided after booking confirmation</small>
+                                    </div>
+                                    <button type="button" class="btn btn-warning btn-lg" data-bs-toggle="modal" data-bs-target="#bankTransferModal">
+                                        <i class="fas fa-upload me-2"></i>Bank Transfer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Terms -->
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <h6 class="text-primary mb-2">
+                            <i class="fas fa-info-circle me-2"></i>Payment Terms
+                        </h6>
+                        <ul class="mb-0 small">
+                            <li>Payment must be completed within 7 days of booking confirmation</li>
+                            <li>Service will commence only after payment verification</li>
+                            <li>All payments are subject to 15% VAT as per Bangladesh tax regulations</li>
+                            <li>Refund policy applies as per our terms and conditions</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            
+                <a href="@Url.Action("Invoice", "Booking", new { id = Model.Id })" class="btn btn-outline-primary me-2">
+                    <i class="fas fa-file-invoice me-2"></i>View Invoice
+                </a>
+                <a href="@Url.Action("Index", "Booking")" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Booking
+                </a>
+            </div>
+
+            <!-- SSLCommerz Payment Modal -->
+            <div class="modal fade" id="sslCommerzModal" tabindex="-1" aria-labelledby="sslCommerzModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="sslCommerzModalLabel">
+                                <i class="fas fa-credit-card me-2"></i>Select Payment Method
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <p class="mb-4">Choose your preferred payment method to proceed with SSLCommerz.</p>
+                            <form method="post" action="@Url.Action("ProcessSSLCommerz", "Booking")" id="sslCommerzForm">
+                                <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+                                    <i class="fas fa-lock me-2"></i>Pay Securely with SSLCommerz
+                                </button>
+                            </form>
+                            <div class="text-muted small">
+                                Supported: Visa, Mastercard, bKash, Rocket, Nagad, and more
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    var payNowBtn = document.getElementById("payNowBtn");
+                    if (payNowBtn) {
+                        payNowBtn.addEventListener("click", function (e) {
+                            e.preventDefault();
+                            var sslCommerzModal = new bootstrap.Modal(document.getElementById('sslCommerzModal'));
+                            sslCommerzModal.show();
+                        });
+                    }
+                });
+            </script>
+        </div>
+    </div>
+</div>
+
+<!-- Bank Transfer Modal -->
+<div class="modal fade" id="bankTransferModal" tabindex="-1" aria-labelledby="bankTransferModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="bankTransferModalLabel">
+                    <i class="fas fa-university me-2"></i>Bank Transfer Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-primary">Bank Details</h6>
+                        <div class="mb-3">
+                            <strong>Bank Name:</strong> Dutch-Bangla Bank Limited<br>
+                            <strong>Account Name:</strong> E-Group Services<br>
+                            <strong>Account Number:</strong> 1234567890123456<br>
+                            <strong>Branch:</strong> Dhanmondi Branch, Dhaka<br>
+                            <strong>SWIFT Code:</strong> DBBLBDDH
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-primary">Payment Amount</h6>
+                        <div class="alert alert-info">
+                            <strong>Amount to Transfer:</strong><br>
+                            <span class="h4 text-primary">@Model.Currency @Model.TotalAmount.ToString("N2")</span><br>
+                            <small>Please include booking number: <strong>@Model.BookingNumber</strong> in the transfer reference</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <form method="post" action="@Url.Action("ManualPayment", "Booking")" enctype="multipart/form-data">
+                    <input type="hidden" name="bookingId" value="@Model.Id" />
+                    <div class="mb-3">
+                        <label for="transactionId" class="form-label">Transaction ID / Reference Number</label>
+                        <input type="text" class="form-control" id="transactionId" name="transactionId" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="paymentReceipt" class="form-label">Upload Payment Receipt</label>
+                        <input type="file" class="form-control" id="paymentReceipt" name="paymentReceipt" accept=".jpg,.jpeg,.png,.pdf" required>
+                        <div class="form-text">Upload a clear photo or PDF of your payment receipt</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="paymentNotes" class="form-label">Additional Notes (Optional)</label>
+                        <textarea class="form-control" id="paymentNotes" name="paymentNotes" rows="3"></textarea>
+                    </div>
+                    <div class="text-end">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-upload me-2"></i>Submit Payment Proof
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Auto-focus on transaction ID field when modal opens
+            $('#bankTransferModal').on('shown.bs.modal', function () {
+                $('#transactionId').focus();
+            });
+        });
+    </script>
+}
+

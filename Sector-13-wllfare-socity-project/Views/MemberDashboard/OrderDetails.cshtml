@@ -1,0 +1,198 @@
+@model Sector_13_Welfare_Society___Digital_Management_System.Models.Order
+
+@{
+    ViewData["Title"] = "Order Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Order Details</h1>
+        <div class="btn-group">
+            <a href="@Url.Action("Orders", "MemberDashboard")" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Orders
+            </a>
+            @if (Model.PaymentStatus == "Pending" && Model.OrderStatus == "Pending")
+            {
+                <a href="@Url.Action("ProcessPayment", "Booking")" class="btn btn-success">
+                    <i class="fas fa-credit-card"></i> Complete Payment
+                </a>
+            }
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Order Information -->
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Order Information</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-primary">Order Details</h6>
+                            <p><strong>Order Number:</strong> @Model.OrderNumber</p>
+                            <p><strong>Order Date:</strong> @Model.CreatedAt.ToString("MMMM dd, yyyy HH:mm")</p>
+                            <p><strong>Order Status:</strong> 
+                                <span class="badge badge-@(Model.OrderStatus == "Completed" ? "success" : Model.OrderStatus == "Pending" ? "warning" : Model.OrderStatus == "Cancelled" ? "danger" : "secondary")">
+                                    @Model.OrderStatus
+                                </span>
+                            </p>
+                            <p><strong>Payment Status:</strong> 
+                                <span class="badge badge-@(Model.PaymentStatus == "Completed" ? "success" : Model.PaymentStatus == "Pending" ? "warning" : Model.PaymentStatus == "Failed" ? "danger" : "secondary")">
+                                    @Model.PaymentStatus
+                                </span>
+                            </p>
+                            @if (!string.IsNullOrEmpty(Model.TransactionId))
+                            {
+                                <p><strong>Transaction ID:</strong> @Model.TransactionId</p>
+                            }
+                            @if (Model.PaymentDate.HasValue)
+                            {
+                                <p><strong>Payment Date:</strong> @Model.PaymentDate.Value.ToString("MMMM dd, yyyy HH:mm")</p>
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-primary">Customer Information</h6>
+                            <p><strong>Name:</strong> @Model.CustomerName</p>
+                            <p><strong>Email:</strong> @Model.CustomerEmail</p>
+                            <p><strong>Phone:</strong> @Model.CustomerPhone</p>
+                            @if (!string.IsNullOrEmpty(Model.CustomerAddress))
+                            {
+                                <p><strong>Address:</strong> @Model.CustomerAddress</p>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.CompanyName))
+                            {
+                                <p><strong>Company:</strong> @Model.CompanyName</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Items -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Order Items</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Service</th>
+                                    <th>Type</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>Subtotal</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.OrderItems)
+                                {
+                                    <tr>
+                                        <td>
+                                            <strong>@item.ServiceName</strong><br>
+                                            <small class="text-muted">@item.ServiceDescription</small>
+                                            @if (!string.IsNullOrEmpty(item.SpecialRequirements))
+                                            {
+                                                <br><small class="text-info"><strong>Special Requirements:</strong> @item.SpecialRequirements</small>
+                                            }
+                                        </td>
+                                        <td>@item.ServiceType</td>
+                                        <td>@item.Quantity</td>
+                                        <td>$@item.UnitPrice.ToString("F2")</td>
+                                        <td>$@item.Subtotal.ToString("F2")</td>
+                                        <td>$@item.TotalAmount.ToString("F2")</td>
+                                    </tr>
+                                    @if (item.TravelAllowance.HasValue && item.TravelAllowance > 0)
+                                    {
+                                        <tr>
+                                            <td colspan="5" class="text-end"><strong>Travel Allowance:</strong></td>
+                                            <td>$@item.TravelAllowance.Value.ToString("F2")</td>
+                                        </tr>
+                                    }
+                                    @if (item.VatAmount.HasValue && item.VatAmount > 0)
+                                    {
+                                        <tr>
+                                            <td colspan="5" class="text-end"><strong>VAT (15%):</strong></td>
+                                            <td>$@item.VatAmount.Value.ToString("F2")</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Order Summary</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal:</span>
+                        <span>$@Model.Subtotal.ToString("F2")</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>VAT (15%):</span>
+                        <span>$@Model.VatAmount.ToString("F2")</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <strong>Total Amount:</strong>
+                        <strong class="text-success">$@Model.TotalAmount.ToString("F2")</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Actions -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Actions</h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        @if (Model.PaymentStatus == "Pending" && Model.OrderStatus == "Pending")
+                        {
+                            <a href="@Url.Action("ProcessPayment", "Booking")" class="list-group-item list-group-item-action text-center bg-success text-white">
+                                <i class="fas fa-credit-card me-2"></i>
+                                Complete Payment
+                            </a>
+                        }
+                        <a href="@Url.Action("Orders", "MemberDashboard")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-list me-2"></i>
+                            Back to Orders
+                        </a>
+                        <a href="@Url.Action("Index", "MemberDashboard")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-home me-2"></i>
+                            Dashboard
+                        </a>
+                        <a href="@Url.Action("Index", "Booking")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-plus me-2"></i>
+                            Book Another Service
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.Notes))
+            {
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Notes</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">@Model.Notes</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

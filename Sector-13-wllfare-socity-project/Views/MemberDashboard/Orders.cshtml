@@ -1,0 +1,139 @@
+@model Sector_13_Welfare_Society___Digital_Management_System.Models.OrdersViewModel
+
+@{
+    ViewData["Title"] = "My Orders";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0 text-gray-800">My Bookings</h1>
+                <a href="@Url.Action("Index", "Booking")" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> New Booking
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bookings Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Service Bookings</h6>
+                </div>
+                <div class="card-body">
+                    @if (Model.Bookings != null && Model.Bookings.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Booking ID</th>
+                                        <th>Service Name</th>
+                                        <th>Service Type</th>
+                                        <th>Booking Date</th>
+                                        <th>Receipt No</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var booking in Model.Bookings)
+                                    {
+                                        <tr>
+                                            <td><strong>B-@booking.Id</strong></td>
+                                            <td>
+                                                @if (booking.Service != null)
+                                                {
+                                                    @booking.Service.Name
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">General Service</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (booking.Service != null)
+                                                {
+                                                    @booking.Service.ServiceType
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">N/A</span>
+                                                }
+                                            </td>
+                                            <td>@booking.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                            <td>
+                                                <small class="font-monospace">R-@booking.Id-@booking.CreatedAt.ToString("yyyyMM")</small>
+                                            </td>
+                                            <td>
+                                                @if (booking.Total.HasValue && booking.Total.Value > 0)
+                                                {
+                                                    <strong class="text-success">@booking.Total.Value.ToString("C")</strong>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">Quote Required</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-@(booking.Status == "Pending Payment" ? "warning" : booking.Status == "Paid" ? "info" : booking.Status == "Processing" ? "primary" : booking.Status == "Audit Complete" ? "success" : booking.Status == "CAP Required" ? "danger" : "secondary")">
+                                                    @(string.IsNullOrEmpty(booking.Status) ? "Pending Payment" : booking.Status)
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    @if (string.IsNullOrEmpty(booking.Status) || booking.Status == "Pending Payment")
+                                                    {
+                                                        <a href="@Url.Action("ProcessPayment", "Booking", new { id = booking.Id })" 
+                                                           class="btn btn-sm btn-success">
+                                                            <i class="fas fa-credit-card"></i>
+                                                        </a>
+                                                    }
+                                                    else if (booking.Status == "Audit Complete")
+                                                    {
+                                                        <a href="@Url.Action("ViewAuditReport", "MemberDashboard", new { id = booking.Id })" 
+                                                           class="btn btn-sm btn-primary">
+                                                            <i class="fas fa-file-alt"></i>
+                                                        </a>
+                                                    }
+                                                    else if (booking.Status == "CAP Required")
+                                                    {
+                                                        <a href="@Url.Action("ViewCAP", "MemberDashboard", new { id = booking.Id })" 
+                                                           class="btn btn-sm btn-warning">
+                                                            <i class="fas fa-tasks"></i>
+                                                        </a>
+                                                    }
+                                                    
+                                                    <a href="@Url.Action("Details", "Booking", new { id = booking.Id })" 
+                                                       class="btn btn-sm btn-outline-info">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-calendar-times fa-4x text-gray-300 mb-3"></i>
+                            <h4 class="text-gray-600">No Bookings Found</h4>
+                            <p class="text-gray-500 mb-4">You haven't made any service bookings yet.</p>
+                            <a href="@Url.Action("Index", "Booking")" class="btn btn-primary btn-lg">
+                                <i class="fas fa-calendar-plus me-2"></i>Create Your First Booking
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

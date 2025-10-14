@@ -1,0 +1,290 @@
+@model Sector_13_Welfare_Society___Digital_Management_System.Models.BookingListViewModel
+
+@{
+    ViewData["Title"] = "All Bookings";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-calendar-check me-2"></i>All Bookings
+                    </h4>
+                    <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#filtersCollapse" aria-expanded="false" aria-controls="filtersCollapse">
+                        <i class="fas fa-filter me-1"></i>Filters
+                    </button>
+                </div>
+                
+                <!-- Filters Section -->
+                <div class="collapse" id="filtersCollapse">
+                    <div class="card-body border-bottom">
+                        <form method="get" class="row g-3">
+                            <div class="col-md-4">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" id="status" name="status">
+                                    <option value="">All Statuses</option>
+                                    <option value="Pending" selected="@(Model.Status == "Pending")">Pending</option>
+                                    <option value="Confirmed" selected="@(Model.Status == "Confirmed")">Confirmed</option>
+                                    <option value="InProgress" selected="@(Model.Status == "InProgress")">In Progress</option>
+                                    <option value="Completed" selected="@(Model.Status == "Completed")">Completed</option>
+                                    <option value="Cancelled" selected="@(Model.Status == "Cancelled")">Cancelled</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="search" class="form-label">Search</label>
+                                <input type="text" class="form-control" id="search" name="search" value="@Model.Search" placeholder="Search by name, email, phone, or booking number...">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">&nbsp;</label>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search me-1"></i>Search
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    @if (Model.Bookings.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Booking #</th>
+                                        <th>Customer</th>
+                                        <th>Contact</th>
+                                        <th>Service</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Booking Date</th>
+                                        <th>Service Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var booking in Model.Bookings)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@booking.BookingNumber</strong>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <strong>@booking.CustomerName</strong>
+                                                    @if (!string.IsNullOrEmpty(booking.CompanyName))
+                                                    {
+                                                        <br><small class="text-muted">@booking.CompanyName</small>
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <i class="fas fa-envelope me-1"></i>@booking.CustomerEmail<br>
+                                                    <i class="fas fa-phone me-1"></i>@booking.CustomerPhone
+                                                </div>
+                                            </td>
+                                            <td>
+                                                @if (booking.BookingItems.Any())
+                                                {
+                                                    <div>
+                                                        @foreach (var item in booking.BookingItems.Take(2))
+                                                        {
+                                                            <span class="badge bg-info me-1">@item.ServiceName</span>
+                                                        }
+                                                        @if (booking.BookingItems.Count > 2)
+                                                        {
+                                                            <span class="badge bg-secondary">+@(booking.BookingItems.Count - 2) more</span>
+                                                        }
+                                                    </div>
+                                                }
+                                            </td>
+                                            <td>
+                                                <strong>@booking.TotalAmount.ToString("C") @booking.Currency</strong>
+                                            </td>
+                                            <td>
+                                                @{
+                                                    var statusClass = booking.BookingStatus switch
+                                                    {
+                                                        "Pending" => "warning",
+                                                        "Confirmed" => "info",
+                                                        "InProgress" => "primary",
+                                                        "Completed" => "success",
+                                                        "Cancelled" => "danger",
+                                                        _ => "secondary"
+                                                    };
+                                                }
+                                                <span class="badge bg-@statusClass">@booking.BookingStatus</span>
+                                            </td>
+                                            <td>@booking.BookingDate.ToString("dd/MM/yyyy")</td>
+                                            <td>
+                                                @if (booking.ServiceDate.HasValue)
+                                                {
+                                                    @booking.ServiceDate.Value.ToString("dd/MM/yyyy")
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <button type="button" class="btn btn-sm btn-outline-info" onclick="viewInvoice(@booking.Id)" title="View Invoice">
+                                                        <i class="fas fa-file-invoice"></i>
+                                                    </button>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                            <i class="fas fa-cog"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                            <li><a class="dropdown-item" href="#" onclick="updateStatus(@booking.Id, 'Confirmed')">Mark as Confirmed</a></li>
+                                                            <li><a class="dropdown-item" href="#" onclick="updateStatus(@booking.Id, 'InProgress')">Mark as In Progress</a></li>
+                                                            <li><a class="dropdown-item" href="#" onclick="updateStatus(@booking.Id, 'Completed')">Mark as Completed</a></li>
+                                                            <li><a class="dropdown-item" href="#" onclick="updateStatus(@booking.Id, 'Cancelled')">Mark as Cancelled</a></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        @if (Model.TotalPages > 1)
+                        {
+                            <nav aria-label="Booking pagination">
+                                <ul class="pagination justify-content-center">
+                                    @if (Model.HasPreviousPage)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=@Model.PreviousPage&status=@Model.Status&search=@Model.Search">Previous</a>
+                                        </li>
+                                    }
+                                    
+                                    @for (int i = Math.Max(1, Model.CurrentPage - 2); i <= Math.Min(Model.TotalPages, Model.CurrentPage + 2); i++)
+                                    {
+                                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                            <a class="page-link" href="?page=@i&status=@Model.Status&search=@Model.Search">@i</a>
+                                        </li>
+                                    }
+                                    
+                                    @if (Model.HasNextPage)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=@Model.NextPage&status=@Model.Status&search=@Model.Search">Next</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </nav>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No bookings found</h5>
+                            <p class="text-muted">Try adjusting your search criteria or check back later.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Invoice Modal -->
+<div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="invoiceModalLabel">Invoice</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="invoiceModalBody">
+                <!-- Invoice content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="printInvoice()">
+                    <i class="fas fa-print me-1"></i>Print
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .modal-content {
+        background: white !important;
+        border: none;
+        border-radius: 8px;
+    }
+    
+    .modal-body {
+        background: white !important;
+        padding: 0;
+    }
+    
+    .modal-header {
+        background: white !important;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .modal-footer {
+        background: white !important;
+        border-top: 1px solid #dee2e6;
+    }
+    
+    #invoiceModalBody {
+        background: white !important;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        function viewInvoice(bookingId) {
+            $('#invoiceModalBody').html('<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading invoice...</div>');
+            $('#invoiceModal').modal('show');
+            
+            $.get('@Url.Action("Invoice", "Booking")', { id: bookingId })
+                .done(function(data) {
+                    $('#invoiceModalBody').html(data);
+                })
+                .fail(function() {
+                    $('#invoiceModalBody').html('<div class="alert alert-danger">Failed to load invoice.</div>');
+                });
+        }
+
+        function updateStatus(bookingId, status) {
+            if (confirm('Are you sure you want to update the booking status to ' + status + '?')) {
+                $.post('@Url.Action("UpdateStatus", "Booking")', { id: bookingId, status: status })
+                    .done(function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    })
+                    .fail(function() {
+                        alert('Failed to update status.');
+                    });
+            }
+        }
+
+        function printInvoice() {
+            var printContent = document.getElementById('invoiceModalBody').innerHTML;
+            var originalContent = document.body.innerHTML;
+            document.body.innerHTML = printContent;
+            window.print();
+            document.body.innerHTML = originalContent;
+            location.reload();
+        }
+    </script>
+}

@@ -1,0 +1,160 @@
+@model Sector_13_Welfare_Society___Digital_Management_System.Models.MemberDirectoryViewModel
+@{
+    ViewData["Title"] = "Member Directory";
+}
+
+<style>
+    :root{
+        --eg-blue:#2575fc;
+        --eg-purple:#6a11cb;
+        --eg-green:#00a35a;
+        --eg-orange:#ff8c39;
+    }
+    .md-hero{
+        background: linear-gradient(90deg, var(--eg-purple), var(--eg-blue));
+        color:#fff;
+        border-radius:16px;
+        padding:25px 28px;
+    
+        margin-top: 2.5rem !important;
+
+        box-shadow:0 10px 30px rgba(106,17,203,.25);
+        animation: fadeSlide .6s ease both;
+        position: sticky; /* keep search visible while scrolling */
+        top: 0;
+        z-index:1050;
+    }
+    @@keyframes fadeSlide{from{opacity:0; transform: translateY(8px)} to{opacity:1; transform:none}}
+    .md-tabs .nav-link{font-weight:700;border-radius:999px}
+    .md-tabs .nav-link.active{background:linear-gradient(90deg,var(--eg-green),var(--eg-blue));}
+    .table thead th{white-space:nowrap}
+    .card-e{border:1px solid rgba(0,0,0,.06);border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.06)}
+    .search-wrap{display:flex;gap:10px;align-items:center}
+    .search-wrap .form-control{border-radius:999px;padding:.6rem 1rem}
+    .badge-pill{border-radius:999px}
+    .row-appear{animation:fadeSlide .4s ease both}
+    .md-shell{max-width:1500px; margin:0 auto; padding:0 8px}
+    .md-content{max-height:calc(100vh - 140px); overflow-y:auto; padding-top:10px}
+    .data-scroll{max-height:calc(100vh - 260px); overflow:auto}
+    .table thead th.sticky{position: sticky; top: 0; background:#fff; z-index: 2}
+</style>
+
+<div class="container-fluid md-shell py-3">
+    <div class="md-hero mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <h2 class="m-0">Member Directory</h2>
+        <div class="search-wrap">
+            <input id="mdSearch" type="search" class="form-control" placeholder="Search country, name, email, phone..."/>
+            <span class="badge bg-warning text-dark badge-pill">Live search</span>
+        </div>
+    </div>
+
+    <div class="md-content">
+        <ul class="nav nav-pills md-tabs mb-3" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#buyers" type="button" role="tab">Buyers</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="pill" data-bs-target="#clients" type="button" role="tab">Clients</button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="buyers" class="tab-pane fade show active" role="tabpanel">
+                <div class="table-responsive card-e p-0 data-scroll">
+                    <table class="table table-striped table-hover align-middle mb-0" id="buyersPublic">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="sticky">Country</th>
+                                <th class="sticky">Buyer name</th>
+                                <th class="sticky">Address</th>
+                                <th class="sticky">Contact person</th>
+                                <th class="sticky">Designation</th>
+                                <th class="sticky">Email</th>
+                                <th class="sticky">Phone</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                    @if (Model?.Buyers != null && Model.Buyers.Count > 0)
+                    {
+                        foreach (var b in Model.Buyers)
+                        {
+                            <tr class="row-appear">
+                                <td>@b.Country</td>
+                                <td>@b.Name</td>
+                                <td>@b.Address</td>
+                                <td>@b.ContactPerson</td>
+                                <td>@b.Designation</td>
+                                <td><a href="mailto:@b.Email">@b.Email</a></td>
+                                <td><a href="tel:@b.Phone">@b.Phone</a></td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="7" class="text-center text-muted">No buyers found.</td></tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="clients" class="tab-pane fade" role="tabpanel">
+            <div class="table-responsive card-e p-0 data-scroll">
+                <table class="table table-striped table-hover align-middle mb-0" id="clientsPublic">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="sticky">Country</th>
+                            <th class="sticky">Factory name</th>
+                            <th class="sticky">Address</th>
+                            <th class="sticky">Contact person</th>
+                            <th class="sticky">Designation</th>
+                            <th class="sticky">Email</th>
+                            <th class="sticky">Phone</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @if (Model?.Clients != null && Model.Clients.Count > 0)
+                    {
+                        foreach (var c in Model.Clients)
+                        {
+                            <tr class="row-appear">
+                                <td>@c.Country</td>
+                                <td>@c.Name</td>
+                                <td>@c.Address</td>
+                                <td>@c.ContactPerson</td>
+                                <td>@c.Designation</td>
+                                <td><a href="mailto:@c.Email">@c.Email</a></td>
+                                <td><a href="tel:@c.Phone">@c.Phone</a></td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="7" class="text-center text-muted">No clients found.</td></tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        const search = document.getElementById('mdSearch');
+        const filterRows = () => {
+            const q = (search.value || '').toLowerCase();
+            const tables = [document.getElementById('buyersPublic'), document.getElementById('clientsPublic')];
+            tables.forEach(t => {
+                if (!t) return;
+                const rows = t.querySelectorAll('tbody tr');
+                rows.forEach(r => {
+                    const txt = (r.innerText || '').toLowerCase();
+                    r.style.display = txt.indexOf(q) !== -1 ? '' : 'none';
+                });
+            });
+        };
+        ['input','change','keyup'].forEach(ev => search.addEventListener(ev, filterRows));
+        // small entrance delay for rows
+        setTimeout(() => document.querySelectorAll('.row-appear').forEach((e,i)=> e.style.animationDelay = (i*15)+'ms'), 0);
+    })();
+</script>

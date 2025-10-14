@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="google-site-verification" content="7elQopzAjDXovrXO9xcC1begtgUBoljhtkcYvVaE1No" />
+    <title>@ViewData["Title"] - Ethical Group LTD</title>
+    <link rel="icon" type="image/x-icon" href="https://res.cloudinary.com/dmnpdzcvd/image/upload/v1757492842/ee_u33nfn.png" />
+    <link rel="preload" href="~/lib/bootstrap/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"></noscript>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Sector_13_Welfare_Society___Digital_Management_System.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden; /* Prevent horizontal scrollbar on HTML */
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+             margin: 0;
+            padding: 0;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden; /* Prevent horizontal scrollbar on Body */
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 8px; /* Adjusted for better spacing */
+        }
+
+        /* Navigation */
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 0.8rem 0;
+            transition: all 0.3s ease;
+            border-bottom: 1.5px solid #e5e5e5; /* From uws-navbar */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03); /* From uws-navbar */
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .nav-logo img {
+            height: 50px;
+            width: 70px;
+        }
+
+           @@font-face {
+            font-family: 'Li Shadhinata';
+            src: url('/fonts/Li Shadhinata 2.0 Unicode.ttf') format('truetype');
+            font-weight: normal;
+        }
+        .nav-logo span {
+            color: #2c3e50;
+            font-weight: 500;
+            font-size: 1.2rem;
+            white-space: nowrap; 
+          font-family: 'Li Shadhinata';
+        }
+
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            gap: 0.8rem;
+            margin: 0;
+            flex: 1;
+            align-items: center;
+        }
+
+        .nav-link,
+        .uws-link {
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+            font-size: 13px !important;
+            color: #23272b; /* From uws-menu .uws-link */
+            font-weight: 600; /* From uws-menu .uws-link */
+            font-size: 1.08rem; /* From uws-menu .uws-link */
+            letter-spacing: 1px; /* From uws-menu .uws-link */
+            padding: 10px 18px; /* From uws-menu .uws-link */
+            border-radius: 7px; /* From uws-menu .uws-link */
+        }
+
+        .nav-link:hover,
+        .uws-link:hover {
+            color: red;
+            background: #f2f2f2; /* From uws-menu .uws-link:hover */
+            color: #5b3fa2; /* From uws-menu .uws-link:hover */
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: red;
+            transition: width 0.3s ease;
+            font-size: 10px;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-link.active {
+            background: #098de5; /* From uws-menu .uws-link.active */
+            color: #fff; /* From uws-menu .uws-link.active */
+        }
+
+
+        /* Hamburger menu styles */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            margin-left: auto;
+        }
+
+        .bar {
+            width: 25px;
+            height: 3px;
+            background-color: #2c3e50;
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+
+        /* Dropdown styles */
+        .nav-item.dropdown {
+            position: relative;
+        }
+        .dropdown-toggle::after {
+            content: none !important;
+        }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            left: 0;
+            top: 100%;
+            min-width: 180px;
+            background: #fff;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            border-radius: 6px;
+            padding: 0.5rem 0;
+            z-index: 1001;
+        }
+        .nav-item.dropdown:hover .dropdown-menu {
+            display: block;
+        }
+        .dropdown-item {
+            display: block;
+            padding: 10px 22px;
+            color: #23272b;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 500;
+            transition: background 0.2s, color 0.2s;
+            border-radius: 4px;
+        }
+        .dropdown-item:hover {
+            background: #f2f2f2;
+            color: #5b3fa2;
+        }
+
+        /* Auth Buttons */
+        .uws-donate-btn {
+            background: #098de5;
+            color: #fff;
+            font-weight: 500;
+            border-radius: 6px;
+            padding: 10px 25px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            margin-left: 10px;
+            transition: background 0.2s;
+            display: inline-block;
+            white-space: nowrap;
+        }
+        .uws-donate-btn:hover {
+            background: #098de5;
+            color: #fff;
+        }
+        .uws-auth-btn {
+            background: #fff;
+            color: #5b3fa2;
+            border: 1.5px solid #5b3fa2;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-decoration: none;
+            margin-left: 5px;
+            transition: background 0.2s, color 0.2s;
+            display: inline-block;
+            white-space: nowrap;
+        }
+        .uws-auth-btn:hover {
+            background: #098de5;
+            color: #fff;
+        }
+        .uws-auth-btn.uws-register {
+            border: 1.5px solid red;
+            color: red;
+        }
+        .uws-auth-btn.uws-register:hover {
+            background: red;
+            color: #fff;
+        }
+        
+        /* Auth buttons container */
+        .auth-buttons {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: 1rem;
+        }
+
+ 
+        /* Footer */
+        .main-footer {
+            background: #232323;
+            color: #f1f1f1;
+            width: 100vw;
+            margin-left: calc(50% - 50vw); /* Ensures full bleed even inside a container */
+            position: relative;
+            padding: 0;
+            font-family: 'Segoe UI', 'Poppins', sans-serif;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 10px 0 10px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .footer-column {
+            flex: 1 1 220px;
+            min-width: 220px;
+            margin-bottom: 20px;
+        }
+
+        .footer-column h3 {
+            color: #00aaff;
+            font-size: 1.2rem;
+            margin-bottom: 18px;
+            letter-spacing: 1px;
+            position: relative;
+            padding-bottom: 8px;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 2px;
+            background: #00aaff;
+            margin-top: 6px;
+        }
+
+        .footer-column p,
+        .footer-column ul {
+            color: #ccc;
+            font-size: 0.8rem;
+            line-height: 1.7;
+        }
+
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.2s;
+            font-weight: 500;
+        }
+
+        .footer-column ul li a:hover {
+            color: #00aaff;
+            text-decoration: underline;
+        }
+
+        .footer-logo img {
+            max-width: 115px;
+            height: auto;
+            margin-bottom: 10px;
+            @* filter: brightness(0) invert(1); *@
+        }
+
+        .social-icons {
+            margin-top: 10px;
+        }
+
+        .social-icons a {
+            color: #fff;
+            font-size: 1.5em;
+            margin-right: 15px;
+            transition: color 0.2s, transform 0.2s;
+            display: inline-block;
+        }
+
+        .social-icons a:hover {
+            color: #00aaff;
+            transform: scale(1.15);
+        }
+
+        .footer-bottom {
+            background: #181818;
+            padding: 10px 0;
+            text-align: center;
+            border-top: 1px solid #333;
+            color: #aaa;
+            font-size: 0.95em;
+            margin-top: 5px;
+            width: 100vw;
+            margin-left: calc(50% - 50vw);
+        }
+
+        .footer-bottom p {
+            margin: 0;
+        }
+
+        @@media (max-width: 900px) {
+            .footer-container {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 0;
+            }
+            .footer-column {
+                min-width: 0;
+                width: 100%;
+                margin-bottom: 25px;
+            }
+            .footer-logo img {
+                margin: 0 auto 10px auto;
+                display: block;
+            }
+        }
+
+        /* Medium Laptop Screens (993px - 1199px) */
+        @@media (max-width: 1199px) and (min-width: 993px) {
+            .nav-container {
+                padding: 0px 10px;
+                justify-content: space-between;
+                overflow: hidden;
+                flex-wrap: nowrap;
+            }
+            .nav-menu {
+                gap: 0.6rem;
+                overflow-x: auto;
+                overflow-y: hidden;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+            .nav-menu::-webkit-scrollbar {
+                display: none;
+            }
+            .nav-link, .uws-link {
+                font-size: 0.95rem;
+                padding: 8px 12px;
+                white-space: nowrap;
+            }
+        }
+
+        /* Large Laptops (1200px - 1500px) */
+        @@media (max-width: 1500px) and (min-width: 1200px) {
+            .nav-container {
+                max-width: 1400px;
+                padding: 0px 20px;
+            }
+            .nav-menu {
+                gap: 1rem;
+            }
+        }
+
+        @@media (max-width: 992px) {
+            .nav-container {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0px 15px;
+            }
+            .nav-logo {
+                flex: 0 0 auto;
+            }
+            .hamburger {
+                display: flex;
+                order: 3;
+            }
+            .nav-menu {
+                position: fixed;
+                left: -100%;
+                top: 70px;
+                flex-direction: column;
+                background-color: white;
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+                padding: 2rem 0;
+                gap: 0.6rem;
+                height: calc(100vh - 80px);
+                overflow-y: auto;
+                z-index: 999;
+            }
+            .nav-menu.active {
+                left: 0;
+            }
+            .footer-column {
+                min-width: 200px;
+            }
+           
+
+        @@media (max-width: 768px) {
+            .nav-container {
+                padding: 0px 10px;
+            }
+            .hamburger {
+                display: flex;
+                order: 3;
+            }
+            .nav-menu {
+                position: fixed;
+                left: -100%;
+                top: 55px;
+                flex-direction: column;
+                background-color: white;
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+                padding: 2rem 0;
+                gap: 1rem;
+                height: calc(100vh - 80px);
+                overflow-y: auto;
+                z-index: 999;
+            }
+            .nav-menu.active {
+                left: 0;
+            }
+            .nav-item {
+                margin: 0.5rem 0;
+            }
+            .nav-link {
+                padding: 1rem 2rem;
+                display: block;
+            }
+            /* Ensure auth buttons are visible in mobile menu */
+            .nav-menu > .auth-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center;
+                margin-top: 2rem;
+                width: 100%;
+            }
+            .auth-buttons .uws-auth-btn {
+                margin: 0;
+                min-width: 120px;
+                text-align: center;
+                padding: 12px 24px;
+            }
+            .auth-buttons form {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+            }
+            .auth-buttons form button {
+                min-width: 120px;
+                padding: 12px 24px;
+            }
+              .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+        }
+
+        .nav-logo img {
+            height: 60px;
+            width: 70px;
+        }
+
+           @@font-face {
+            font-family: 'Li Shadhinata';
+            src: url('/fonts/Li Shadhinata 2.0 Unicode.ttf') format('truetype');
+            font-weight: normal;
+        }
+        .nav-logo span {
+            color: #2c3e50;
+            font-weight: 500;
+            font-size: 1rem;
+            white-space: nowrap; 
+          font-family: 'Li Shadhinata';
+        }
+  
+            .footer-container {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .footer-column {
+                width: 100%;
+                max-width: 400px;
+                padding: 0 10px;
+            }
+            .footer-column h3 {
+                text-align: center;
+            }
+            .footer-column h3::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            .brand-social {
+                text-align: center;
+                order: -1;
+            }
+            .footer-logo img {
+                margin-bottom: 10px;
+            }
+            .social-icons a {
+                margin: 0 10px;
+            }
+            .footer-bottom {
+                text-align: center;
+            }
+
+        }
+
+        @@media (max-width: 480px) {
+            .nav-container {
+                padding: 0px 8px;
+            }
+            .nav-logo {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                text-decoration: none;
+            }
+
+            .nav-logo img {
+                height: 40px;
+                width: 50px;
+            }
+
+            @@font-face {
+                font-family: 'Li Shadhinata';
+                src: url('/fonts/Li Shadhinata 2.0 Unicode.ttf') format('truetype');
+                font-weight: normal;
+            }
+            .nav-logo span {
+                color: #2c3e50;
+                font-weight: 500;
+                font-size: 0.9rem;
+                white-space: nowrap; 
+                font-family: 'Li Shadhinata';
+            }
+            
+            /* Mobile auth buttons styling */
+            .nav-menu > .auth-buttons {
+                margin-top: 1.2rem;
+                padding: 0 20px;
+            }
+            .auth-buttons .uws-auth-btn {
+                font-size: 0.9rem;
+                padding: 10px 20px;
+                min-width: 100px;
+            }
+           
+            .footer-column {
+                margin-bottom: 20px;
+            }
+            .footer-column h3 {
+                font-size: 1.2em;
+                margin-bottom: 15px;
+            }
+            .footer-logo img {
+                max-width: 110px;
+            }
+            .social-icons a {
+                font-size: 1.3em;
+            }
+            .footer-bottom p {
+                font-size: 0.8em;
+            }
+        }
+    </style>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="@Url.Action("Index", "Home")" class="nav-logo">
+                <img src="https://res.cloudinary.com/dmnpdzcvd/image/upload/v1757492842/ee_u33nfn.png" alt="Logo">
+                
+            </a>
+            
+            <ul class="nav-menu">
+                <li><a href="@Url.Action("Index", "Home")" class="nav-link active">HOME</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="aboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1.08rem; font-weight: 600; letter-spacing: 1px; padding: 10px 18px; border-radius: 7px; color: #23272b;">
+                        ABOUT US
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
+                        <li><a class="dropdown-item" href="@Url.Action("AboutUs", "Home")">About Us</a></li>
+                        <li><a class="dropdown-item" href="@Url.Action("MessageOfChairman", "Home")">Message of Chairman</a></li>
+                        <li><a class="dropdown-item" href="@Url.Action("MessageOfSecretary", "Home")">Message of E-GROUP Employee</a></li>
+                        <li><a class="dropdown-item" href="@Url.Action("HowDoWeWork", "Home")">How Do We Work</a></li>
+                        <li><a class="dropdown-item" href="@Url.Action("memberDirectory", "Home")">Member Directory</a></li>
+                    </ul>
+                </li>
+                <!-- Add new Committee dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="committeeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1.08rem; font-weight: 600; letter-spacing: 1px; padding: 10px 18px; border-radius: 7px; color: #23272b;">
+                        COMMITTEE
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="committeeDropdown">
+                        <li><a class="dropdown-item" href="@Url.Action("Advisor", "Home")"> Our Advisor</a></li>
+                        <li><a class="dropdown-item" href="@Url.Action("Software", "Home")">Software Team</a></li>
+
+                        <li><a class="dropdown-item" href="@Url.Action("EStudio", "Home")">E_Studio Team</a></li>
+                        <li><a class="dropdown-item" href="@Url.Action("Management", "Home")">Management Team</a></li>
+                    
+                    </ul>
+                </li>
+                
+                <li><a href="@Url.Action("Gallery", "Home")" class="nav-link">GALLERY</a></li>
+                <li><a href="@Url.Action("PublicList", "Notice")" class="nav-link">NOTICES</a></li>
+                <li><a href="@Url.Action("ContactUs", "Home")" class="nav-link">CONTACT</a></li>
+                <li><a href="@Url.Action("ClientsServicesList", "ClientsServices")" class="nav-link">SERVICES</a></li>
+                <li><a href="@Url.Action("Index", "Booking")" class="uws-donate-btn">BOOK US</a></li>
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="auth-buttons">
+                        <a href="@Url.Action("Index", "Dashboard")" class="uws-auth-btn">Dashboard</a>
+                        <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
+                            <button type="submit" class="uws-auth-btn uws-register" style="color: rgb(255, 255, 255); background: #880000; border: none;"><i class="fa-solid fa-right-from-bracket"></i></button>
+                        </form>
+                    </div>
+                }
+                else
+                {
+                    <div class="auth-buttons">
+                        <a href="@Url.Action("Login", "Account")" class="uws-auth-btn">Login</a>
+                        <a href="@Url.Action("Register", "Account")" class="uws-auth-btn uws-register">Register</a>   
+                    </div>
+                }
+            </ul>
+            
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <div style="min-height: calc(100vh - 200px); margin-top: 15px;">
+        @RenderBody()
+    </div>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P6RD5GCL"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-L53VQ78ZL0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-L53VQ78ZL0');
+</script>
+
+    <!-- AngularJS Scripts for Dynamic Content Enhancement -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="~/js/enhancement.js"></script>
+
+
+     <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-column about-uws">
+                <h3>E-Group</h3>
+                <p>Welcome to E-Group Bangladesh, where innovation meets excellence in the heart of Uttara, Dhaka. Since our inception in 2020, we have been committed to transforming businesses across Bangladesh through cutting-edge technology solutions and creative design approaches tailored for the local market.</p>
+            </div>
+
+            <div class="footer-column quick-links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="@Url.Action("AboutUs", "Home")">About us</a></li>
+                    <li><a href="@Url.Action("Gallery", "Home")">Gallery</a></li>
+                    <li><a href="@Url.Action("ContactUs", "Home")">Contact Us</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column contact-us">
+                <h3>Contact Us</h3>
+                <p><strong>Head Office:</strong><br> <a href="https://maps.app.goo.gl/rE5vbLtKxyzzFf1x9">23 Gareeb-e-Newaz Ave,Sector 13, Dhaka 1230, Bangladesh</a></p>
+                <p><strong>Mail:</strong> <a href="mailto:shimanto@e-groupbd.com">shimanto@e-groupbd.com</a></p>
+            </div>
+
+            <div class="footer-column brand-social">
+                <div class="footer-logo">
+                    <img src="https://res.cloudinary.com/dmnpdzcvd/image/upload/v1757492842/ee_u33nfn.png" alt="E-Group">
+                </div>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/profile.php?id=61579971779873" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                   <a href="https://tinyurl.com/estudioltd" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="https://wa.me/8801400055289" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="footer-container">
+                <p>Copyright © 2025 E-Group. All rights reserved. </p>
+            </div>
+        </div>
+    </footer>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" defer></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Navigation functionality
+        class Navigation {
+            constructor() {
+                this.hamburger = document.querySelector('.hamburger');
+                this.navMenu = document.querySelector('.nav-menu');
+                this.navLinks = document.querySelectorAll('.nav-link, .dropdown-item'); // Include dropdown items
+
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.handleScroll();
+            }
+
+            bindEvents() {
+                this.hamburger.addEventListener('click', () => this.toggleMenu());
+
+                this.navLinks.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        const targetId = link.getAttribute('href');
+                        if (targetId && targetId.startsWith('#')) {
+                            e.preventDefault(); // Only prevent default for hash links
+                            this.smoothScroll(targetId);
+                            if (window.innerWidth <= 768) { // Close menu only on smaller screens
+                                this.closeMenu();
+                            }
+                        }
+                        // For non-hash links (like login/register), allow default behavior
+                    });
+                });
+
+                // Close menu when clicking outside (on mobile)
+                document.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 768 && !this.hamburger.contains(e.target) && !this.navMenu.contains(e.target)) {
+                        this.closeMenu();
+                    }
+                });
+            }
+
+            toggleMenu() {
+                this.hamburger.classList.toggle('active');
+                this.navMenu.classList.toggle('active');
+
+                const bars = this.hamburger.querySelectorAll('.bar');
+                if (this.hamburger.classList.contains('active')) {
+                    bars[0].style.transform = 'rotate(-45deg) translate(-5px, 6px)';
+                    bars[1].style.opacity = '0';
+                    bars[2].style.transform = 'rotate(45deg) translate(-5px, -6px)';
+                } else {
+                    bars[0].style.transform = 'none';
+                    bars[1].style.opacity = '1';
+                    bars[2].style.transform = 'none';
+                }
+            }
+
+            closeMenu() {
+                this.hamburger.classList.remove('active');
+                this.navMenu.classList.remove('active');
+
+                const bars = this.hamburger.querySelectorAll('.bar');
+                bars[0].style.transform = 'none';
+                bars[1].style.opacity = '1';
+                bars[2].style.transform = 'none';
+            }
+
+            smoothScroll(targetId) {
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    const navbarHeight = document.querySelector('.navbar').offsetHeight; // Get dynamic navbar height
+                    const offsetTop = targetElement.offsetTop - navbarHeight - 10; // Adjust for navbar and a little more space
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+
+            handleScroll() {
+                window.addEventListener('scroll', () => {
+                    const navbar = document.querySelector('.navbar');
+                    if (window.scrollY > 50) { // Changed scroll threshold
+                        navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+                        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+                    } else {
+                        navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+                        navbar.style.boxShadow = 'none';
+                    }
+                });
+            }
+        }
+
+        // Animation on scroll
+        class ScrollAnimations {
+            constructor() {
+                this.animatedElements = document.querySelectorAll('.feature-card, .stat-card, .program-card'); // Added program-card
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.checkElements(); // Initial check on page load
+            }
+
+            bindEvents() {
+                window.addEventListener('scroll', () => this.checkElements());
+                window.addEventListener('resize', () => this.checkElements()); // Re-check on resize
+            }
+
+            checkElements() {
+                this.animatedElements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementVisible = 150; // Adjust this value as needed
+
+                    if (elementTop < window.innerHeight - elementVisible) {
+                        element.classList.add('animate');
+                    } else {
+                        // Optional: remove 'animate' class if element scrolls out of view upwards
+                        // This can make animations re-trigger if element comes back into view
+                        // element.classList.remove('animate');
+                    }
+                });
+            }
+        }
+
+        // Add loading animation (optional, for a fade-in effect on page load)
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '1';
+            document.body.style.transition = 'opacity 0.5s ease-in';
+        });
+
+        // Initial body opacity setting to enable fade-in
+        document.body.style.opacity = '0';
+
+        // Instantiate Navigation for responsive nav toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            new Navigation();
+        });
+    </script>
+    
+    <script>
+    (function() {
+        // Always show preloader for 3 seconds, then hide
+        setTimeout(function() {
+            var preloader = document.getElementById('preloader-overlay');
+            if (preloader) preloader.style.display = 'none';
+            sessionStorage.setItem('preloaderShown', 'true');
+        }, 3000);
+    })();
+    </script>
+
+    @* <!-- Emergency Hotline Floating Button and Modal -->
+    <div id="emergency-hotline-btn" style="position:fixed;right:24px;bottom:100px;z-index:1200;display:flex;flex-direction:column;align-items:center;">
+        <button type="button" style="background:#e50914;color:#fff;border:none;border-radius:50%;width:50px;height:50px;box-shadow:0 2px 8px rgba(0,0,0,0.18);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:1.5rem;transition:background 0.2s;outline:none;" onclick="showHotlineModal()">
+            <i class="fa fa-phone"></i>
+        </button>
+        <span style="margin-top:6px;font-size:1rem;font-weight:600;color:#e50914;text-shadow:0 1px 2px #fff;">হটলাইন</span>
+    </div> *@
+
+    @* <div id="emergency-hotline-modal" style="display:none;position:fixed;z-index:1300;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.35);align-items:center;justify-content:center;">
+        <div style="background:#ffffffd5;padding:32px 30px 30px 30px;border-radius:16px;max-width:350px;width:90vw;box-shadow:0 8px 32px rgba(0,0,0,0.18);position:relative;">
+            <button onclick="hideHotlineModal()" style="position:absolute;top:12px;right:12px;background:none;border:none;font-size:1.8rem;color:#e50914;cursor:pointer;">&times;</button>
+            <h6 style="color:#e50914;text-align:center;margin-bottom:18px;font-weight:700;">জরুরি সেবা হটলাইন সেক্টর ১৩ </h6>
+            <hr>
+            <ul style="list-style:none;padding:0;margin:0;font-size:1.1rem;">
+                <li style="margin-bottom:10px;"><strong>পুলিশ:</strong> <a href="tel:+880 1320041824" style="color:red;text-decoration:none;font-weight:600;">01320-041824</a></li>
+                <li style="margin-bottom:10px;"><strong>জরুরি পুলিশ:</strong> <a href="tel:999" style="color:red;text-decoration:none;font-weight:600;">999</a></li>
+                <li style="margin-bottom:10px;"><strong>ফায়ার সার্ভিস:</strong> <a href="tel:+880 1901020782" style="color:red;text-decoration:none;font-weight:600;">01901020782</a></li>
+                <li style="margin-bottom:10px;"><strong>জরুরি ফায়ার সার্ভিস:</strong> <a href="tel:199" style="color:red;text-decoration:none;font-weight:600;">199</a></li>
+                <li style="margin-bottom:10px;"><strong>এম্বুলেন্স:</strong> <a href="tel:+880 1627669222" style="color:red;text-decoration:none;font-weight:600;">01627669222</a></li>
+                <li style="margin-bottom:10px;"><strong>জরুরি এম্বুলেন্স:</strong> <a href="tel:16699" style="color:red;text-decoration:none;font-weight:600;">16699</a></li>
+                <li style="margin-bottom:10px;"><strong>নারী ও শিশু :</strong> <a href="tel:109" style="color:red;text-decoration:none;font-weight:600;">109</a></li>
+                <li style="margin-bottom:10px;"><strong>দুদক :</strong> <a href="tel:106" style="color:red;text-decoration:none;font-weight:600;">106</a></li>
+                <li style="margin-bottom:10px;"><strong>বিদ্যুৎ জরুরি(Desco):</strong> <a href="tel:16120" style="color:red;text-decoration:none;font-weight:600;">16120</a></li>
+                <li style="margin-bottom:10px;"><strong>বিদ্যুৎ জরুরি(Nesco):</strong> <a href="tel:16603" style="color:red;text-decoration:none;font-weight:600;">16603</a></li>
+                <li style="margin-bottom:10px;"><strong>তিতাস গ্যাস :</strong> <a href="tel:16496" style="color:red;text-decoration:none;font-weight:600;">16496</a></li>
+                <li style="margin-bottom:10px;"><strong>ওয়াসা :</strong> <a href="tel:16162" style="color:red;text-decoration:none;font-weight:600;">16162</a></li>
+            </ul>
+        </div>
+    </div> *@
+    <!-- End Emergency Hotline Floating Button and Modal -->
+</body>
+</html>
+

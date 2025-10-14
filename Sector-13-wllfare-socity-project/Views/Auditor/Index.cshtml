@@ -1,0 +1,256 @@
+@model AuditorDashboardViewModel
+
+@{
+    ViewData["Title"] = "Auditor Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0 text-gray-800">
+                    <i class="fas fa-clipboard-check me-2"></i>Auditor Dashboard
+                </h1>
+                <div class="btn-group">
+                    <a href="@Url.Action("AuditReports", "Manager")" class="btn btn-outline-primary">
+                        <i class="fas fa-chart-bar me-2"></i>Reports
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Pending Audits
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalPendingAudits</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Completed Audits
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalCompletedAudits</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                CAP Required
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalCAPRequired</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                This Month
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalAuditsThisMonth</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Audits -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-warning">Pending Audits</h6>
+                </div>
+                <div class="card-body">
+                    @if (Model.PendingAudits.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Booking ID</th>
+                                        <th>Customer</th>
+                                        <th>Service</th>
+                                        <th>Payment Date</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var booking in Model.PendingAudits)
+                                    {
+                                        <tr>
+                                            <td>B-@booking.Id</td>
+                                            <td>@booking.Customer?.Name</td>
+                                            <td>@booking.Service?.Name</td>
+                                            <td>@booking.UpdatedAt.ToString("MMM dd, yyyy")</td>
+                                            <td>
+                                                <span class="badge badge-@(booking.Status == "Paid" ? "info" : "primary")">
+                                                    @booking.Status
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="@Url.Action("StartAudit", new { id = booking.Id })" 
+                                                   class="btn btn-sm btn-warning">
+                                                    <i class="fas fa-play me-1"></i>Start Audit
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-clipboard-check fa-4x text-gray-300 mb-3"></i>
+                            <h5 class="text-gray-600">No Pending Audits</h5>
+                            <p class="text-gray-500">All audits are up to date!</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- In Progress Audits -->
+    @if (Model.InProgressAudits.Any())
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">In Progress Audits</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Booking ID</th>
+                                        <th>Customer</th>
+                                        <th>Service</th>
+                                        <th>Started</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var booking in Model.InProgressAudits)
+                                    {
+                                        <tr>
+                                            <td>B-@booking.Id</td>
+                                            <td>@booking.Customer?.Name</td>
+                                            <td>@booking.Service?.Name</td>
+                                            <td>@booking.UpdatedAt.ToString("MMM dd, yyyy")</td>
+                                            <td>
+                                                <a href="@Url.Action("StartAudit", new { id = booking.Id })" 
+                                                   class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-edit me-1"></i>Continue Audit
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Recent Completed Audits -->
+    @if (Model.CompletedAudits.Any())
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-success">Recent Completed Audits</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Booking ID</th>
+                                        <th>Customer</th>
+                                        <th>Service</th>
+                                        <th>Completed</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var booking in Model.CompletedAudits)
+                                    {
+                                        <tr>
+                                            <td>B-@booking.Id</td>
+                                            <td>@booking.Customer?.Name</td>
+                                            <td>@booking.Service?.Name</td>
+                                            <td>@booking.UpdatedAt.ToString("MMM dd, yyyy")</td>
+                                            <td>
+                                                <span class="badge badge-@(booking.Status == "Audit Complete" ? "success" : "warning")">
+                                                    @booking.Status
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="@Url.Action("ViewAuditDetails", new { id = booking.Id })" 
+                                                   class="btn btn-sm btn-outline-success">
+                                                    <i class="fas fa-eye me-1"></i>View Details
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

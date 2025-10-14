@@ -1,0 +1,337 @@
+@model Sector_13_Welfare_Society___Digital_Management_System.Models.ManagerDashboardViewModel
+@{
+    ViewData["Title"] = "Manager Dashboard";
+    Layout = "_DashboardLayout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card bg-warning text-white mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">
+                        <i class="fas fa-user-cog me-2"></i>
+                        Manager Dashboard
+                    </h2>
+                    <p class="card-text">Welcome, @ViewBag.UserName! You are responsible for managing society operations.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <div class="fw-bold text-muted">Employees</div>
+                    <div class="display-6">@Model.TotalEmployees</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <div class="fw-bold text-muted">Present Today</div>
+                    <div class="display-6 text-success">@Model.PresentToday</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <div class="fw-bold text-muted">Pending Leaves</div>
+                    <div class="display-6 text-warning">@Model.PendingLeaves</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <div class="fw-bold text-muted">Today Bookings</div>
+                    <div class="display-6 text-info">@Model.TodayBookings</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance Management Section with links -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-gradient-primary text-white py-3 border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user-clock me-2"></i>
+                        Employee Attendance Management
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-6 col-md-3">
+                            <a href="@Url.Action("Manage", "Attendance")" class="btn btn-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                                <i class="fas fa-calendar-day fa-2x mb-2"></i>
+                                <span class="fw-bold">Daily Attendance</span>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <a href="@Url.Action("AllRecords", "Attendance")" class="btn btn-info w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                                <i class="fas fa-list fa-2x mb-2"></i>
+                                <span class="fw-bold">All Records</span>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <a href="@Url.Action("Report", "Attendance")" class="btn btn-success w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                                <i class="fas fa-chart-bar fa-2x mb-2"></i>
+                                <span class="fw-bold">Reports</span>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <a href="@Url.Action("Index", "Shift")" class="btn btn-secondary w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                                <i class="fas fa-business-time fa-2x mb-2"></i>
+                                <span class="fw-bold">Shift Management</span>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <a href="@Url.Action("Index", "LeaveApproval")" class="btn btn-warning w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                                <i class="fas fa-user-check fa-2x mb-2"></i>
+                                <span class="fw-bold">Leave Approval</span>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <a href="@Url.Action("Index", "LeavePolicy")" class="btn btn-dark w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                                <i class="fas fa-book fa-2x mb-2"></i>
+                                <span class="fw-bold">Leave Policy</span>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <a href="@Url.Action("AllBookings", "Booking")" class="btn btn-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                                <i class="fas fa-calendar-check fa-2x mb-2"></i>
+                                <span class="fw-bold">All Bookings</span>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <a href="@Url.Action("CompletedServices", "Booking")" class="btn btn-success w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                                <i class="fas fa-check-circle fa-2x mb-2"></i>
+                                <span class="fw-bold">Completed Services</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts and Tables Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-lg-7">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-gradient-success text-white py-3 border-0">
+                    <h6 class="mb-0"><i class="fas fa-chart-line me-2"></i>Attendance (Last 7 Days)</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="attendanceChart" height="180"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-5">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-gradient-primary text-white py-3 border-0">
+                    <h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Top Services (30 days)</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="servicesPie" height="180"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-xl-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light py-2">
+                    <strong><i class="fas fa-user-friends me-2"></i>Recent Employees</strong>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Name</th>
+                                <th>Employee ID</th>
+                                <th>Phone</th>
+                                <th>Shift</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var e in Model.RecentEmployees)
+                            {
+                                <tr>
+                                    <td>@e.Name</td>
+                                    <td>@e.EmployeeId</td>
+                                    <td>@(string.IsNullOrEmpty(e.Phone) ? "-" : e.Phone)</td>
+                                    <td>@(Model.Shifts.FirstOrDefault(s => s.ShiftId == e.ShiftId)?.Name ?? "-")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light py-2">
+                    <strong><i class="fas fa-calendar-alt me-2"></i>Recent Leave Requests</strong>
+                        </div>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Employee</th>
+                                <th>Type</th>
+                                <th>Days</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var l in Model.RecentLeaveRequests)
+                            {
+                                <tr>
+                                    <td>@l.EmployeeId</td>
+                                    <td>@l.LeaveType</td>
+                                    <td>@l.NumberOfDays</td>
+                                    <td>
+                                        <span class="badge @(l.ApprovalStatus == "Approved" ? "bg-success" : l.ApprovalStatus == "Rejected" ? "bg-danger" : "bg-warning")">@l.ApprovalStatus</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                        </div>
+                    </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light py-2">
+                    <strong><i class="fas fa-receipt me-2"></i>Recent Bookings</strong>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Booking #</th>
+                                <th>Date</th>
+                                <th>Customer</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var b in Model.RecentBookings)
+                            {
+                                <tr>
+                                    <td>@b.BookingNumber</td>
+                                    <td>@b.BookingDate.ToString("dd MMM yyyy")</td>
+                                    <td>@b.CustomerName</td>
+                                    <td>@b.TotalAmount.ToString("C")</td>
+                                    <td>@b.BookingStatus</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  </div> 
+
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .bg-gradient-success {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+    
+    .btn {
+        transition: all 0.3s ease;
+        border-radius: 12px;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    
+    .list-group-item {
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        margin-bottom: 5px;
+    }
+    
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+        transform: translateX(5px);
+    }
+</style> 
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        (function () {
+            // Attendance Line Chart
+            var attCtx = document.getElementById('attendanceChart');
+            if (attCtx) {
+                new Chart(attCtx, {
+                    type: 'line',
+                    data: {
+                        labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AttendanceLabels)),
+                        datasets: [
+                            {
+                                label: 'Present',
+                                data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AttendancePresentCounts)),
+                                borderColor: '#28a745',
+                                backgroundColor: 'rgba(40,167,69,0.1)',
+                                tension: 0.3,
+                                fill: true
+                            },
+                            {
+                                label: 'Absent',
+                                data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AttendanceAbsentCounts)),
+                                borderColor: '#dc3545',
+                                backgroundColor: 'rgba(220,53,69,0.1)',
+                                tension: 0.3,
+                                fill: true
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+            }
+
+            // Services Pie
+            var pie = document.getElementById('servicesPie');
+            if (pie) {
+                new Chart(pie, {
+                    type: 'pie',
+                    data: {
+                        labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ServiceLabels)),
+                        datasets: [{
+                            data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ServiceUsageCounts)),
+                            backgroundColor: ['#6f42c1','#0d6efd','#20c997','#fd7e14','#198754','#dc3545']
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            }
+        })();
+    </script>
+}

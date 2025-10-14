@@ -1,0 +1,145 @@
+@model IEnumerable<Sector_13_Welfare_Society___Digital_Management_System.Models.Role>
+@{
+    ViewData["Title"] = "Role Management";
+    Layout = "_DashboardLayout";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-user-tag me-2"></i>Role Management
+                    </h3>
+                    <div class="card-tools">
+                        <a class="btn btn-primary" href="@Url.Action("Create")">
+                            <i class="fas fa-plus me-1"></i>Create New Role
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Role Name</th>
+                                    <th>Description</th>
+                                    <th>Created Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var role in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <strong>@role.Name</strong>
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(role.Description))
+                                            {
+                                                @role.Description
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">No description</span>
+                                            }
+                                        </td>
+                                        <td>@role.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                        <td>
+                                            @if (role.IsActive)
+                                            {
+                                                <span class="badge bg-success">Active</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Inactive</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Edit", new { id = role.Id })">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </a>
+                                                <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                        onclick="deleteRole(@role.Id, '@role.Name')">
+                                                    <i class="fas fa-trash"></i> Delete
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    @if (!Model.Any())
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-user-tag fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No roles found</h5>
+                            <p class="text-muted">Create your first role to get started.</p>
+                            <a class="btn btn-primary" href="@Url.Action("Create")">
+                                <i class="fas fa-plus me-1"></i>Create First Role
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function deleteRole(roleId, roleName) {
+            if (confirm(`Are you sure you want to delete the role "${roleName}"? This action cannot be undone.`)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '@Url.Action("Delete")';
+                
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                const tokenInput = document.createElement('input');
+                tokenInput.type = 'hidden';
+                tokenInput.name = '__RequestVerificationToken';
+                tokenInput.value = token;
+                
+                const roleIdInput = document.createElement('input');
+                roleIdInput.type = 'hidden';
+                roleIdInput.name = 'id';
+                roleIdInput.value = roleId;
+                
+                form.appendChild(tokenInput);
+                form.appendChild(roleIdInput);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        // Auto-dismiss alerts after 5 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+    </script>
+}

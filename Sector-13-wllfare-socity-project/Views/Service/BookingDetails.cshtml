@@ -1,0 +1,456 @@
+@model Sector_13_Welfare_Society___Digital_Management_System.Models.Booking
+@{
+    ViewData["Title"] = "Booking Details - " + Model.BookingNumber;
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-calendar-check me-2"></i>Booking Details - @Model.BookingNumber
+                    </h4>
+                    <div>
+                        <span class="badge @GetStatusBadgeClass(Model.BookingStatus) me-2">@Model.BookingStatus</span>
+                        <span class="badge @GetPaymentBadgeClass(Model.PaymentStatus)">@Model.PaymentStatus</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Customer Information -->
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-user me-2"></i>Customer Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-4"><strong>Name:</strong></div>
+                                <div class="col-sm-8">@Model.CustomerName</div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-4"><strong>Email:</strong></div>
+                                <div class="col-sm-8">@Model.CustomerEmail</div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-4"><strong>Phone:</strong></div>
+                                <div class="col-sm-8">@Model.CustomerPhone</div>
+                            </div>
+                            <hr>
+                            @if (!string.IsNullOrEmpty(Model.CompanyName))
+                            {
+                                <div class="row">
+                                    <div class="col-sm-4"><strong>Company:</strong></div>
+                                    <div class="col-sm-8">@Model.CompanyName</div>
+                                </div>
+                                <hr>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.CustomerAddress))
+                            {
+                                <div class="row">
+                                    <div class="col-sm-4"><strong>Address:</strong></div>
+                                    <div class="col-sm-8">@Model.CustomerAddress</div>
+                                </div>
+                                <hr>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Booking Information -->
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-info-circle me-2"></i>Booking Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-4"><strong>Booking Date:</strong></div>
+                                <div class="col-sm-8">@Model.BookingDate.ToString("MMMM dd, yyyy")</div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-4"><strong>Service Date:</strong></div>
+                                <div class="col-sm-8">
+                                    @if (Model.ServiceDate.HasValue)
+                                    {
+                                        @Model.ServiceDate.Value.ToString("MMMM dd, yyyy")
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Not scheduled</span>
+                                    }
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-4"><strong>Payment Method:</strong></div>
+                                <div class="col-sm-8">@Model.PaymentMethod</div>
+                            </div>
+                            <hr>
+                            @if (Model.PaymentDate.HasValue)
+                            {
+                                <div class="row">
+                                    <div class="col-sm-4"><strong>Payment Date:</strong></div>
+                                    <div class="col-sm-8">@Model.PaymentDate.Value.ToString("MMMM dd, yyyy")</div>
+                                </div>
+                                <hr>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.TransactionId))
+                            {
+                                <div class="row">
+                                    <div class="col-sm-4"><strong>Transaction ID:</strong></div>
+                                    <div class="col-sm-8">@Model.TransactionId</div>
+                                </div>
+                                <hr>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service Details -->
+            <div class="row">
+                <div class="col-12 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="mb-0">
+                                <i class="fas fa-list me-2"></i>Service Details
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Service</th>
+                                            <th>Type</th>
+                                            <th>Workforce Size</th>
+                                            <th>Man-Days</th>
+                                            <th>Location</th>
+                                            <th>Unit Price</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.BookingItems)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <strong>@item.ServiceName</strong><br>
+                                                    <small class="text-muted">@item.ServiceDescription</small>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-primary">@item.ServiceType</span>
+                                                </td>
+                                                <td>
+                                                    @if (item.WorkforceSize.HasValue)
+                                                    {
+                                                        <span class="badge bg-info">@item.WorkforceSize workers</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">N/A</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (item.ManDaysRequired.HasValue)
+                                                    {
+                                                        <span class="badge bg-success">@item.ManDaysRequired man-days</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">N/A</span>
+                                                    }
+                                                </td>
+                                                <td>@item.Location</td>
+                                                <td>@item.Currency @item.UnitPrice.ToString("N2")</td>
+                                                <td><strong>@item.Currency @item.TotalAmount.ToString("N2")</strong></td>
+                                            </tr>
+                                            
+                                            <!-- Detailed Pricing Breakdown -->
+                                            @if (item.WorkforceSize.HasValue && item.ManDaysRequired.HasValue)
+                                            {
+                                                <tr class="table-light">
+                                                    <td colspan="7">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <h6 class="text-primary">Pricing Breakdown</h6>
+                                                                @{
+                                                                    var manDayRate = GetManDayRate(item.ServiceType);
+                                                                    var auditFee = item.ManDaysRequired.Value * manDayRate;
+                                                                    var registrationFee = GetRegistrationFee(item.ServiceType);
+                                                                    var travelAllowance = item.TravelAllowance ?? 0;
+                                                                    var subtotal = auditFee + registrationFee + travelAllowance;
+                                                                    var vatAmount = item.VatAmount ?? 0;
+                                                                }
+                                                                <div class="mb-2">
+                                                                    <strong>Audit Fee:</strong> @item.Currency @auditFee.ToString("F2")
+                                                                    <small class="text-muted">(@item.ManDaysRequired man-days × @manDayRate)</small>
+                                                                </div>
+                                                                @if (registrationFee > 0)
+                                                                {
+                                                                    <div class="mb-2">
+                                                                        <strong>Registration Fee:</strong> @item.Currency @registrationFee.ToString("F2")
+                                                                    </div>
+                                                                }
+                                                                @if (travelAllowance > 0)
+                                                                {
+                                                                    <div class="mb-2">
+                                                                        <strong>Travel Allowance:</strong> @item.Currency @travelAllowance.ToString("F2")
+                                                                    </div>
+                                                                }
+                                                                <div class="mb-2">
+                                                                    <strong>Subtotal:</strong> @item.Currency @subtotal.ToString("F2")
+                                                                </div>
+                                                                <div class="mb-2">
+                                                                    <strong>VAT (15%):</strong> @item.Currency @vatAmount.ToString("F2")
+                                                                </div>
+                                                                <div class="mb-2">
+                                                                    <strong>Total:</strong> @item.Currency @item.TotalAmount.ToString("F2")
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <h6 class="text-primary">Service Configuration</h6>
+                                                                @if (!string.IsNullOrEmpty(item.ServiceConfiguration))
+                                                                {
+                                                                    try
+                                                                    {
+                                                                        var config = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(item.ServiceConfiguration);
+                                                                        if (config != null && config.ContainsKey("isoOption"))
+                                                                        {
+                                                                            <div class="mb-2">
+                                                                                <strong>ISO Option:</strong> @config["isoOption"]
+                                                                            </div>
+                                                                        }
+                                                                    }
+                                                                    catch
+                                                                    {
+                                                                        <div class="mb-2">
+                                                                            <strong>Configuration:</strong> @item.ServiceConfiguration
+                                                                        </div>
+                                                                    }
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Total Amount -->
+                            <div class="row mt-3">
+                                <div class="col-md-8"></div>
+                                <div class="col-md-4">
+                                    <div class="card bg-primary text-white">
+                                        <div class="card-body text-center">
+                                            <h4 class="mb-0">
+                                                <strong>Total Amount: @Model.Currency @Model.TotalAmount.ToString("N2")</strong>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Special Requirements and Notes -->
+            @if (!string.IsNullOrEmpty(Model.SpecialRequirements) || !string.IsNullOrEmpty(Model.Notes))
+            {
+                <div class="row">
+                    <div class="col-12 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-secondary text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-sticky-note me-2"></i>Additional Information
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                @if (!string.IsNullOrEmpty(Model.SpecialRequirements))
+                                {
+                                    <div class="mb-3">
+                                        <h6 class="text-primary">Special Requirements</h6>
+                                        <p class="text-muted">@Model.SpecialRequirements</p>
+                                    </div>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.Notes))
+                                {
+                                    <div>
+                                        <h6 class="text-primary">Notes</h6>
+                                        <p class="text-muted">@Model.Notes</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Action Buttons -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="btn-group" role="group">
+                                <a href="@Url.Action("Bookings", "Service")" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>Back to Bookings
+                                </a>
+                                <a href="@Url.Action("Invoice", "Booking", new { id = Model.Id })" class="btn btn-info" target="_blank">
+                                    <i class="fas fa-file-invoice me-2"></i>View Invoice
+                                </a>
+                                @if (Model.BookingStatus == "Pending")
+                                {
+                                    <button type="button" class="btn btn-success" onclick="updateBookingStatus(@Model.Id, 'Confirmed')">
+                                        <i class="fas fa-check me-2"></i>Confirm Booking
+                                    </button>
+                                }
+                                @if (Model.BookingStatus == "Confirmed")
+                                {
+                                    <button type="button" class="btn btn-warning" onclick="updateBookingStatus(@Model.Id, 'In Progress')">
+                                        <i class="fas fa-play me-2"></i>Start Service
+                                    </button>
+                                }
+                                @if (Model.BookingStatus == "In Progress")
+                                {
+                                    <button type="button" class="btn btn-success" onclick="updateBookingStatus(@Model.Id, 'Completed')">
+                                        <i class="fas fa-flag-checkered me-2"></i>Complete Service
+                                    </button>
+                                }
+                                @if (Model.PaymentStatus == "Pending Verification")
+                                {
+                                    <button type="button" class="btn btn-primary" onclick="verifyPayment(@Model.Id)">
+                                        <i class="fas fa-check-circle me-2"></i>Verify Payment
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function updateBookingStatus(bookingId, newStatus) {
+            if (confirm(`Are you sure you want to change the status to "${newStatus}"?`)) {
+                fetch('@Url.Action("UpdateBookingStatus", "Service")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({
+                        bookingId: bookingId,
+                        status: newStatus
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Error updating status: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while updating the status.');
+                });
+            }
+        }
+        
+        function verifyPayment(bookingId) {
+            if (confirm('Are you sure you want to verify this payment?')) {
+                fetch('@Url.Action("VerifyPayment", "Service")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({
+                        bookingId: bookingId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Error verifying payment: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while verifying the payment.');
+                });
+            }
+        }
+    </script>
+}
+
+@functions {
+    private string GetStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Pending" => "bg-warning",
+            "Confirmed" => "bg-info",
+            "In Progress" => "bg-primary",
+            "Completed" => "bg-success",
+            "Cancelled" => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+    
+    private string GetPaymentBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Pending" => "bg-warning",
+            "Paid" => "bg-success",
+            "Failed" => "bg-danger",
+            "Pending Verification" => "bg-info",
+            _ => "bg-secondary"
+        };
+    }
+    
+    private decimal GetManDayRate(string serviceType)
+    {
+        return serviceType.ToUpper() switch
+        {
+            "WRAP" => 400,
+            "ISO9001" or "ISO14001" or "ISO45001" => 120,
+            _ => 300
+        };
+    }
+    
+    private decimal GetRegistrationFee(string serviceType)
+    {
+        return serviceType.ToUpper() switch
+        {
+            "GOTS" or "OCS" or "RCS" => 200,
+            "GRS" => 300,
+            "GRS+RCS" => 500,
+            "GOTS+OCS+RCS+GRS" => 900,
+            "GOTS+OCS" => 400,
+            _ => 0
+        };
+    }
+}

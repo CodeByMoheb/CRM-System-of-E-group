@@ -1,0 +1,209 @@
+@model Sector_13_Welfare_Society___Digital_Management_System.Models.InvoiceViewModel
+
+@{
+    ViewData["Title"] = "Invoice";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h1 class="mb-0">
+                        <i class="fas fa-file-invoice me-3"></i>
+                        Invoice
+                    </h1>
+                    <p class="mb-0 mt-2">Service Booking Invoice</p>
+                </div>
+                
+                <div class="card-body p-5">
+                    <!-- Invoice Header -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h4 class="text-primary">E-Group Services</h4>
+                            <p class="mb-1">Sector 13 Welfare Society</p>
+                            <p class="mb-1">Digital Management System</p>
+                            <p class="mb-0">Email: info@egroup.com</p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <h5 class="text-primary">Invoice Details</h5>
+                            <p class="mb-1"><strong>Invoice #:</strong> @Model.Invoice.InvoiceId</p>
+                            <p class="mb-1"><strong>Date:</strong> @Model.Invoice.InvoiceDate?.ToString("dd MMMM yyyy")</p>
+                            <p class="mb-0"><strong>Status:</strong> <span class="badge bg-warning">Pending Payment</span></p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Customer Information -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="text-primary mb-3">Customer Information</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="mb-1"><strong>Name:</strong> @Model.Customer.Name</p>
+                                    <p class="mb-1"><strong>Email:</strong> @Model.Customer.Email</p>
+                                    <p class="mb-1"><strong>Phone:</strong> @Model.Customer.Phone</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-1"><strong>Company:</strong> @Model.Customer.CompanyName</p>
+                                    <p class="mb-1"><strong>Address:</strong> @Model.Customer.HouseNo, @Model.Customer.Street</p>
+                                    <p class="mb-0"><strong>City:</strong> @Model.Customer.City</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Service Details -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="text-primary mb-3">Service Details</h5>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="table-primary">
+                                        <tr>
+                                            <th>Service</th>
+                                            <th>Type</th>
+                                            <th>Registration Fee</th>
+                                            <th>Location Charge</th>
+                                            <th>Manpower</th>
+                                            <th>Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <strong>@Model.Booking.Service?.Name</strong><br>
+                                                <small class="text-muted">@Model.Booking.Service?.Description</small>
+                                            </td>
+                                            <td>@Model.Booking.Service?.ServiceType</td>
+                                            <td>$@(Model.Booking.Service?.Registration_fees?.ToString("F2") ?? "0.00")</td>
+                                            <td>$@(Model.Booking.LocationCharge?.LChargeValue?.ToString("F2") ?? "0.00")</td>
+                                            <td>
+                                                @if (Model.Booking.ManPower != null)
+                                                {
+                                                    <span>@Model.Booking.ManPower.ManPowerType</span><br>
+                                                    <small class="text-muted">@Model.Booking.ManPower.ManPowerDay days × $@Model.Booking.ManPower.ManPowerPrice</small>
+                                                }
+                                                else
+                                                {
+                                                    <span>-</span>
+                                                }
+                                            </td>
+                                            <td>$@(Model.Booking.Total?.ToString("F2") ?? "0.00")</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Price Breakdown -->
+                    <div class="row mb-4">
+                        <div class="col-md-6 offset-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title text-primary">Price Breakdown</h6>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Subtotal:</span>
+                                        <span>$@(Model.Booking.Total?.ToString("F2") ?? "0.00")</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>VAT (15%):</span>
+                                        <span>$@(Model.Booking.VAT?.ToString("F2") ?? "0.00")</span>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between">
+                                        <strong>Total Amount:</strong>
+                                        <strong class="text-success">$@(Model.Booking.Total?.ToString("F2") ?? "0.00")</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            @if (User.Identity?.IsAuthenticated == true)
+                            {
+                                <!-- Logged in user - Add to Cart -->
+                                <button type="button" class="btn btn-primary btn-lg me-3" onclick="addToCart(@Model.Booking.Id)">
+                                    <i class="fas fa-shopping-cart me-2"></i>
+                                    Add to Cart
+                                </button>
+                                <a href="@Url.Action("Cart", "Booking")" class="btn btn-outline-primary btn-lg me-3">
+                                    <i class="fas fa-shopping-bag me-2"></i>
+                                    View Cart
+                                </a>
+                            }
+                            else
+                            {
+                                <!-- Not logged in - Login to continue -->
+                                <button type="button" class="btn btn-primary btn-lg me-3" onclick="redirectToLogin()">
+                                    <i class="fas fa-sign-in-alt me-2"></i>
+                                    Login to Place Order
+                                </button>
+                                <a href="@Url.Action("Register", "Account")" class="btn btn-outline-primary btn-lg me-3">
+                                    <i class="fas fa-user-plus me-2"></i>
+                                    Create Account
+                                </a>
+                            }
+                            <a href="@Url.Action("Index", "Booking")" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Back to Booking
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function addToCart(bookingId) {
+            $.ajax({
+                url: '@Url.Action("AddToCart", "Booking")',
+                type: 'POST',
+                data: { bookingId: bookingId },
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            window.location.href = '@Url.Action("Cart", "Booking")';
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred while adding to cart.'
+                    });
+                }
+            });
+        }
+
+        function redirectToLogin() {
+            // Store current URL in session for redirect after login
+            sessionStorage.setItem('returnUrl', window.location.href);
+            window.location.href = '@Url.Action("Login", "Account")';
+        }
+    </script>
+}

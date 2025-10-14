@@ -1,0 +1,22 @@
+@{
+    ViewData["Title"] = "Test Upload";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="container">
+    <h3>Test Cloudinary Upload</h3>
+    <form method="post" enctype="multipart/form-data" action="@Url.Action("TestUpload", "Gallery")">
+        <div class="mb-3">
+            <label class="form-label">Test Image</label>
+            <input type="file" class="form-control" name="file" accept="image/*" required />
+        </div>
+        <button class="btn btn-primary" type="submit">Test Upload</button>
+    </form>
+    
+    @if (ViewBag.TestResult != null)
+    {
+        <div class="alert alert-info mt-3">
+            <strong>Test Result:</strong> @ViewBag.TestResult
+        </div>
+    }
+</div>

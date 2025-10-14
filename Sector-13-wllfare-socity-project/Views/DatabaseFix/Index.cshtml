@@ -1,0 +1,75 @@
+@{
+    ViewData["Title"] = "Database Schema Fix";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Database Schema Fix</h1>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Database Schema Issues</h6>
+                </div>
+                <div class="card-body">
+                    <p>This tool will fix common database schema issues including:</p>
+                    <ul>
+                        <li>Add missing <code>UpdatedAt</code> columns to all tables</li>
+                        <li>Mark problematic migrations as applied</li>
+                        <li>Fix foreign key constraint issues</li>
+                    </ul>
+                    
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Warning:</strong> This will modify your database schema. Please ensure you have a backup before proceeding.
+                    </div>
+
+                    <form method="post" asp-action="FixSchema">
+                        <button type="submit" class="btn btn-primary btn-lg" onclick="return confirm('Are you sure you want to fix the database schema? This will modify your database.')">
+                            <i class="fas fa-wrench me-2"></i>Fix Database Schema
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-info">Instructions</h6>
+                </div>
+                <div class="card-body">
+                    <ol>
+                        <li>Ensure your application is not in production</li>
+                        <li>Create a database backup (recommended)</li>
+                        <li>Click "Fix Database Schema" button</li>
+                        <li>Wait for the process to complete</li>
+                        <li>Check the success/error messages</li>
+                        <li>Test your application functionality</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

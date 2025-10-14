@@ -1,0 +1,540 @@
+@model Sector_13_Welfare_Society___Digital_Management_System.Models.CompanyCalViewModel
+
+@{
+    ViewData["Title"] = "Book Our Services";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<style>
+    .form-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px 0;
+        margin-top:3rem;
+    }
+
+    .logo-container {
+        text-align: center;
+        margin-bottom: 30px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+        .logo-container img {
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+            .logo-container img:hover {
+                transform: scale(1.05);
+            }
+
+    .form-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+    }
+
+        .form-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+    .card-header-custom {
+        background: linear-gradient(135deg, #3B3B98 0%, #4A4AA8 100%);
+        color: white;
+        border-radius: 20px 20px 0 0;
+        padding: 20px;
+        text-align: center;
+        font-size: 22px;
+        font-weight: 600;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .card-body-custom {
+        padding: 30px;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        padding: 12px 15px;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+        .form-control:focus {
+            border-color: #3B3B98;
+            box-shadow: 0 0 0 0.2rem rgba(59, 59, 152, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .form-control[readonly] {
+            background: #f8f9fa;
+            border-color: #dee2e6;
+        }
+
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .summary-card {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .summary-row {
+        background: white;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        border-left: 4px solid #3B3B98;
+    }
+
+    .btn-custom {
+        border-radius: 25px;
+        padding: 12px 30px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+    .btn-success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+    }
+
+    .btn-secondary {
+        background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        border: none;
+    }
+
+    .validation-error {
+        color: #dc3545;
+        font-size: 12px;
+        margin-top: 5px;
+        font-weight: 500;
+    }
+</style>
+
+<div class="form-container">
+    <div class="container">
+        <!-- Form -->
+        <form id="CustomerForm" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <div class="row">
+                <!-- Left: Customer Info -->
+                <div class="col-lg-6">
+                    <div class="form-card">
+                        <div class="card-header-custom">
+                            <i class="bi bi-person-plus-fill me-2"></i>
+                            @(Model.Customer?.Id == 0 ? "Enter Your  Information" : "Edit Your Information")
+                        </div>
+                        <div class="card-body-custom">
+                            <input type="hidden" asp-for="Customer.Id" />
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label" asp-for="Customer.Name"><i class="bi bi-person me-1"></i>Full Name</label>
+                                    <input asp-for="Customer.Name" class="form-control" placeholder="Enter full name" />
+                                    <span asp-validation-for="Customer.Name" class="validation-error"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label" asp-for="Customer.Email"><i class="bi bi-envelope me-1"></i>Email Address</label>
+                                    <input asp-for="Customer.Email" class="form-control" placeholder="Enter email address" />
+                                    <span asp-validation-for="Customer.Email" class="validation-error"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label" asp-for="Customer.Phone"><i class="bi bi-telephone me-1"></i>Phone Number</label>
+                                    <input asp-for="Customer.Phone" class="form-control" placeholder="Enter phone number" />
+                                    <span asp-validation-for="Customer.Phone" class="validation-error"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label" asp-for="Customer.CompanyName"><i class="bi bi-building me-1"></i>Company Name</label>
+                                    <input asp-for="Customer.CompanyName" class="form-control" placeholder="Enter company name" />
+                                    <span asp-validation-for="Customer.CompanyName" class="validation-error"></span>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label" asp-for="Customer.HouseNo"><i class="bi bi-house me-1"></i>House No</label>
+                                    <input asp-for="Customer.HouseNo" class="form-control" placeholder="House number" />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label" asp-for="Customer.Street"><i class="bi bi-geo-alt me-1"></i>Street</label>
+                                    <input asp-for="Customer.Street" class="form-control" placeholder="Street name" />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label" asp-for="Customer.City"><i class="bi bi-building me-1"></i>City</label>
+                                    <input asp-for="Customer.City" class="form-control" placeholder="City name" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Charges -->
+                <div class="col-lg-6">
+                    <div class="form-card">
+                        <div class="card-header-custom">
+                            <i class="bi bi-calculator me-2"></i> Charges & Calculation Summary
+                        </div>
+                        <div class="card-body-custom">
+                            <div class="mb-4">
+                                <label class="form-label" asp-for="Invoice.InvoiceId"><i class="bi bi-receipt me-1"></i>Invoice Number</label>
+                                <input asp-for="Invoice.InvoiceId" id="InvoiceId" class="form-control" value="@DateTime.Now.ToString("yyMMddHHmmss")" readonly />
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="CompanyCal.ServiceId" class="form-label">Select Service *</label>
+                                    <select asp-for="CompanyCal.ServiceId" class="form-control" id="CompanyCal_ServiceId" name="CompanyCal.ServiceId">
+                                        <option value="">-- Choose a Service --</option>
+                                        @foreach (var service in Model.Services)
+                                        {
+                                            <option value="@service.Id" data-fee="@service.Registration_fees">
+                                                @service.Name
+                                            </option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label" asp-for="CompanyCal.Service.Registration_fees"><i class="bi bi-building me-1"></i>Registration Fees</label>
+                                    <input asp-for="CompanyCal.Service.Registration_fees" id="Reg_fees" class="form-control" value="0" readonly />
+                                </div>
+                            </div>
+                            
+                            <!-- Location -->
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label"><i class="bi bi-geo me-1"></i>Location Charge</label>
+                                    <select class="form-control" asp-for="CompanyCal.LocationChargeId" id="locationChargeSelect" name="CompanyCal.LocationChargeId">
+                                        <option value="">Select Location Charge</option>
+                                        @foreach (var item in Model.LocationCharges)
+                                        {
+                                            <option value="@item.Id" data-charge="@(item.LChargeValue ?? 0)">
+                                                @item.LChargeType
+                                            </option>
+                                        }
+                                    </select>
+
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label"><i class="bi bi-currency-dollar me-1"></i>Amount</label>
+                                    <input type="text" class="form-control" id="LChargeValue" readonly />
+                                </div>
+                            </div>
+
+                            <!-- ManPower -->
+                            <div class="row mb-4">
+                                <div class="col-md-4">
+                                    <label class="form-label"><i class="bi bi-people me-1"></i>ManPower</label>
+                                    <select class="form-control" asp-for="CompanyCal.ManPowerId" id="manPowerSelect" name="CompanyCal.ManPowerId">
+                                        <option value="">Select ManPower</option>
+                                    </select>
+                                </div>
+                                <select id="allManPowers" style="display:none;">
+                                    @foreach (var item in Model.ManPowers)
+                                    {
+                                        <option value="@item.Id"
+                                                data-day="@(item.ManPowerDay ?? 0)"
+                                                data-price="@(item.ManPowerPrice ?? 0)"
+                                                data-service-id="@(item.ServiceId ?? 0)">
+                                            @item.ManPowerType
+                                        </option>
+                                    }
+                                </select>
+
+                                <div class="col-md-4">
+                                    <label class="form-label"><i class="bi bi-calendar me-1"></i>Days</label>
+                                    <input type="text" class="form-control" id="ManPowerDay" readonly />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label"><i class="bi bi-cash me-1"></i>Price</label>
+                                    <input type="text" class="form-control" id="ManPowerPrice" readonly />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary -->
+                    <div class="summary-card">
+                        <h5 class="text-center mb-4" style="color: #3B3B98; font-weight: 600;">
+                            <i class="bi bi-receipt-cutoff me-2"></i>Final Calculation
+                        </h5>
+                        <div class="summary-row">
+                            <div class="row align-items-center">
+                                <div class="col-md-4"><strong>SubTotal:</strong></div>
+                                <div class="col-md-8"><input type="text" class="form-control" id="Subtotal" readonly /></div>
+                            </div>
+                        </div>
+                        <div class="summary-row">
+                            <div class="row align-items-center">
+                                <div class="col-md-4"><strong>VAT (15%):</strong></div>
+                                <div class="col-md-8"><input type="text" class="form-control" id="VAT" readonly /></div>
+                            </div>
+                        </div>
+                        <div class="summary-row" style="background: linear-gradient(135deg, #3B3B98 0%, #4A4AA8 100%); color: white;">
+                            <div class="row align-items-center">
+                                <div class="col-md-4"><strong>Total Amount:</strong></div>
+                                <div class="col-md-8">
+                                    <input asp-for="CompanyCal.Total" type="hidden" id="CompanyCal_Total" />
+                                    <input asp-for="CompanyCal.VAT" type="hidden" id="CompanyCal_VAT" />
+                                    <input type="text" class="form-control" id="Total" readonly style="background: rgba(255,255,255,0.9); border: none; font-weight: 600; color: #3B3B98;" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-success btn-custom me-3">
+                            <i class="bi bi-check-circle me-2"></i> @(Model.Customer?.Id == 0 ? "Submit Application" : "Update Information")
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary btn-custom">
+                            <i class="bi bi-arrow-clockwise me-2"></i> Clear Form
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Location Charge
+            $('#locationChargeSelect').change(function () {
+                debugger;
+                const charge = parseFloat($(this).find('option:selected').attr('data-charge')) || 0;
+                $('#LChargeValue').val(charge.toFixed(2));
+                calculateTotal();
+            });
+
+ 
+            // Function to calculate man-days (auto from workforce)
+            function calculateManDays(workforceSize) {
+                if (workforceSize < 100) return 1;
+                if (workforceSize <= 500) return 2;
+                if (workforceSize <= 1000) return 3;
+                return 4;
+            }
+            $('#manPowerSelect').change(function () {
+                debugger;
+                const day = parseFloat($(this).find('option:selected').attr('data-day')) || 0;
+                const price = parseFloat($(this).find('option:selected').attr('data-price')) || 0;
+                const subtotal = day * price;
+                $('#ManPowerDay').val(day);
+                $('#ManPowerPrice').val(subtotal.toFixed(2));
+                calculateTotal();
+            });
+
+            $('#CompanyCal_ServiceId').change(function () {
+                const selectedOption = $(this).find('option:selected');
+                const fee = parseFloat(selectedOption.data('fee')) || 0;
+                $('#Reg_fees').val(fee.toFixed(2));
+
+                // Also update manpower dropdown as before
+                const selectedServiceId = parseInt($(this).val()) || 0;
+                $('#manPowerSelect').empty().append('<option value="">Select ManPower</option>');
+                $('#allManPowers option').each(function () {
+                    const optionServiceId = parseInt($(this).data('service-id')) || 0;
+                    if (optionServiceId === selectedServiceId) {
+                        $('#manPowerSelect').append($(this).clone());
+                    }
+                });
+
+                $('#ManPowerDay').val('');
+                $('#ManPowerPrice').val('');
+                calculateTotal();
+            });
+
+
+
+            function calculateTotal() {
+                const locationCharge = parseFloat($('#LChargeValue').val()) || 0;
+                const manpowerPrice = parseFloat($('#ManPowerPrice').val()) || 0;
+                const registrationfees = parseFloat($('#Reg_fees').val()) || 0;
+                const subtotal = locationCharge + manpowerPrice + registrationfees;
+                const vat = subtotal * 0.15;
+                const total = subtotal + vat;
+
+                $('#Subtotal').val(subtotal.toFixed(2));
+                $('#VAT').val(vat.toFixed(2));
+                $('#Total').val(total.toFixed(2));
+                
+                // Update hidden fields for form submission
+                $('#CompanyCal_Total').val(total.toFixed(2));
+                $('#CompanyCal_VAT').val(vat.toFixed(2));
+            }
+
+            // AJAX form
+            $('#CustomerForm').submit(function (e) {
+                e.preventDefault();
+                
+                // Basic client-side validation
+                const name = $('input[name="Customer.Name"]').val();
+                const email = $('input[name="Customer.Email"]').val();
+                const phone = $('input[name="Customer.Phone"]').val();
+                const serviceId = $('#CompanyCal_ServiceId').val();
+                
+                if (!name || name.trim() === '') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        text: 'Please enter your name.'
+                    });
+                    return;
+                }
+                
+                if (!email || email.trim() === '') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        text: 'Please enter your email address.'
+                    });
+                    return;
+                }
+                
+                if (!phone || phone.trim() === '') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        text: 'Please enter your phone number.'
+                    });
+                    return;
+                }
+                
+                if (!serviceId || serviceId === '') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        text: 'Please select a service.'
+                    });
+                    return;
+                }
+                
+                // Ensure calculation is done before submission
+                calculateTotal();
+                
+                // Validate that total is calculated
+                const total = $('#CompanyCal_Total').val();
+                if (!total || parseFloat(total) <= 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        text: 'Please select service options to calculate the total amount.'
+                    });
+                    return;
+                }
+
+                const formData = new FormData(this);
+
+                // Show loading indicator
+                Swal.fire({
+                    title: 'Processing...',
+                    text: 'Please wait while we process your booking.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    url: '@Url.Action("ProcessBooking", "Booking")',
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response.success) {
+                            // User is logged in - redirect to dashboard
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Booking Successful!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(() => {
+                                window.location.href = response.redirectUrl;
+                            });
+                        } else if (response.requiresLogin) {
+                            // User is not logged in - show login prompt
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Login Required',
+                                text: response.message,
+                                showCancelButton: true,
+                                confirmButtonText: 'Login',
+                                cancelButtonText: 'Register'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // Redirect to login
+                                    window.location.href = response.loginUrl;
+                                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                                    // Redirect to register
+                                    window.location.href = response.registerUrl;
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message || 'An error occurred while processing your booking.'
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        let errorMessage = 'An error occurred while saving your booking.';
+                        
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        } else if (xhr.responseText) {
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+                                if (response.message) {
+                                    errorMessage = response.message;
+                                }
+                            } catch (e) {
+                                // Keep default error message
+                            }
+                        }
+                        
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: errorMessage
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

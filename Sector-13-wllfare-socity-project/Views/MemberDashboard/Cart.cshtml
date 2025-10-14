@@ -1,0 +1,139 @@
+@model List<CartItem>
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0 text-gray-800">
+                    <i class="fas fa-shopping-cart me-2"></i>Shopping Cart
+                </h1>
+                <a href="@Url.Action("Index", "Booking")" class="btn btn-outline-primary">
+                    <i class="fas fa-plus me-2"></i>Continue Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Cart Items (@Model.Count)</h6>
+                    </div>
+                    <div class="card-body">
+                        @foreach (var item in Model)
+                        {
+                            <div class="row align-items-center mb-3 pb-3 border-bottom">
+                                <div class="col-md-6">
+                                    <h5 class="mb-1">@item.ServiceName</h5>
+                                    <p class="text-muted mb-1">Service Type: @(item.Service?.ServiceType ?? "N/A")</p>
+                                    <small class="text-muted">Added: @item.CreatedAt.ToString("MMM dd, yyyy")</small>
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control text-center" value="@item.Quantity" min="1" max="10">
+                                    </div>
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <strong>@item.TotalAmount.ToString("C")</strong>
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <button class="btn btn-sm btn-outline-danger" onclick="removeFromCart(@item.Id)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Order Summary</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal:</span>
+                            <strong>@Model.Sum(i => i.TotalAmount).ToString("C")</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tax:</span>
+                            <span>Calculated at checkout</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-3">
+                            <strong>Total:</strong>
+                            <strong>@Model.Sum(i => i.TotalAmount).ToString("C")</strong>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <a href="@Url.Action("Checkout", "Order")" class="btn btn-primary btn-lg">
+                                <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
+                            </a>
+                            <a href="@Url.Action("Index", "Booking")" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow mt-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Need Help?</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-3">Have questions about our services?</p>
+                        <div class="d-grid gap-2">
+                            <a href="@Url.Action("ContactUs", "Home")" class="btn btn-outline-info btn-sm">
+                                <i class="fas fa-phone me-2"></i>Contact Support
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-shopping-cart fa-4x text-gray-300 mb-4"></i>
+                        <h3 class="text-gray-600 mb-3">Your cart is empty</h3>
+                        <p class="text-gray-500 mb-4">Looks like you haven't added any services to your cart yet.</p>
+                        <a href="@Url.Action("Index", "Booking")" class="btn btn-primary btn-lg">
+                            <i class="fas fa-store me-2"></i>Browse Services
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function removeFromCart(itemId) {
+            if (confirm('Are you sure you want to remove this item from your cart?')) {
+                // Add AJAX call to remove item
+                $.post('@Url.Action("RemoveFromCart", "Cart")', { id: itemId }, function(result) {
+                    if (result.success) {
+                        location.reload();
+                    } else {
+                        alert('Error removing item from cart');
+                    }
+                });
+            }
+        }
+    </script>
+}

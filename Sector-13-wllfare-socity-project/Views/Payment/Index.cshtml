@@ -1,0 +1,268 @@
+@model PaymentViewModel
+
+@{
+    ViewData["Title"] = "Payment - " + Model.OrderNumber;
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0 text-gray-800">
+                    <i class="fas fa-credit-card me-2"></i>Payment for Order #@Model.OrderNumber
+                </h1>
+                <a href="@Url.Action("OrderDetails", "MemberDashboard", new { id = Model.OrderId })" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Order
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Order Summary -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Order Summary</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Order Number:</span>
+                        <strong>@Model.OrderNumber</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Customer:</span>
+                        <span>@Model.CustomerName</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Email:</span>
+                        <span>@Model.CustomerEmail</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Phone:</span>
+                        <span>@Model.CustomerPhone</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3">
+                        <h5>Total Amount:</h5>
+                        <h5 class="text-success">@Model.Amount.ToString("C") @Model.Currency</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Methods -->
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Choose Payment Method</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Online Payment -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card border-primary">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-globe me-2"></i>Online Payment
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text">Pay securely using SSLCommerz gateway with:</p>
+                                    <ul class="list-unstyled">
+                                        <li><i class="fas fa-check text-success"></i> Credit/Debit Cards</li>
+                                        <li><i class="fas fa-check text-success"></i> Mobile Banking (bKash, Rocket, Nagad)</li>
+                                        <li><i class="fas fa-check text-success"></i> Internet Banking</li>
+                                        <li><i class="fas fa-check text-success"></i> Instant confirmation</li>
+                                    </ul>
+                                    <button class="btn btn-primary btn-lg w-100" onclick="processOnlinePayment()">
+                                        <i class="fas fa-credit-card me-2"></i>Pay Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Offline Payment -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card border-warning">
+                                <div class="card-header bg-warning text-dark">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-university me-2"></i>Offline Payment
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text">Submit payment proof for manual verification:</p>
+                                    <div class="mb-3">
+                                        <label class="form-label">Payment Method</label>
+                                        <select class="form-select" id="offlinePaymentMethod">
+                                            <option value="">Select Method</option>
+                                            <option value="Bank Transfer">Bank Transfer</option>
+                                            <option value="bKash">bKash</option>
+                                            <option value="Nagad">Nagad</option>
+                                            <option value="Rocket">Rocket</option>
+                                            <option value="Cash">Cash Payment</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Transaction ID (if applicable)</label>
+                                        <input type="text" class="form-control" id="transactionId" placeholder="Enter transaction ID">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Payment Proof (Screenshot/Receipt)</label>
+                                        <input type="file" class="form-control" id="paymentProof" accept="image/*,.pdf">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Notes</label>
+                                        <textarea class="form-control" id="paymentNotes" rows="3" placeholder="Additional notes..."></textarea>
+                                    </div>
+                                    <button class="btn btn-warning btn-lg w-100" onclick="processOfflinePayment()">
+                                        <i class="fas fa-upload me-2"></i>Submit Payment Proof
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Instructions -->
+            <div class="card shadow mt-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-info">Payment Instructions</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Bank Details:</h6>
+                            <p class="mb-1"><strong>Bank:</strong> Dutch Bangla Bank</p>
+                            <p class="mb-1"><strong>Account Name:</strong> E-Group Ltd</p>
+                            <p class="mb-1"><strong>Account Number:</strong> 123-456-7890</p>
+                            <p class="mb-3"><strong>Routing Number:</strong> 090-123-456</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Mobile Banking:</h6>
+                            <p class="mb-1"><strong>bKash:</strong> 01700-000000</p>
+                            <p class="mb-1"><strong>Nagad:</strong> 01700-000000</p>
+                            <p class="mb-1"><strong>Rocket:</strong> 01700-000000</p>
+                            <p class="mb-3"><em>Send money to these numbers</em></p>
+                        </div>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Note:</strong> Offline payments require manual verification and may take 24-48 hours to process.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function processOnlinePayment() {
+            Swal.fire({
+                title: 'Processing Payment...',
+                text: 'Redirecting to payment gateway',
+                icon: 'info',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                willOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            $.post('@Url.Action("ProcessOnlinePayment", "Payment")', {
+                orderId: @Model.OrderId
+            })
+            .done(function(response) {
+                if (response.success) {
+                    window.location.href = response.redirectUrl;
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Payment Error',
+                        text: response.message || 'Failed to process payment'
+                    });
+                }
+            })
+            .fail(function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to connect to payment gateway'
+                });
+            });
+        }
+
+        function processOfflinePayment() {
+            const paymentMethod = document.getElementById('offlinePaymentMethod').value;
+            const transactionId = document.getElementById('transactionId').value;
+            const notes = document.getElementById('paymentNotes').value;
+            const paymentProof = document.getElementById('paymentProof').files[0];
+
+            if (!paymentMethod) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Missing Information',
+                    text: 'Please select a payment method'
+                });
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('orderId', @Model.OrderId);
+            formData.append('paymentMethod', paymentMethod);
+            formData.append('transactionId', transactionId);
+            formData.append('notes', notes);
+            if (paymentProof) {
+                formData.append('paymentProof', paymentProof);
+            }
+
+            Swal.fire({
+                title: 'Submitting Payment...',
+                text: 'Please wait while we process your submission',
+                icon: 'info',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                willOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            $.ajax({
+                url: '@Url.Action("ProcessOfflinePayment", "Payment")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Payment Submitted!',
+                            text: response.message,
+                            confirmButtonText: 'View Order'
+                        }).then(() => {
+                            window.location.href = response.redirectUrl;
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Submission Error',
+                            text: response.message || 'Failed to submit payment'
+                        });
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to submit payment proof'
+                    });
+                }
+            });
+        }
+    </script>
+}

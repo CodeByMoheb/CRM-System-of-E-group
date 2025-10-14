@@ -1,0 +1,583 @@
+@{
+    ViewData["Title"] = "Advisor";
+}
+
+<style>
+    .elected-candidates-content {
+      
+        padding: 40px 0;
+        background: linear-gradient(135deg,rgb(62, 118, 173) 0%,rgb(22, 159, 168) 100%);
+        min-height: 100vh;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 50px;
+        animation: fadeInUp 0.8s ease-out;
+    }
+
+    .page-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .page-header p {
+        font-size: 1.1rem;
+        color: #6c757d;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* President Section */
+    .president-section {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        margin-bottom: 40px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        text-align: center;
+        animation: fadeInUp 0.8s ease-out 0.2s both;
+        border: 1px solid #e9ecef;
+    }
+
+    .president-image {
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto;
+        border: 8px solid #007bff;
+        box-shadow: 0 15px 35px rgba(0, 123, 255, 0.3);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .president-image:hover {
+        transform: scale(1.05);
+        box-shadow: 0 20px 40px rgba(0, 123, 255, 0.4);
+    }
+
+    .president-info h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+
+    .president-designation {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        display: inline-block;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    }
+
+    .president-details {
+        color: #6c757d;
+        font-size: 1.5rem;
+        line-height: 1.6;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    /* Other Members Section */
+    .members-section {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        animation: fadeInUp 0.8s ease-out 0.4s both;
+        border: 1px solid #e9ecef;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 40px;
+        color: #2c3e50;
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+
+    .members-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+
+    .member-card {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-radius: 15px;
+        padding: 25px;
+        text-align: center;
+        transition: all 0.3s ease;
+        border: 1px solid #dee2e6;
+        position: relative;
+        overflow: hidden;
+        width: 270px;
+        min-width: 270px;
+        max-width: 270px;
+        height: 340px;
+        min-height: 340px;
+        max-height: 340px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .member-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    }
+
+    .member-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        transition: left 0.5s;
+    }
+
+    .member-card:hover::before {
+        left: 100%;
+    }
+
+    .member-image {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto 15px;
+
+        box-shadow: 0 8px 20px rgba(0, 123, 255, 0.2);
+        transition: transform 0.3s ease;
+    }
+
+    .member-card:hover .member-image {
+        transform: scale(1.1);
+    }
+
+    .member-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 8px;
+    }
+
+    .member-designation {
+        background: linear-gradient(135deg, #6c757d, #495057);
+        color: white;
+        padding: 5px 15px;
+        border-radius: 15px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+
+    .member-details {
+        color: #6c757d;
+        font-size: 1.2rem;
+        line-height: 1.4;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 992px) {
+        .members-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .member-card {
+            width: 220px;
+            min-width: 220px;
+            max-width: 220px;
+            height: 300px;
+            min-height: 300px;
+            max-height: 300px;
+        }
+        
+        .president-image {
+            width: 250px;
+            height: 250px;
+        }
+        
+        .page-header h1 {
+            font-size: 2rem;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .elected-candidates-content {
+           
+            padding: 20px 0;
+        }
+        
+        .president-section,
+        .members-section {
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .member-card {
+            width: 100%;
+            min-width: 0;
+            max-width: 100%;
+            height: auto;
+            min-height: 0;
+            max-height: none;
+        }
+        
+        .president-image {
+            width: 200px;
+            height: 200px;
+        }
+        
+        .president-info h2 {
+            font-size: 1.5rem;
+        }
+        
+        .page-header h1 {
+            font-size: 1.8rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .members-grid {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        .president-image {
+            width: 180px;
+            height: 180px;
+        }
+        
+        .member-image {
+            width: 100px;
+            height: 100px;
+        }
+        
+        .page-header h1 {
+            font-size: 1.5rem;
+        }
+        
+        .president-info h2 {
+            font-size: 1.3rem;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+        }
+    }
+
+    /* Animations */
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Loading placeholder for images */
+    .image-placeholder {
+        background: linear-gradient(135deg, #e9ecef, #dee2e6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    /* Special styling for different designations */
+    .designation-vice-president {
+        background: linear-gradient(135deg, #28a745, #20c997);
+    }
+
+    .designation-secretary {
+        background: linear-gradient(135deg, #ffc107, #fd7e14);
+    }
+
+    .designation-treasurer {
+        background: linear-gradient(135deg, #dc3545, #e83e8c);
+    }
+
+    .designation-member {
+        background: linear-gradient(135deg, #6f42c1, #6610f2);
+    }
+
+    .members-row {
+        display: flex;
+        gap: 30px;
+        margin-bottom: 30px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .group-header {
+        display: inline-block;
+        text-align: center;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #007bff;
+        margin: 30px auto 10px auto;
+        background: linear-gradient(135deg, #e3f2fd 60%, #bbdefb 100%);
+        border-radius: 18px;
+        padding: 10px 32px;
+        box-shadow: 0 2px 8px rgba(0,123,255,0.08);
+        letter-spacing: 0.5px;
+        border: 1px solid #b6e0fe;
+    }
+    @@media (max-width: 768px) {
+        .members-row {
+            flex-direction: column;
+            gap: 15px;
+        }
+    }
+</style>
+<div class="elected-candidates-content">
+    <div class="container">
+        <div class="page-header">
+           
+        </div>
+
+        <!-- President Section -->
+  
+
+        <!-- Other Members Section -->
+        <div class="members-section">
+
+            <h3 class="section-title">Our Advisor Department</h3>
+            
+            <div class="members-grid">
+                <!-- Vice President -->
+                <div class="member-card">
+                    <img src="https://res.cloudinary.com/drz65fsga/image/upload/v1757928092/Brig-Gen-Md-Zahid-Hossain_tcuprn.jpg" alt="Vice President" class="member-image"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjYwIiB5PSI2MCIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzk5OSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIj5JbWFnZSBOb3QgRm91bmQ8L3RleHQ+Cjwvc3ZnPg=='">
+                    <div class="member-name">Dr. M. Zahid Hossain</div>
+                    <div class="member-designation designation-vice-president">Group Strategic Advisor</div>
+                   
+                </div>
+
+                <!-- General Secretary -->
+                <div class="member-card">
+                    <img src="https://res.cloudinary.com/drz65fsga/image/upload/v1758715008/Shamsul_Huda_mjrun8.jpg" alt="General Secretary" class="member-image"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjYwIiB5PSI2MCIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzk5OSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIj5JbWFnZSBOb3QgRm91bmQ8L3RleHQ+Cjwvc3ZnPg=='">
+                    <div class="member-name">MN HUDA </div>
+                    <div class="member-designation designation-secretary">MEDIA ADVISOR </div>
+                    <div class="member-details">E- studio</div>
+                </div>
+
+                <!-- Treasurer -->
+                  <div class="member-card">
+                    <img src="https://res.cloudinary.com/drz65fsga/image/upload/v1758715008/WhatsApp_Image_2025-09-24_at_17.34.40_8a0e99c8_fkjoaz.jpg" alt="General Secretary" class="member-image"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjYwIiB5PSI2MCIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzk5OSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIj5JbWFnZSBOb3QgRm91bmQ8L3RleHQ+Cjwvc3ZnPg=='">
+                    <div class="member-name">Mahbubur Rahman</div>
+                    <div class="member-designation designation-secretary"> ADVISOR </div>
+                    <div class="member-details"> Paradise Interior and Exterior Ltd</div>
+                </div>
+
+                <!-- Member 1 -->
+                  <div class="member-card">
+                    <img src="https://res.cloudinary.com/drz65fsga/image/upload/v1758715008/Shaikh_Mahmud_Alam_ktqm4l.jpg" alt="General Secretary" class="member-image"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjYwIiB5PSI2MCIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzk5OSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIj5JbWFnZSBOb3QgRm91bmQ8L3RleHQ+Cjwvc3ZnPg=='">
+                    <div class="member-name">Professor Mahmoud</div>
+                    <div class="member-designation designation-secretary">Education Advisor  </div>
+                    <div class="member-details">E-Academy</div>
+                </div>
+
+                <!-- Member 2 -->
+                 <div class="member-card">
+                    <img src="https://res.cloudinary.com/drz65fsga/image/upload/v1758715008/WhatsApp_Image_2025-09-24_at_17.35.18_54237c29_sgkexj.jpg" alt="General Secretary" class="member-image"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjYwIiB5PSI2MCIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzk5OSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIj5JbWFnZSBOb3QgRm91bmQ8L3RleHQ+Cjwvc3ZnPg=='">
+                    <div class="member-name">Dr. Akhi Nur Parves </div>
+                    <div class="member-designation designation-secretary">Chief Dentist </div>
+                    <div class="member-details">Jamalpur Dental Clinic</div>
+                </div>
+                <!-- Member 3 -->
+                  <div class="member-card">
+                    <img src="https://res.cloudinary.com/drz65fsga/image/upload/v1758715008/WhatsApp_Image_2025-09-24_at_17.36.05_d03151d9_mv2bgc.jpg" alt="General Secretary" class="member-image"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjYwIiB5PSI2MCIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzk5OSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIj5JbWFnZSBOb3QgRm91bmQ8L3RleHQ+Cjwvc3ZnPg=='">
+                    <div class="member-name">Md Aurangazeb Belal </div>
+                    <div class="member-designation designation-secretary"> Company and Legal Advisor </div>
+                    <div class="member-details">E-Grpup</div>
+                </div>
+
+                <!-- Member 4 -->
+                 <div class="member-card">
+                    <img src="https://res.cloudinary.com/drz65fsga/image/upload/v1758715008/WhatsApp_Image_2025-09-24_at_17.34.28_3ebe7662_oahyxz.jpg" alt="General Secretary" class="member-image"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjYwIiB5PSI2MCIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzk5OSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIj5JbWFnZSBOb3QgRm91bmQ8L3RleHQ+Cjwvc3ZnPg=='">
+                    <div class="member-name">NA</div>
+                    <div class="member-designation designation-secretary">Advisor </div>
+                    <div class="member-details">E-Trade Centre</div>
+                </div>
+
+                <!-- Member 5 -->
+                  <div class="member-card">
+                    <img src="https://res.cloudinary.com/drz65fsga/image/upload/v1757844182/tolin_zkh7tg.jpg" alt="General Secretary" class="member-image"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjYwIiB5PSI2MCIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzk5OSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIj5JbWFnZSBOb3QgRm91bmQ8L3RleHQ+Cjwvc3ZnPg=='">
+                    <div class="member-name">Engr. FarukA </div>
+                    <div class="member-designation designation-secretary"> ADVISOR </div>
+                    <div class="member-details">E Builders Ltd</div>
+                </div>
+
+                <!-- Member 6 -->
+                  <div class="member-card">
+                    <img src="https://res.cloudinary.com/drz65fsga/image/upload/v1757844182/tolin_zkh7tg.jpg" alt="General Secretary" class="member-image"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjYwIiB5PSI2MCIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzk5OSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIj5JbWFnZSBOb3QgRm91bmQ8L3RleHQ+Cjwvc3ZnPg=='">
+                    <div class="member-name">Dr. Salauddin  </div>
+                    <div class="member-designation designation-secretary">Advisor </div>
+                    <div class="member-details">E-Agro Ltd</div>
+                </div>
+
+                <!-- Member 7 -->
+                  <div class="member-card">
+                    <img src="https://res.cloudinary.com/drz65fsga/image/upload/v1757844182/tolin_zkh7tg.jpg" alt="General Secretary" class="member-image"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjYwIiB5PSI2MCIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzk5OSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIj5JbWFnZSBOb3QgRm91bmQ8L3RleHQ+Cjwvc3ZnPg=='">
+                    <div class="member-name">Mr. Kamal Uddin </div>
+                    <div class="member-designation designation-secretary">Advisor </div>
+                    <div class="member-details">E- Auto Ltd</div>
+                </div>
+               
+                <!-- Member 8 -->
+                <div class="member-card">
+                    <img src="https://res.cloudinary.com/drz65fsga/image/upload/v1757844182/tolin_zkh7tg.jpg" alt="General Secretary" class="member-image"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjYwIiB5PSI2MCIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzk5OSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIj5JbWFnZSBOb3QgRm91bmQ8L3RleHQ+Cjwvc3ZnPg=='">
+                    <div class="member-name">Doctor Shahadat Uddin  </div>
+                    <div class="member-designation designation-secretary">Chief Advisor </div>
+                    <div class="member-details">E-Academy</div>
+                </div>
+                <!-- Member 9 -->
+                <div class="member-card">
+                    <img src="https://res.cloudinary.com/drz65fsga/image/upload/v1757844182/tolin_zkh7tg.jpg" alt="General Secretary" class="member-image"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjYwIiB5PSI2MCIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzk5OSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIj5JbWFnZSBOb3QgRm91bmQ8L3RleHQ+Cjwvc3ZnPg=='">
+                    <div class="member-name">Mr. Hi  </div>
+                    <div class="member-designation designation-secretary">Advisor Vat and Tax  </div>
+                    <div class="member-details">E - Group</div>
+                </div>
+
+                <!-- Member 10 -->
+                <div class="member-card">
+                    <img src="https://res.cloudinary.com/drz65fsga/image/upload/v1757844182/tolin_zkh7tg.jpg" alt="General Secretary" class="member-image"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjYwIiB5PSI2MCIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzk5OSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIj5JbWFnZSBOb3QgRm91bmQ8L3RleHQ+Cjwvc3ZnPg=='">
+                    <div class="member-name">Abu Hanif Modhupury </div>
+                    <div class="member-designation designation-secretary">Chief Advisor  </div>
+                    <div class="member-details">Paradise Enterior and Exterior</div>
+                </div>
+
+                <!-- Member 11 -->
+                <div class="member-card">
+                    <img src="https://res.cloudinary.com/drz65fsga/image/upload/v1757844182/tolin_zkh7tg.jpg" alt="General Secretary" class="member-image"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjYwIiB5PSI2MCIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzk5OSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIj5JbWFnZSBOb3QgRm91bmQ8L3RleHQ+Cjwvc3ZnPg=='">
+                    <div class="member-name">Riasad Uddin </div>
+                    <div class="member-designation designation-secretary">Chief Advisor  </div>
+                    <div class="member-details">E- Builders Ltd</div>
+                </div>
+
+            
+            <div class="members-grid">
+                <div class="member-card">
+                    <img src="https://res.cloudinary.com/drz65fsga/image/upload/v1757844175/shimanto_zqrt3o.jpg" alt="General Secretary" class="member-image"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjYwIiB5PSI2MCIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzk5OSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIj5JbWFnZSBOb3QgRm91bmQ8L3RleHQ+Cjwvc3ZnPg=='">
+                    <div class="member-name">Shimanto Islam</div>
+                    <div class="member-designation designation-secretary">Advisor</div>
+                    <div class="member-details">01400055289</div>
+                </div>
+
+                <!-- Treasurer -->
+                
+
+                <!-- Member 1 -->
+                
+
+                <!-- Member 2 -->
+               
+                <!-- Member 3 -->
+                
+
+                <!-- Member 4 -->
+               
+
+                <!-- Member 5 -->
+                
+
+                <!-- Member 6 -->
+
+
+                <!-- Member 7 -->
+               
+                <!-- Member 8 -->
+               
+                <!-- Member 9 -->
+             
+
+                <!-- Member 10 -->
+                
+
+                <!-- Member 11 -->
+                
+
+
+                <!-- Member 12 -->
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add smooth scrolling and animations
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add intersection observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all member cards
+        document.querySelectorAll('.member-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+
+        // Add hover effects for better interactivity
+        document.querySelectorAll('.member-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    });
+</script> 

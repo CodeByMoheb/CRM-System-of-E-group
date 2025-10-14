@@ -1,0 +1,402 @@
+@model Sector_13_Welfare_Society___Digital_Management_System.Models.Booking
+@{
+    ViewData["Title"] = "Invoice - " + Model.BookingNumber;
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .invoice-container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .invoice-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .invoice-body {
+            padding: 30px;
+        }
+         .company-logo {
+             width: 100px;
+             height: 100px;
+             margin: 0 auto 20px;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+         }
+         .company-logo img {
+             max-width: 100%;
+             max-height: 100%;
+             object-fit: contain;
+         }
+        .invoice-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .invoice-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        .invoice-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        .detail-value {
+            color: #212529;
+        }
+        .service-table {
+            margin-bottom: 30px;
+        }
+        .service-table th {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px;
+        }
+        .service-table td {
+            padding: 15px;
+            vertical-align: top;
+            border-color: #e9ecef;
+        }
+        .pricing-breakdown {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 5px 0;
+        }
+        .breakdown-row.total {
+            border-top: 2px solid #667eea;
+            margin-top: 15px;
+            padding-top: 15px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #667eea;
+        }
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-confirmed { background: #d1ecf1; color: #0c5460; }
+        .status-completed { background: #d4edda; color: #155724; }
+        .footer {
+            background: #343a40;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        @@media print {
+            body { background: white; }
+            .invoice-container { box-shadow: none; margin: 0; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+         <!-- Header -->
+         <div class="invoice-header">
+             <div class="company-logo">
+                 <img src="~/WhatsApp Image 2025-06-29 at 12.18.39_e8d5f69d.jpg" alt="E-Group Logo" />
+             </div>
+             <h1 class="invoice-title">E-Group</h1>
+             <p class="invoice-subtitle">Professional Certification & Compliance Services</p>
+         </div>
+
+        <!-- Body -->
+        <div class="invoice-body">
+            <!-- Invoice Details -->
+            <div class="invoice-details">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="detail-row">
+                            <span class="detail-label">Invoice Number:</span>
+                            <span class="detail-value">@Model.BookingNumber</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Invoice Date:</span>
+                            <span class="detail-value">@Model.BookingDate.ToString("MMMM dd, yyyy")</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Status:</span>
+                            <span class="status-badge status-@Model.BookingStatus.ToLower()">@Model.BookingStatus</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-row">
+                            <span class="detail-label">Payment Method:</span>
+                            <span class="detail-value">@Model.PaymentMethod</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Payment Status:</span>
+                            <span class="detail-value">@Model.PaymentStatus</span>
+                        </div>
+                        @if (Model.PaymentDate.HasValue)
+                        {
+                            <div class="detail-row">
+                                <span class="detail-label">Payment Date:</span>
+                                <span class="detail-value">@Model.PaymentDate.Value.ToString("MMMM dd, yyyy")</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Information -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5 class="text-primary mb-3"><i class="fas fa-user me-2"></i>Customer Information</h5>
+                    <div class="detail-row">
+                        <span class="detail-label">Name:</span>
+                        <span class="detail-value">@Model.CustomerName</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Email:</span>
+                        <span class="detail-value">@Model.CustomerEmail</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Phone:</span>
+                        <span class="detail-value">@Model.CustomerPhone</span>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.CompanyName))
+                    {
+                        <div class="detail-row">
+                            <span class="detail-label">Company:</span>
+                            <span class="detail-value">@Model.CompanyName</span>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.CustomerAddress))
+                    {
+                        <div class="detail-row">
+                            <span class="detail-label">Address:</span>
+                            <span class="detail-value">@Model.CustomerAddress</span>
+                        </div>
+                    }
+                </div>
+                <div class="col-md-6">
+                    <h5 class="text-primary mb-3"><i class="fas fa-building me-2"></i>E-Group Information</h5>
+                    <div class="detail-row">
+                        <span class="detail-label">Company:</span>
+                        <span class="detail-value">E-Group</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Services:</span>
+                        <span class="detail-value">Professional Certification & Compliance</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Contact:</span>
+                        <span class="detail-value">info@egroup.com</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Services -->
+            <h5 class="text-primary mb-3"><i class="fas fa-list me-2"></i>Service Details</h5>
+            <div class="table-responsive">
+                <table class="table service-table">
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Type</th>
+                            <th>Qty</th>
+                            <th>Unit Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.BookingItems)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@item.ServiceName</strong><br>
+                                    <small class="text-muted">@item.ServiceDescription</small>
+                                </td>
+                                <td>@item.ServiceType</td>
+                                <td>@item.Quantity</td>
+                                <td>@item.Currency @item.UnitPrice.ToString("N2")</td>
+                                <td><strong>@item.Currency @item.TotalAmount.ToString("N2")</strong></td>
+                            </tr>
+                            
+                            @if (item.WorkforceSize.HasValue && item.ManDaysRequired.HasValue)
+                            {
+                                <tr class="table-light">
+                                    <td colspan="5">
+                                        <div class="pricing-breakdown">
+                                            <h6 class="text-primary mb-3"><i class="fas fa-calculator me-2"></i>Detailed Pricing Breakdown</h6>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="detail-row">
+                                                        <span class="detail-label">Workforce Size:</span>
+                                                        <span class="detail-value">@item.WorkforceSize workers</span>
+                                                    </div>
+                                                    <div class="detail-row">
+                                                        <span class="detail-label">Man-Days Required:</span>
+                                                        <span class="detail-value">@item.ManDaysRequired man-days</span>
+                                                    </div>
+                                                    <div class="detail-row">
+                                                        <span class="detail-label">Location:</span>
+                                                        <span class="detail-value">@item.Location</span>
+                                                    </div>
+                                                    <div class="detail-row">
+                                                        <span class="detail-label">Service Type:</span>
+                                                        <span class="detail-value">@item.ServiceType</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    @{
+                                                        var manDayRate = GetManDayRate(item.ServiceType);
+                                                        var auditFee = item.ManDaysRequired.Value * manDayRate;
+                                                        var registrationFee = GetRegistrationFee(item.ServiceType);
+                                                        var travelAllowance = item.TravelAllowance ?? 0;
+                                                        var subtotal = auditFee + registrationFee + travelAllowance;
+                                                        var vatAmount = item.VatAmount ?? 0;
+                                                    }
+                                                    <div class="breakdown-row">
+                                                        <span>Audit Fee (@item.ManDaysRequired man-days × @manDayRate):</span>
+                                                        <span>@item.Currency @auditFee.ToString("F2")</span>
+                                                    </div>
+                                                    @if (registrationFee > 0)
+                                                    {
+                                                        <div class="breakdown-row">
+                                                            <span>Registration Fee:</span>
+                                                            <span>@item.Currency @registrationFee.ToString("F2")</span>
+                                                        </div>
+                                                    }
+                                                    @if (travelAllowance > 0)
+                                                    {
+                                                        <div class="breakdown-row">
+                                                            <span>Travel Allowance:</span>
+                                                            <span>@item.Currency @travelAllowance.ToString("F2")</span>
+                                                        </div>
+                                                    }
+                                                    <div class="breakdown-row">
+                                                        <span><strong>Subtotal:</strong></span>
+                                                        <span><strong>@item.Currency @subtotal.ToString("F2")</strong></span>
+                                                    </div>
+                                                    <div class="breakdown-row">
+                                                        <span>VAT (15%):</span>
+                                                        <span>@item.Currency @vatAmount.ToString("F2")</span>
+                                                    </div>
+                                                    <div class="breakdown-row total">
+                                                        <span>Total Amount:</span>
+                                                        <span>@item.Currency @item.TotalAmount.ToString("F2")</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Special Requirements -->
+            @if (!string.IsNullOrEmpty(Model.SpecialRequirements))
+            {
+                <div class="mt-4">
+                    <h6 class="text-primary"><i class="fas fa-sticky-note me-2"></i>Special Requirements</h6>
+                    <p class="text-muted">@Model.SpecialRequirements</p>
+                </div>
+            }
+
+            <!-- Notes -->
+            @if (!string.IsNullOrEmpty(Model.Notes))
+            {
+                <div class="mt-4">
+                    <h6 class="text-primary"><i class="fas fa-comment me-2"></i>Notes</h6>
+                    <p class="text-muted">@Model.Notes</p>
+                </div>
+            }
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p class="mb-0">
+                <strong>E-Group</strong> - Professional Certification & Compliance Services<br>
+                <small>Thank you for choosing our services!</small>
+            </p>
+        </div>
+    </div>
+
+    <div class="text-center mt-3 no-print">
+        <button onclick="window.print()" class="btn btn-primary me-2">
+            <i class="fas fa-print me-2"></i>Print Invoice
+        </button>
+        <a href="@Url.Action("Index", "Booking")" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Booking
+        </a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+@functions {
+    private decimal GetManDayRate(string serviceType)
+    {
+        return serviceType.ToUpper() switch
+        {
+            "WRAP" => 400,
+            "ISO9001" or "ISO14001" or "ISO45001" => 120,
+            _ => 300
+        };
+    }
+
+    private decimal GetRegistrationFee(string serviceType)
+    {
+        return serviceType.ToUpper() switch
+        {
+            "GOTS" or "OCS" or "RCS" => 200,
+            "GRS" => 300,
+            "GRS+RCS" => 500,
+            "GOTS+OCS+RCS+GRS" => 900,
+            "GOTS+OCS" => 400,
+            _ => 0
+        };
+    }
+}

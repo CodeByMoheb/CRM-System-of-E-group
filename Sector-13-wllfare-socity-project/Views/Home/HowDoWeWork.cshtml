@@ -1,0 +1,313 @@
+@{
+    ViewData["Title"] = "সোসাইটির বিভিন্ন কার্যক্রম";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .howwork-hero {
+        background-image: url('@Url.Content("~/Photos/howworkbg.jpg")');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        position: relative;
+        min-height: 320px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100vw;
+        margin-left: calc(-50vw + 50%);
+        margin-top: 50px;
+    }
+    .howwork-hero::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.55);
+        z-index: 1;
+    }
+    .howwork-hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 900px;
+        margin: 0 auto;
+        text-align: center;
+        color: #fff;
+        padding: 40px 16px 40px 16px;
+    }
+    .howwork-hero-content h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 18px;
+        letter-spacing: 0.5px;
+    }
+    .howwork-hero-content p {
+        font-size: 1.18rem;
+        margin-bottom: 0;
+    }
+    .howwork-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 80px 0 60px 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .howwork-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.2) 0%, transparent 50%);
+        pointer-events: none;
+    }
+    
+    .howwork-section .container {
+        position: relative;
+        z-index: 2;
+    }
+    .howwork-section h2 {
+        color: #ffffff;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 24px;
+        font-size: 2.5rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        position: relative;
+        z-index: 3;
+    }
+    .howwork-section p {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 40px;
+        font-size: 1.2rem;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        position: relative;
+        z-index: 3;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.6;
+    }
+    .howwork-cards {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        justify-content: center;
+        margin-bottom: 30px;
+        position: relative;
+        z-index: 3;
+    }
+    .howwork-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
+        border-radius: 20px;
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.08);
+        padding: 32px 24px 28px 24px;
+        flex: 1 1 280px;
+        max-width: 360px;
+        min-width: 260px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+        min-height: 320px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+    }
+    
+    .howwork-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #3b82f6, #1d4ed8, #6366f1);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.4s ease;
+    }
+    
+    .howwork-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.02) 0%, rgba(99, 102, 241, 0.02) 100%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        pointer-events: none;
+    }
+    
+    .howwork-card:hover {
+        transform: translateY(-15px) scale(1.03);
+        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.2), 0 10px 30px rgba(102, 126, 234, 0.15);
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .howwork-card:hover::before {
+        transform: scaleX(1);
+    }
+    
+    .howwork-card:hover::after {
+        opacity: 1;
+    }
+    
+    .howwork-card h2 {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 16px;
+        line-height: 1.4;
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .howwork-card h2::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        background: linear-gradient(135deg, #3b82f6, #6366f1);
+        border-radius: 50%;
+        flex-shrink: 0;
+        transition: transform 0.3s ease;
+    }
+    
+    .howwork-card:hover h2::before {
+        transform: scale(1.3);
+    }
+    
+    .howwork-card img {
+        width: 100%;
+        height: 160px;
+        object-fit: contain;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        margin-bottom: 16px;
+        box-shadow: 0 4px 16px rgba(44,62,80,0.06);
+        transition: transform 0.3s ease;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .howwork-card:hover img {
+        transform: scale(1.05);
+    }
+    
+    .howwork-card p {
+        font-size: 1.05rem;
+        color: #475569;
+        margin-bottom: 0;
+        text-align: left;
+        line-height: 1.6;
+        position: relative;
+        z-index: 2;
+        flex-grow: 1;
+    }
+    
+    .card-number {
+        position: absolute;
+        top: 16px;
+        right: 20px;
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #3b82f6, #6366f1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 0.9rem;
+        z-index: 3;
+        transition: transform 0.3s ease;
+    }
+    
+    .howwork-card:hover .card-number {
+        transform: rotate(360deg) scale(1.1);
+    }
+    @@media (max-width: 900px) {
+        .howwork-cards {
+            flex-direction: column;
+            gap: 18px;
+        }
+        .howwork-card {
+            max-width: 100%;
+            min-width: 0;
+            height: auto;
+        }
+    }
+    @@media (max-width: 600px) {
+        .howwork-hero-content h1 {
+            font-size: 1.4rem;
+        }
+        .howwork-section h2 {
+            font-size: 1.2rem;
+        }
+        .howwork-card {
+            padding: 16px 8px 12px 8px;
+        }
+        .howwork-card img {
+            height: 100px;
+        }
+    }
+</style>
+
+<!-- Hero Section -->
+<section class="howwork-hero">
+    <div class="howwork-hero-content">
+        <h1>At E-GROUP, we believe in a structured yet flexible workflow that ensures innovation, efficiency, and transparency:</h1>
+        <p>Being a startup, our strength lies in our agility and collaborative mindset:</p>
+    </div>
+</section>
+
+<!-- Systematic Approach Section -->
+<section class="howwork-section">
+    <div style="max-width: 950px; margin: 0 auto; padding: 0 10px; gap: 10px;">
+        <h2>How We Work at E-GROUP</h2>
+        <p>We follow a clear, transparent and outcome-driven process — from initial assessment to certification and continuous improvement — ensuring your organization meets global standards while accelerating operational excellence.</p>
+        <!-- First Row - Steps 1-3 -->
+        <div class="howwork-cards">
+            <div class="howwork-card">
+                <h2>Inquiry & Gap Assessment</h2>
+                <p>Clients contact us via form, phone or email. We conduct a quick pre-assessment to understand scope, existing systems, and the standard(s) you want to meet. Based on findings we deliver a concise Gap Assessment Report and a recommended roadmap with timeline and cost estimate.</p>
+            </div>
+            <div class="howwork-card">
+                <h2>Planning & Documentation</h2>
+                <p>We work with your leadership and process owners to prepare required documentation: policies, procedures, and records. If needed, we provide sample templates and a Documentation Checklist to accelerate readiness.</p>
+            </div>
+            <div class="howwork-card">
+                <h2>Training & Capacity Building</h2>
+                <p>We run role-based trainings (e.g., Management Representative, Internal Auditor, Welfare Officer, Chemical Management) and hands-on workshops so your team can implement and own the system internally.</p>
+            </div>
+        </div>
+        <!-- Second Row - Steps 4-6 -->
+        <div class="howwork-cards">
+            <div class="howwork-card">
+                <h2>Implementation & Internal Audit</h2>
+                <p>Your team implements the documented processes. We support with on-site/remote coaching and perform an Internal Audit (pre-audit) to identify non-conformities and corrective actions.</p>
+            </div>
+            <div class="howwork-card">
+                <h2>Certification Audit & Verification</h2>
+                <p>After remediation, we coordinate the certification audit with the accredited body (or support your third-party auditor). We assist through the audit process until certificate issuance, and we also provide certificate-verification instructions for stakeholders.</p>
+            </div>
+            <div class="howwork-card">
+                <h2>Post-Certification Support & Continuous Improvement</h2>
+                <p>Certification is just the start. We help set KPIs, conduct periodic surveillance support, refresher trainings, and readiness checks for recertification to ensure sustained compliance and continuous improvement.</p>
+            </div>
+        </div>
+    </div>
+</section>
+

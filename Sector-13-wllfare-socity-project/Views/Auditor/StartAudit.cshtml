@@ -1,0 +1,305 @@
+@model AuditQuestionnaireViewModel
+
+@{
+    ViewData["Title"] = "Audit Questionnaire";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0 text-gray-800">
+                    <i class="fas fa-clipboard-list me-2"></i>Audit Questionnaire - Booking #B-@Model.Booking.Id
+                </h1>
+                <a href="@Url.Action("Index")" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Information -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Booking Information</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <strong>Service:</strong><br>
+                            @Model.Booking.Service?.Name
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Customer:</strong><br>
+                            @Model.Booking.Customer?.Name
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Booking Date:</strong><br>
+                            @Model.Booking.CreatedAt.ToString("MMM dd, yyyy")
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Amount:</strong><br>
+                            @Model.Booking.Total?.ToString("C")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audit Form -->
+    <div class="row">
+        <div class="col-12">
+            <form id="auditForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="bookingId" value="@Model.Booking.Id" />
+                
+                @if (Model.Questions.Any())
+                {
+                    var groupedQuestions = Model.Questions.GroupBy(q => q.Category);
+                    
+                    @foreach (var categoryGroup in groupedQuestions)
+                    {
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">
+                                    <i class="fas fa-folder me-2"></i>@categoryGroup.Key
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                @foreach (var question in categoryGroup.OrderBy(q => q.SortOrder))
+                                {
+                                    var existingResponse = Model.Responses.FirstOrDefault(r => r.AuditQuestionId == question.Id);
+                                    
+                                    <div class="row mb-4 question-row" data-question-id="@question.Id">
+                                        <div class="col-md-6">
+                                            <label class="form-label font-weight-bold">
+                                                @question.QuestionText
+                                            </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input response-radio" 
+                                                               type="radio" 
+                                                               name="question_@question.Id" 
+                                                               id="yes_@question.Id" 
+                                                               value="Yes"
+                                                               @(existingResponse?.ResponseValue == "Yes" ? "checked" : "")>
+                                                        <label class="form-check-label text-success" for="yes_@question.Id">
+                                                            <i class="fas fa-check me-1"></i>Yes
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input response-radio" 
+                                                               type="radio" 
+                                                               name="question_@question.Id" 
+                                                               id="no_@question.Id" 
+                                                               value="No"
+                                                               @(existingResponse?.ResponseValue == "No" ? "checked" : "")>
+                                                        <label class="form-check-label text-danger" for="no_@question.Id">
+                                                            <i class="fas fa-times me-1"></i>No
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input response-radio" 
+                                                               type="radio" 
+                                                               name="question_@question.Id" 
+                                                               id="partial_@question.Id" 
+                                                               value="Partial"
+                                                               @(existingResponse?.ResponseValue == "Partial" ? "checked" : "")>
+                                                        <label class="form-check-label text-warning" for="partial_@question.Id">
+                                                            <i class="fas fa-exclamation-triangle me-1"></i>Partial
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <button type="button" class="btn btn-sm btn-outline-info toggle-comments" 
+                                                            data-question-id="@question.Id">
+                                                        <i class="fas fa-comment me-1"></i>Comments
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="mt-2 comments-section" 
+                                                 id="comments_@question.Id" 
+                                                 style="display: @(existingResponse?.ResponseValue == "No" || existingResponse?.ResponseValue == "Partial" || !string.IsNullOrEmpty(existingResponse?.Comments) ? "block" : "none")">
+                                                <textarea class="form-control comments-textarea" 
+                                                          name="comments_@question.Id" 
+                                                          rows="2" 
+                                                          placeholder="Enter comments (required for No/Partial responses)">@(existingResponse?.Comments)</textarea>
+                                                <small class="text-muted">Comments are required for "No" and "Partial" responses</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                }
+                            </div>
+                        </div>
+                    }
+                    
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <button type="button" class="btn btn-success btn-lg me-3" onclick="submitAudit()">
+                                <i class="fas fa-check me-2"></i>Complete Audit
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-lg" onclick="saveProgress()">
+                                <i class="fas fa-save me-2"></i>Save Progress
+                            </button>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="card shadow">
+                        <div class="card-body text-center py-5">
+                            <i class="fas fa-question-circle fa-4x text-gray-300 mb-3"></i>
+                            <h4 class="text-gray-600">No Questions Available</h4>
+                            <p class="text-gray-500">There are no audit questions configured for this service.</p>
+                            <a href="@Url.Action("Questionnaires", "Manager")" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Create Questions
+                            </a>
+                        </div>
+                    </div>
+                }
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Toggle comments section
+            $('.toggle-comments').click(function() {
+                var questionId = $(this).data('question-id');
+                var commentsSection = $('#comments_' + questionId);
+                commentsSection.toggle();
+            });
+
+            // Show/hide comments based on response
+            $('.response-radio').change(function() {
+                var questionId = $(this).closest('.question-row').data('question-id');
+                var value = $(this).val();
+                var commentsSection = $('#comments_' + questionId);
+                var commentsTextarea = commentsSection.find('textarea');
+
+                if (value === 'No' || value === 'Partial') {
+                    commentsSection.show();
+                    commentsTextarea.prop('required', true);
+                } else {
+                    commentsSection.hide();
+                    commentsTextarea.prop('required', false);
+                }
+            });
+        });
+
+        function validateForm() {
+            var isValid = true;
+            var errors = [];
+
+            $('.question-row').each(function() {
+                var questionId = $(this).data('question-id');
+                var selectedResponse = $('input[name="question_' + questionId + '"]:checked');
+                
+                if (selectedResponse.length === 0) {
+                    errors.push('Please answer all questions');
+                    isValid = false;
+                    return false;
+                }
+
+                var responseValue = selectedResponse.val();
+                var commentsTextarea = $('#comments_' + questionId + ' textarea');
+                
+                if ((responseValue === 'No' || responseValue === 'Partial') && !commentsTextarea.val().trim()) {
+                    errors.push('Comments are required for "No" and "Partial" responses');
+                    commentsTextarea.addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    commentsTextarea.removeClass('is-invalid');
+                }
+            });
+
+            if (!isValid) {
+                alert(errors.join('\n'));
+            }
+
+            return isValid;
+        }
+
+        function collectFormData() {
+            var questionResponses = [];
+            
+            $('.question-row').each(function() {
+                var questionId = $(this).data('question-id');
+                var selectedResponse = $('input[name="question_' + questionId + '"]:checked');
+                var commentsTextarea = $('#comments_' + questionId + ' textarea');
+                
+                if (selectedResponse.length > 0) {
+                    questionResponses.push({
+                        QuestionId: questionId,
+                        ResponseValue: selectedResponse.val(),
+                        Comments: commentsTextarea.val().trim()
+                    });
+                }
+            });
+
+            return {
+                BookingId: parseInt($('#bookingId').val()),
+                QuestionResponses: questionResponses
+            };
+        }
+
+        function submitAudit() {
+            if (!validateForm()) {
+                return;
+            }
+
+            if (!confirm('Are you sure you want to complete this audit? This action cannot be undone.')) {
+                return;
+            }
+
+            var formData = collectFormData();
+            
+            $.ajax({
+                url: '@Url.Action("SubmitAuditResponse")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        var message = 'Audit completed successfully!';
+                        if (response.requiresCAP) {
+                            message += ' A Corrective Action Plan has been generated and sent to the member.';
+                        }
+                        alert(message);
+                        window.location.href = '@Url.Action("Index")';
+                    } else {
+                        alert('Error submitting audit: ' + response.message);
+                    }
+                },
+                error: function() {
+                    alert('An error occurred while submitting the audit.');
+                }
+            });
+        }
+
+        function saveProgress() {
+            var formData = collectFormData();
+            
+            // Save progress logic here
+            alert('Progress saved successfully!');
+        }
+    </script>
+}

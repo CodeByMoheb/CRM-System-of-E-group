@@ -1,0 +1,1000 @@
+@{
+    ViewData["Title"] = "About Us";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* Responsive styles for AboutUs page */
+    .hero-section {
+        background-image: url('https://res.cloudinary.com/drz65fsga/image/upload/v1757575987/eg_dzghie.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        opacity: 0.8;
+        background-color: #0000009e;
+        background-blend-mode: multiply;
+        color: #ffffff;
+        padding: 40px 20px 50px 20px;
+        text-align: center;
+        width: 100vw;
+        margin-left: calc(-50vw + 50%);
+
+    }
+
+    .hero-content {
+        max-width: 900px;
+        margin: 0 auto;
+        margin-top: 40px;
+    }
+
+    .hero-title {
+        font-size: 2.8rem;
+        font-weight: 700;
+        margin-bottom: 18px;
+        line-height: 1.2;
+    }
+
+    .hero-subtitle {
+        font-size: 1.25rem;
+        margin-bottom: 10px;
+        line-height: 1.5;
+    }
+
+    .hero-location {
+        margin-top: 18px;
+        font-size: 1.1rem;
+    }
+
+    .content-section {
+        background: #fff;
+        padding: 40px 20px;
+    }
+
+    .content-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: flex-start;
+        gap: 32px;
+        flex-wrap: wrap;
+    }
+
+    .text-column {
+        flex: 1 1 350px;
+        min-width: 320px;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border-radius: 20px;
+        padding: 32px 28px;
+        box-shadow: 0 8px 32px rgba(44, 62, 80, 0.08);
+        border: 1px solid rgba(37, 99, 235, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .text-column::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 100%;
+        background: linear-gradient(180deg, #ff8c00, #0080ff, #ff0000, #00cc44);
+        border-radius: 0 3px 3px 0;
+    }
+
+    .section-title {
+        color: #1e293b;
+        font-weight: 800;
+        margin-bottom: 24px;
+        font-size: 2.2rem;
+        position: relative;
+        padding-left: 20px;
+        line-height: 1.2;
+        text-align: center;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(90deg, #ff8c00, #0080ff);
+        border-radius: 2px;
+    }
+
+    .section-text {
+        font-size: 1.1rem;
+        color: #475569;
+        margin-bottom: 28px;
+        line-height: 1.7;
+        padding-left: 20px;
+        font-weight: 400;
+        text-align: justify;
+    }
+
+    .text-list {
+        font-size: 1.08rem;
+        color: #334155;
+        padding-left: 20px;
+    }
+
+    .text-list ol {
+        margin: 0;
+        padding-left: 0;
+        line-height: 1.7;
+        counter-reset: item;
+        list-style: none;
+    }
+
+    .text-list li {
+        margin-bottom: 20px;
+        padding: 16px 20px 16px 60px;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(248, 250, 252, 0.9) 100%);
+        border-radius: 12px;
+        border-left: 4px solid transparent;
+        position: relative;
+        transition: all 0.3s ease;
+        counter-increment: item;
+        box-shadow: 0 2px 8px rgba(44, 62, 80, 0.04);
+    }
+
+    .text-list li::before {
+        content: counter(item);
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 28px;
+        height: 28px;
+        background: linear-gradient(135deg, #ff8c00, #0080ff);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+
+    .text-list li:nth-child(odd) {
+        border-left-color: #ff8c00;
+    }
+
+    .text-list li:nth-child(even) {
+        border-left-color: #0080ff;
+    }
+
+    .text-list li:nth-child(3n) {
+        border-left-color: #ff0000;
+    }
+
+    .text-list li:nth-child(4n) {
+        border-left-color: #00cc44;
+    }
+
+    .text-list li:hover {
+        transform: translateX(8px);
+        box-shadow: 0 8px 25px rgba(44, 62, 80, 0.12);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 1) 100%);
+    }
+
+    .text-list li strong {
+        color: #1e293b;
+        font-weight: 700;
+        font-size: 1.05em;
+    }
+
+    .images-column {
+        flex: 1 1 300px;
+        min-width: 300px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .story-image {
+        width: 100%;
+        max-width: 380px;
+        height: 75vh;
+        margin-top: 20px;
+        border-radius: 12px;
+        object-fit: center;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
+    }
+
+    .foundation-section {
+        background: #fafbfc;
+        padding: 50px 20px 30px 20px;
+        margin-bottom:20px;
+
+    }
+
+    .foundation-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .foundation-subtitle {
+        color: #444;
+        font-size: 1.1rem;
+        margin-bottom: 32px;
+        line-height: 1.5;
+    }
+
+    .cards-container {
+        display: flex;
+        gap: 18px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 36px;
+    }
+
+    .foundation-card {
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(44, 62, 80, 0.12);
+        padding: 32px 24px;
+        flex: 1 1 260px;
+        max-width: 340px;
+        min-width: 220px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* Mission Card - Orange Theme */
+    .foundation-card:nth-child(1) {
+        background: linear-gradient(135deg, #ff8c00 0%, #ffa500 100%);
+        color: white;
+    }
+
+    .foundation-card:nth-child(1):hover {
+        background: linear-gradient(135deg, #ff7700 0%, #ff9500 100%);
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(255, 140, 0, 0.4);
+    }
+
+    /* Vision Card - Blue Theme */
+    .foundation-card:nth-child(2) {
+        background: linear-gradient(135deg, #0080ff 0%, #0099ff 100%);
+        color: white;
+    }
+
+    .foundation-card:nth-child(2):hover {
+        background: linear-gradient(135deg, #0070ee 0%, #0088ee 100%);
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 128, 255, 0.4);
+    }
+
+    /* Philosophy Card - Red Theme */
+    .foundation-card:nth-child(3) {
+        background: linear-gradient(135deg, #ff0000 0%, #ff3333 100%);
+        color: white;
+    }
+
+    .foundation-card:nth-child(3):hover {
+        background: linear-gradient(135deg, #ee0000 0%, #ff2222 100%);
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(255, 0, 0, 0.4);
+    }
+
+    .foundation-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.3);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .foundation-card:hover::before {
+        opacity: 1;
+    }
+
+    .card-icon {
+        font-size: 2.8rem;
+        margin-bottom: 16px;
+        padding: 16px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        color: white;
+    }
+
+    .foundation-card:hover .card-icon {
+        transform: scale(1.1);
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    .card-title {
+        font-weight: 700;
+        margin-bottom: 12px;
+        font-size: 1.3rem;
+        color: white;
+        position: relative;
+    }
+
+    .card-text {
+        color: rgba(255, 255, 255, 0.95);
+        font-size: 1rem;
+        line-height: 1.6;
+        text-align: justify;
+    }
+
+    .values-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .value-card {
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(44, 62, 80, 0.08);
+        padding: 32px 24px;
+        height: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        color: white;
+    }
+
+    /* Compassion Card - Orange Theme */
+    .value-card:nth-child(1) {
+        background: linear-gradient(135deg, #ff8c00 0%, #ffa500 100%);
+    }
+
+    .value-card:nth-child(1):hover {
+        background: linear-gradient(135deg, #ff7700 0%, #ff9500 100%);
+        transform: translateY(-12px) scale(1.02);
+        box-shadow: 0 25px 50px rgba(255, 140, 0, 0.3);
+    }
+
+    /* Integrity Card - Blue Theme */
+    .value-card:nth-child(2) {
+        background: linear-gradient(135deg, #0080ff 0%, #0099ff 100%);
+    }
+
+    .value-card:nth-child(2):hover {
+        background: linear-gradient(135deg, #0070ee 0%, #0088ee 100%);
+        transform: translateY(-12px) scale(1.02);
+        box-shadow: 0 25px 50px rgba(0, 128, 255, 0.3);
+    }
+
+    /* Community-Centered Card - Red Theme */
+    .value-card:nth-child(3) {
+        background: linear-gradient(135deg, #ff0000 0%, #ff3333 100%);
+    }
+
+    .value-card:nth-child(3):hover {
+        background: linear-gradient(135deg, #ee0000 0%, #ff2222 100%);
+        transform: translateY(-12px) scale(1.02);
+        box-shadow: 0 25px 50px rgba(255, 0, 0, 0.3);
+    }
+
+    /* Impact-Driven Card - Green Theme */
+    .value-card:nth-child(4) {
+        background: linear-gradient(135deg, #00cc44 0%, #00dd55 100%);
+    }
+
+    .value-card:nth-child(4):hover {
+        background: linear-gradient(135deg, #00bb33 0%, #00cc44 100%);
+        transform: translateY(-12px) scale(1.02);
+        box-shadow: 0 25px 50px rgba(0, 204, 68, 0.3);
+    }
+
+    /* Excellence Card - Orange Theme (Second Orange) */
+    .value-card:nth-child(5) {
+        background: linear-gradient(135deg, #ff6600 0%, #ff7722 100%);
+    }
+
+    .value-card:nth-child(5):hover {
+        background: linear-gradient(135deg, #ee5500 0%, #ff6611 100%);
+        transform: translateY(-12px) scale(1.02);
+        box-shadow: 0 25px 50px rgba(255, 102, 0, 0.3);
+    }
+
+    /* Transparency Card - Blue Theme (Second Blue) */
+    .value-card:nth-child(6) {
+        background: linear-gradient(135deg, #0066cc 0%, #0077dd 100%);
+    }
+
+    .value-card:nth-child(6):hover {
+        background: linear-gradient(135deg, #0055bb 0%, #0066cc 100%);
+        transform: translateY(-12px) scale(1.02);
+        box-shadow: 0 25px 50px rgba(0, 102, 204, 0.3);
+    }
+
+    .value-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.3);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .value-card:hover::before {
+        opacity: 1;
+    }
+
+    .value-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        color: white;
+        padding: 20px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.4s ease;
+        position: relative;
+        z-index: 2;
+    }
+
+    .value-card:hover .value-icon {
+        transform: scale(1.15) rotate(5deg);
+        background: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+    }
+
+    .value-content {
+        flex: 1;
+        position: relative;
+        z-index: 2;
+    }
+
+    .value-title {
+        font-weight: 700;
+        margin-bottom: 16px;
+        font-size: 1.3rem;
+        color: white;
+        position: relative;
+    }
+
+    .value-title::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 3px;
+        background: rgba(255, 255, 255, 0.4);
+        border-radius: 2px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .value-card:hover .value-title::after {
+        opacity: 1;
+    }
+
+    .value-description {
+        color: rgba(255, 255, 255, 0.95);
+        font-size: 1rem;
+        line-height: 1.6;
+        text-align: center;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Mobile Responsive Styles */
+    @@media (max-width: 768px) {
+        .hero-title {
+            font-size: 2rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+        }
+
+        .hero-location {
+            font-size: 1rem;
+        }
+
+        .content-section {
+            padding: 30px 15px;
+        }
+
+        .content-container {
+            gap: 20px;
+        }
+
+        .text-column {
+            flex: 1 1 100%;
+            padding: 24px 20px;
+            min-width: auto;
+            border-radius: 16px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            padding-left: 16px;
+        }
+
+        .section-title::after {
+            left: 16px;
+            width: 50px;
+        }
+
+        .section-text {
+            padding-left: 16px;
+            font-size: 1.05rem;
+        }
+
+        .text-list {
+            padding-left: 16px;
+        }
+
+        .text-list li {
+            padding: 14px 16px 14px 50px;
+            margin-bottom: 16px;
+        }
+
+        .text-list li::before {
+            width: 24px;
+            height: 24px;
+            left: 16px;
+            font-size: 0.8rem;
+        }
+
+        .images-column {
+            flex: 1 1 100%;
+            min-width: auto;
+            justify-content: space-between;
+        }
+
+        .story-image {
+            width: 70%;
+            min-width: 100px;
+        }
+
+        .foundation-section {
+            padding: 40px 15px 20px 15px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+        }
+
+        .foundation-subtitle {
+            font-size: 1rem;
+        }
+
+        .cards-container {
+            gap: 15px;
+        }
+
+        .foundation-card {
+            flex: 1 1 100%;
+            max-width: none;
+            min-width: auto;
+            padding: 28px 20px;
+            border-radius: 12px;
+        }
+
+        .foundation-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .card-icon {
+            font-size: 2.4rem;
+            padding: 12px;
+        }
+
+        .values-container {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .value-card {
+            padding: 28px 20px;
+            border-radius: 16px;
+        }
+
+        .value-card:hover {
+            transform: translateY(-6px) scale(1.01);
+        }
+
+        .value-icon {
+            font-size: 2.4rem;
+            padding: 16px;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .hero-title {
+            font-size: 1.6rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+        }
+
+        .content-section {
+            padding: 25px 10px;
+        }
+
+        .text-column {
+            padding: 20px 16px;
+            border-radius: 12px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            padding-left: 12px;
+        }
+
+        .section-title::after {
+            left: 12px;
+            width: 40px;
+            height: 3px;
+        }
+
+        .section-text {
+            padding-left: 12px;
+            font-size: 1rem;
+        }
+
+        .text-list {
+            padding-left: 12px;
+        }
+
+        .text-list li {
+            padding: 12px 14px 12px 45px;
+            margin-bottom: 14px;
+            border-radius: 10px;
+        }
+
+        .text-list li::before {
+            width: 22px;
+            height: 22px;
+            left: 14px;
+            font-size: 0.75rem;
+        }
+
+        .text-list li:hover {
+            transform: translateX(4px);
+        }
+
+        .foundation-section {
+            padding: 30px 10px 15px 10px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+        }
+
+        .section-text {
+            font-size: 1rem;
+        }
+
+        .text-list {
+            font-size: 1rem;
+        }
+
+        .images-column {
+            gap: 6px;
+        }
+
+        .story-image {
+            width: 80%;
+            min-width: 120px;
+        }
+
+        .foundation-card {
+            padding: 24px 16px;
+            border-radius: 10px;
+        }
+
+        .foundation-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card-icon {
+            font-size: 2.2rem;
+            padding: 10px;
+        }
+
+        .value-card {
+            padding: 24px 16px;
+            border-radius: 12px;
+        }
+
+        .value-card:hover {
+            transform: translateY(-4px) scale(1.005);
+        }
+
+        .value-icon {
+            font-size: 2.2rem;
+            padding: 12px;
+        }
+
+        .value-title {
+            font-size: 1rem;
+        }
+
+        .value-description {
+            font-size: 0.9rem;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .values-container {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+    }
+
+    @@media (max-width: 360px) {
+        .hero-title {
+            font-size: 1.4rem;
+        }
+
+        .hero-subtitle {
+            font-size: 0.9rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+        }
+
+        .story-image {
+            min-width: 200px;
+        }
+
+        .value-card {
+            padding: 18px 10px;
+        }
+
+        .value-icon {
+            font-size: 1.8rem;
+        }
+    }
+</style>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">E-GROUP</h1>
+        <p class="hero-subtitle">
+       E-GROUP is a dynamic business conglomerate in Bangladesh with a diverse range of sister concerns across different industries. Each concern is committed to excellence, innovation, and sustainable growth, ensuring value for both society and the economy.
+            </p>
+        <div class="hero-location">Sector 13, Uttara, Dhaka-1230</div>
+    </div>
+</section>
+
+<!-- Sister Concerns Section -->
+<section class="content-section">
+    <div class="content-container">
+        <h2 class="section-title" style="text-align: center; margin-bottom: 20px;">Sister Concerns of E-GROUP</h2>
+        <p class="section-text" style="text-align: center; margin-bottom: 40px; max-width: 800px; margin-left: auto; margin-right: auto;">
+            E-GROUP is a dynamic business conglomerate in Bangladesh with a diverse range of sister concerns across different industries. Each concern is committed to excellence, innovation, and sustainable growth, ensuring value for both society and the economy.
+        </p>
+        
+        <!-- First Row: Concerns 1-5 -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; margin-bottom: 30px;">
+            <!-- Card 1: E-TEX Solution -->
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); padding: 25px 20px; text-align: center; transition: all 0.3s ease; border: 1px solid rgba(59, 130, 246, 0.1);">
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #3b82f6, #6366f1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto;">
+                   <img src="https://www.e-groupbd.com/services/etex.png" alt="E-TEX Solution" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                </div>
+                <h3 style="color: #1e293b; font-size: 1.1rem; font-weight: 700; margin-bottom: 10px;">E-TEX Solution</h3>
+                <p style="color: #64748b; font-size: 0.9rem; line-height: 1.5; margin: 0;">A leading name in the textile and apparel sector.</p>
+            </div>
+
+            <!-- Card 2: EPIC Sustainable Certification -->
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); padding: 25px 20px; text-align: center; transition: all 0.3s ease; border: 1px solid rgba(59, 130, 246, 0.1);">
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto;">
+                   <img src="https://res.cloudinary.com/drz65fsga/image/upload/v1758719777/epic_yvy2w5.jpg" alt="EPIC Sustainable Certification" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                </div>
+                <h3 style="color: #1e293b; font-size: 1.1rem; font-weight: 700; margin-bottom: 10px;">EPIC Sustainable Certification</h3>
+                <p style="color: #64748b; font-size: 0.9rem; line-height: 1.5; margin: 0;">Ensuring international standards and sustainable business practices through certification.</p>
+            </div>
+
+            <!-- Card 3: Paradise Interior & Exterior -->
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); padding: 25px 20px; text-align: center; transition: all 0.3s ease; border: 1px solid rgba(59, 130, 246, 0.1);">
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto;">
+                    <img src="https://www.e-groupbd.com/services/interior.png" alt="Paradise Interior & Exterior" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                </div>
+                <h3 style="color: #1e293b; font-size: 1.1rem; font-weight: 700; margin-bottom: 10px;">Paradise Interior & Exterior</h3>
+                <p style="color: #64748b; font-size: 0.9rem; line-height: 1.5; margin: 0;">Specialized in modern interior and exterior design solutions.</p>
+            </div>
+
+            <!-- Card 4: 1st Dental -->
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); padding: 25px 20px; text-align: center; transition: all 0.3s ease; border: 1px solid rgba(59, 130, 246, 0.1);">
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #ef4444, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto;">
+                    <img src="https://res.cloudinary.com/drz65fsga/image/upload/v1758719646/1st_dental_zqqdkq.jpg" alt="1st Dental" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                </div>
+                <h3 style="color: #1e293b; font-size: 1.1rem; font-weight: 700; margin-bottom: 10px;">1st Dental</h3>
+                <p style="color: #64748b; font-size: 0.9rem; line-height: 1.5; margin: 0;">Providing advanced dental care and oral health services.</p>
+            </div>
+        </div>
+
+        <!-- Second Row: Concerns 6-10 -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; margin-bottom: 30px;">
+            <!-- Card 5: E-Builders -->
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); padding: 25px 20px; text-align: center; transition: all 0.3s ease; border: 1px solid rgba(59, 130, 246, 0.1);">
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #8b5cf6, #7c3aed); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto;">
+                    <img src="https://www.e-groupbd.com/services/ebuilder.png" alt="E-Builders" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                </div>
+                <h3 style="color: #1e293b; font-size: 1.1rem; font-weight: 700; margin-bottom: 10px;">E-Builders</h3>
+                <p style="color: #64748b; font-size: 0.9rem; line-height: 1.5; margin: 0;">Engaged in real estate development and construction projects.</p>
+            </div>
+
+            <!-- Card 6: E-TEX Soft -->
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); padding: 25px 20px; text-align: center; transition: all 0.3s ease; border: 1px solid rgba(59, 130, 246, 0.1);">
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #06b6d4, #0891b2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto;">
+                    <img src="https://www.e-groupbd.com/services/soft.png" alt="E-TEX Soft" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                </div>
+                <h3 style="color: #1e293b; font-size: 1.1rem; font-weight: 700; margin-bottom: 10px;">E-TEX Soft</h3>
+                <p style="color: #64748b; font-size: 0.9rem; line-height: 1.5; margin: 0;">IT and software solutions for businesses and organizations.</p>
+            </div>
+
+            <!-- Card 7: TEX Global Venture -->
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); padding: 25px 20px; text-align: center; transition: all 0.3s ease; border: 1px solid rgba(59, 130, 246, 0.1);">
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #ec4899, #db2777); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto;">
+                    <img src="https://www.e-groupbd.com/services/onestop.png" alt="TEX Global Venture" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                </div>
+                <h3 style="color: #1e293b; font-size: 1.1rem; font-weight: 700; margin-bottom: 10px;">TEX Global Venture</h3>
+                <p style="color: #64748b; font-size: 0.9rem; line-height: 1.5; margin: 0;">Global trading and business expansion platform.</p>
+            </div>
+
+            <!-- Card 8: International Sustainable Platform (ISP) -->
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); padding: 25px 20px; text-align: center; transition: all 0.3s ease; border: 1px solid rgba(59, 130, 246, 0.1);">
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #84cc16, #65a30d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto;">
+                    <img src="https://res.cloudinary.com/drz65fsga/image/upload/v1758719646/isp_hefudd.jpg" alt="International Sustainable Platform (ISP)" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                </div>
+                <h3 style="color: #1e293b; font-size: 1.1rem; font-weight: 700; margin-bottom: 10px;">International Sustainable Platform (ISP)</h3>
+                <p style="color: #64748b; font-size: 0.9rem; line-height: 1.5; margin: 0;">Promoting global sustainability initiatives.</p>
+            </div>
+        </div>
+
+        <!-- Third Row: Remaining Concerns + Image -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px;">
+            <!-- Card 9: EPIC Pharma -->
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); padding: 25px 20px; text-align: center; transition: all 0.3s ease; border: 1px solid rgba(59, 130, 246, 0.1);">
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #f97316, #ea580c); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto;">
+                    <img src="https://www.e-groupbd.com/services/pharma.png" alt="EPIC Pharma" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                </div>
+                <h3 style="color: #1e293b; font-size: 1.1rem; font-weight: 700; margin-bottom: 10px;">EPIC Pharma</h3>
+                <p style="color: #64748b; font-size: 0.9rem; line-height: 1.5; margin: 0;">Delivering high-quality pharmaceutical products for better healthcare.</p>
+            </div>
+
+            <!-- Card 10: USB Bangladesh Ltd -->
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); padding: 25px 20px; text-align: center; transition: all 0.3s ease; border: 1px solid rgba(59, 130, 246, 0.1);">
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #6366f1, #4f46e5); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto;">
+                    <img src="https://res.cloudinary.com/drz65fsga/image/upload/v1758719312/usb_wyej65.webp" alt="USB Bangladesh Ltd" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                </div>
+                <h3 style="color: #1e293b; font-size: 1.1rem; font-weight: 700; margin-bottom: 10px;">USB Bangladesh Ltd</h3>
+                <p style="color: #64748b; font-size: 0.9rem; line-height: 1.5; margin: 0;">A reputed certification and compliance service provider.</p>
+            </div>
+
+            <!-- Image Section - Spans 2 columns -->
+            
+        </div>
+    </div>
+</section>
+
+<!-- Our Organization Section -->
+<section class="foundation-section">
+    <div class="foundation-container">
+        <h2 class="section-title">Our Organization</h2>
+        <div class="foundation-subtitle">To deliver innovative, reliable, and sustainable solutions that empower businesses and communities, fostering growth, efficiency, and technological advancement</div>
+
+        <!-- Mission, Vision, Philosophy Cards -->
+        <div class="cards-container">
+            <div class="foundation-card">
+                <div class="card-icon" style="color: #2563eb;"><i class="fas fa-bullseye"></i></div>
+                <h3 class="card-title">Our Mission</h3>
+                <div class="card-text">
+                    E-GROUP is a dynamic, innovative, and service-driven organization committed to excellence in every sector we operate. Our primary goal is to provide efficient management, technological solutions, and sustainable development for our clients and communities, fostering a modern, productive, and harmonious environment.
+                </div>
+            </div>
+            <div class="foundation-card">
+                <div class="card-icon" style="color: #6c47b6;"><i class="fas fa-eye"></i></div>
+                <h3 class="card-title">Our Vision</h3>
+                <div class="card-text">
+                    To be a leading, innovative, and trusted organization that delivers excellence, sustainable growth, and modern solutions, creating a harmonious and prosperous environment for clients and communities
+                </div>
+            </div>
+            <div class="foundation-card">
+                <div class="card-icon" style="color: #e53935;"><i class="fas fa-heart"></i></div>
+                <h3 class="card-title">Our Philosophy</h3>
+                <div class="card-text">
+                    At E-GROUP, we believe that real success comes when people work together with shared values and respect. We focus on helping each other, staying innovative, and being responsible, so everyone can grow and thrive. We value honesty, teamwork, and new ideas to create a modern, peaceful, and productive environment.
+                </div>
+            </div>
+        </div>
+
+        <h3 class="section-title">Our Core Values</h3>
+        <p class="text-success">We believe that real success comes when people work together in a friendly and inclusive environment, where everyone is respected and can contribute.</p>
+        <!-- Core Values Cards -->
+        <div class="values-container">
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-hand-holding-heart"></i>
+                </div>
+                <div class="value-title">Compassion</div>
+                <div class="value-description">
+                    We care about people and believe in showing empathy and support, especially in difficult times. A caring organization is a strong organization.
+                </div>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-balance-scale"></i>
+                </div>
+                <div class="value-title">Integrity</div>
+                <div class="value-description">
+                    We act honestly, transparently, and ethically in everything we do. Honesty builds trust and is the foundation of long-term success.
+                </div>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="value-title">Community-Centered</div>
+                <div class="value-description">
+                    We put the well-being of our clients, employees, and community first. Every decision we make considers the needs and voices of those we serve.
+                </div>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-bullseye"></i>
+                </div>
+                <div class="value-title">Impact-Driven</div>
+                <div class="value-description">
+                    We focus on actions that create real, lasting, and meaningful results. Every project and initiative is aimed at making a positive difference.
+                </div>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="value-title">Excellence</div>
+                <div class="value-description">
+                    We strive for the highest quality in everything—from services to operations. Our goal is to deliver work with dedication, skill, and consistency.
+                </div>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-unlock-alt"></i>
+                </div>
+                <div class="value-title">Transparency</div>
+                <div class="value-description">
+                    We communicate openly and share information honestly. Being transparent builds trust, accountability, and confidence among everyone involved.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+

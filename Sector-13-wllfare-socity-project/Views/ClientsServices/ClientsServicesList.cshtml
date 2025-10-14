@@ -1,0 +1,99 @@
+﻿@model IEnumerable<ClientsServices>
+@{
+    ViewData["Title"] = "Our Services List";
+    Layout = "_Layout";
+}
+
+<div class="container py-5">
+    <div class="services-title-wrapper text-center mb-5">
+        <h2 class="services-title">Our Services List</h2>
+        <div class="services-title-underline mx-auto mt-2"></div>
+    </div>
+
+    <div class="row justify-content-center g-4">
+        @foreach (var item in Model ?? Enumerable.Empty<ClientsServices>())
+        {
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100 service-card text-center border-0 rounded-3 shadow-sm">
+                    <div class="card-top-border"></div>
+                    <div class="card-body d-flex flex-column">
+                        <img src="@(string.IsNullOrEmpty(item.ExistingImageUrl) ? "/photos/default.png" : item.ExistingImageUrl)"
+                             class="rounded-circle mb-3 mx-auto service-image"
+                             style="width:80px; height:80px; object-fit:cover;"
+                             alt="@item.Title" />
+
+                        <h5 class="card-title fw-bold">@item.Title</h5>
+
+                        <p class="card-text text-muted flex-fill" style="font-size:0.9rem;">
+                            @(item.Description != null && item.Description.Length > 100
+                                ? item.Description.Substring(0, 100) + "..."
+                                : item.Description ?? "")
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    /* Modern Title Styling */
+    .services-title-wrapper {
+        margin-top: 100px; /* Space from navbar */
+    }
+
+    .services-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #333;
+        position: relative;
+        display: inline-block;
+    }
+
+    .services-title-underline {
+        width: 80px;
+        height: 4px;
+        background: #d32f2f; /* Accent color */
+        border-radius: 2px;
+    }
+
+    /* Card hover effect with top border */
+    .service-card {
+        position: relative;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .service-card .card-top-border {
+        height: 5px;
+        width: 100%;
+        background-color: transparent;
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-top-left-radius: 0.75rem;
+        border-top-right-radius: 0.75rem;
+        transition: background-color 0.3s;
+    }
+
+    .service-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 25px rgba(0,0,0,0.15);
+    }
+
+    .service-card:hover .card-top-border {
+        background-color: #d32f2f; /* Red like your screenshot */
+    }
+
+    /* Image border */
+    .service-image {
+        border: 2px solid #dee2e6; /* Light gray border */
+    }
+
+    /* Ensure spacing for mobile */
+    @@media (max-width: 767.98px) {
+        .service-card { margin-bottom: 1.5rem; }
+        .services-title {
+            font-size: 2rem;
+        }
+    }
+</style>

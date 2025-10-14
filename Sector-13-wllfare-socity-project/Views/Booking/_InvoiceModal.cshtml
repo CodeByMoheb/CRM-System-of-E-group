@@ -1,0 +1,318 @@
+@model Sector_13_Welfare_Society___Digital_Management_System.Models.Booking
+
+<div class="invoice-container">
+    <!-- Invoice Header -->
+    <div class="row mb-4">
+        <div class="col-6">
+            <div class="d-flex align-items-center mb-2">
+                <img src="~/E-Group.png" alt="E-Group Logo" class="invoice-logo me-3" />
+            </div>
+            <div class="company-address">
+                <p class="text-muted mb-1 small">23 Gareeb-e-Newaz Ave,Sector 13, Dhaka 1230, Bangladesh</p>
+                <p class="text-muted mb-1 small">E-Group Limited</p>
+                
+            </div>
+        </div>
+        <div class="col-6 text-end">
+            <h4 class="invoice-title mb-3">INVOICE</h4>
+            <div class="invoice-details">
+                <p class="text-muted mb-1 small"><strong>Invoice #:</strong> @Model.BookingNumber</p>
+                <p class="text-muted mb-1 small"><strong>Date:</strong> @Model.BookingDate.ToString("dd/MM/yyyy")</p>
+                @if (Model.ServiceDate.HasValue)
+                {
+                    <p class="text-muted mb-1 small"><strong>Service Date:</strong> @Model.ServiceDate.Value.ToString("dd/MM/yyyy")</p>
+                }
+                <p class="text-muted mb-0 small"><strong>Balance Due:</strong> <span class="text-primary fw-bold">$@Model.TotalAmount.ToString("N2")</span></p>
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-4">
+
+    <!-- Customer Information -->
+    <div class="row mb-4">
+        <div class="col-6">
+            <h5 class="text-dark mb-3 fw-bold">Bill To:</h5>
+            <div class="client-info">
+                <p class="mb-1 fw-bold">@Model.CustomerName</p>
+                @if (!string.IsNullOrEmpty(Model.CompanyName))
+                {
+                    <p class="mb-1 text-muted small">@Model.CompanyName</p>
+                }
+                <p class="mb-1 small">@Model.CustomerEmail</p>
+                <p class="mb-1 small">@Model.CustomerPhone</p>
+                @if (!string.IsNullOrEmpty(Model.CustomerAddress))
+                {
+                    <p class="mb-0 text-muted small">@Model.CustomerAddress</p>
+                }
+            </div>
+        </div>
+        <div class="col-6 text-end">
+            <h5 class="text-dark mb-3 fw-bold">Payment Information:</h5>
+            <div class="payment-info">
+                <p class="mb-1 small"><strong>Method:</strong> @Model.PaymentMethod</p>
+                <p class="mb-1 small"><strong>Status:</strong> 
+                    <span class="badge bg-@(Model.PaymentStatus == "Completed" ? "success" : Model.PaymentStatus == "Pending" ? "warning" : "danger")">
+                        @Model.PaymentStatus
+                    </span>
+                </p>
+                @if (!string.IsNullOrEmpty(Model.TransactionId))
+                {
+                    <p class="mb-0 small"><strong>Transaction ID:</strong> @Model.TransactionId</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Services Table -->
+    <div class="table-responsive mb-4">
+        <table class="table invoice-table">
+            <thead>
+                <tr>
+                    <th class="text-start">Item</th>
+                    <th class="text-start">Description</th>
+                    <th class="text-end">Unit Cost</th>
+                    <th class="text-center">Quantity</th>
+                    <th class="text-end">Line Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.BookingItems)
+                {
+                    <tr>
+                        <td class="text-primary fw-bold">@item.ServiceName</td>
+                        <td class="text-muted">@(string.IsNullOrEmpty(item.ServiceDescription) ? "-" : item.ServiceDescription)</td>
+                        <td class="text-end">$@item.UnitPrice.ToString("N2")</td>
+                        <td class="text-center">@item.Quantity</td>
+                        <td class="text-end fw-bold">$@item.Subtotal.ToString("N2")</td>
+                    </tr>
+                    
+                    @if (item.TravelAllowance.HasValue && item.TravelAllowance > 0)
+                    {
+                        <tr>
+                            <td class="text-primary fw-bold">Travel Allowance</td>
+                            <td class="text-muted">-</td>
+                            <td class="text-end">$@item.TravelAllowance.Value.ToString("N2")</td>
+                            <td class="text-center">1</td>
+                            <td class="text-end fw-bold">$@item.TravelAllowance.Value.ToString("N2")</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Totals -->
+    <div class="row">
+        <div class="col-8">
+            <p class="text-muted mb-0 mt-3">Thanks for your business!</p>
+        </div>
+        <div class="col-4">
+            <table class="table table-sm totals-table">
+                @{
+                    // Use the correct server-side calculations from BookingItem
+                    var serviceSubtotal = Model.BookingItems.Sum(item => item.Subtotal);
+                    var travelAllowanceTotal = Model.BookingItems.Sum(item => item.TravelAllowance ?? 0);
+                    var subtotal = serviceSubtotal + travelAllowanceTotal;
+                    
+                    // Use the VAT amount from the first BookingItem (which contains the correct VAT)
+                    var vatAmount = Model.BookingItems.FirstOrDefault()?.VatAmount ?? 0;
+                    var totalAmount = Model.TotalAmount;
+                }
+                <tr>
+                    <td class="text-start"><strong>Subtotal:</strong></td>
+                    <td class="text-end fw-bold">$@subtotal.ToString("N2")</td>
+                </tr>
+                @if (vatAmount > 0)
+                {
+                    <tr>
+                        <td class="text-start">VAT (15%):</td>
+                        <td class="text-end">$@vatAmount.ToString("N2")</td>
+                    </tr>
+                }
+                <tr>
+                    <td class="text-start">Paid To Date:</td>
+                    <td class="text-end">$0.00</td>
+                </tr>
+                <tr class="balance-due">
+                    <td class="text-start"><strong>Balance Due:</strong></td>
+                    <td class="text-end text-primary fw-bold">$@totalAmount.ToString("N2")</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Special Requirements -->
+    @if (!string.IsNullOrEmpty(Model.SpecialRequirements))
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <h6 class="text-dark">Special Requirements:</h6>
+                <p class="text-muted">@Model.SpecialRequirements</p>
+            </div>
+        </div>
+    }
+
+    <!-- Notes -->
+    @if (!string.IsNullOrEmpty(Model.Notes))
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <h6 class="text-dark">Notes:</h6>
+                <p class="text-muted">@Model.Notes</p>
+            </div>
+        </div>
+    }
+
+    <!-- Footer -->
+    <div class="row mt-5">
+        <div class="col-12 text-center">
+            <hr class="footer-line">
+            <p class="text-muted mb-0 small">
+                <strong>Thank you for choosing our services!</strong><br>
+                For any queries, please contact us at e-groupbd@gmail.com
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .invoice-container {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+        background: white;
+        padding: 30px;
+        max-width: 800px;
+        margin: 0 auto;
+        border-radius: 8px;
+    }
+    
+    .invoice-logo {
+        height: 40px;
+        width: auto;
+        object-fit: contain;
+    }
+    
+    .invoice-title {
+        color: #007bff;
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+    }
+    
+    .invoice-details p {
+        margin-bottom: 0.25rem;
+    }
+    
+    .company-address p {
+        margin-bottom: 0.25rem;
+    }
+    
+    .client-info p, .payment-info p {
+        margin-bottom: 0.25rem;
+    }
+    
+    .invoice-table {
+        border: none;
+        margin-bottom: 0;
+    }
+    
+    .invoice-table thead th {
+        background-color: #f8f9fa;
+        color: #333;
+        border: none;
+        border-bottom: 2px solid #dee2e6;
+        font-weight: 600;
+        padding: 12px 8px;
+        font-size: 0.9rem;
+    }
+    
+    .invoice-table tbody td {
+        border: none;
+        border-bottom: 1px solid #dee2e6;
+        padding: 12px 8px;
+        vertical-align: middle;
+    }
+    
+    .invoice-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .totals-table {
+        border: none;
+        margin-top: 20px;
+    }
+    
+    .totals-table td {
+        border: none;
+        padding: 8px 0;
+        font-size: 0.9rem;
+    }
+    
+    .balance-due {
+        border-top: 2px solid #007bff !important;
+        background-color: #f8f9fa;
+    }
+    
+    .balance-due td {
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+    
+    .footer-line {
+        border-top: 1px solid #dee2e6;
+        margin: 30px 0 20px 0;
+    }
+    
+    .text-primary {
+        color: #007bff !important;
+    }
+    
+    .fw-bold {
+        font-weight: 700 !important;
+    }
+    
+    .small {
+        font-size: 0.875rem;
+    }
+    
+    @@media print {
+        .invoice-container {
+            font-size: 12px;
+            padding: 20px;
+            max-width: none;
+            margin: 0;
+        }
+        
+        .btn {
+            display: none !important;
+        }
+        
+        .modal-header,
+        .modal-footer {
+            display: none !important;
+        }
+        
+        .modal-body {
+            padding: 0 !important;
+        }
+        
+        .invoice-logo {
+            height: 50px;
+        }
+        
+        .invoice-title {
+            font-size: 1.5rem;
+        }
+        
+        .invoice-table thead th {
+            background-color: #f8f9fa !important;
+            -webkit-print-color-adjust: exact;
+        }
+        
+        .balance-due {
+            background-color: #f8f9fa !important;
+            -webkit-print-color-adjust: exact;
+        }
+    }
+</style>

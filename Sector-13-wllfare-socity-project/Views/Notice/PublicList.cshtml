@@ -1,0 +1,185 @@
+@model IEnumerable<Sector_13_Welfare_Society___Digital_Management_System.Models.Notice>
+@{
+    ViewData["Title"] = "Notices";
+    Layout = "_Layout";
+}
+
+<!-- Notices (Simple, Clean) -->
+<div class="container py-2">
+    <!-- Hero: Official Notices -->
+<div class="row mt-2 mb-2">
+  <div class="col-12">
+    <section class="hero-notices rounded-3 p-3 p-md-4">
+      <div class="d-flex flex-column align-items-center gap-2 text-center">
+        <div class="d-flex align-items-center justify-content-center gap-3">
+          <div class="hero-notices__icon d-inline-flex align-items-center justify-content-center rounded-circle">
+          </div>
+          <div class="text-center">
+            <h1 class="h3 mb-1 text-center">Official Notices</h1>
+            <p class="mb-0 text-muted text-center">Latest announcements from E-Group</p>
+          </div>
+        </div>
+
+        
+      </div>
+    </section>
+  </div>
+</div>
+
+    <!-- Controls -->
+    <div class="row g-2 mb-3">
+        <div class="col-12 col-md-7">
+            <div class="position-relative">
+                <i class="fas fa-search position-absolute text-muted" style="left:12px;top:50%;transform:translateY(-50%);"></i>
+                <input id="npSearch" type="text" class="form-control ps-5" placeholder="Search notices..." autocomplete="off" />
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="dropdown w-100">
+                <button class="btn btn-outline-secondary w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-sort me-1"></i><span id="npSortLabel">Latest</span>
+                </button>
+                <ul class="dropdown-menu w-100">
+                    <li><a class="dropdown-item np-sort" href="#" data-sort="date_desc">Latest</a></li>
+                    <li><a class="dropdown-item np-sort" href="#" data-sort="date_asc">Oldest</a></li>
+                    <li><a class="dropdown-item np-sort" href="#" data-sort="title_asc">Title A–Z</a></li>
+                    <li><a class="dropdown-item np-sort" href="#" data-sort="title_desc">Title Z–A</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-6 col-md-2">
+            <button id="npClearBtn" class="btn btn-light w-100"><i class="fas fa-eraser me-1"></i>Clear</button>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info d-flex align-items-center" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <div>No notices available at the moment. Please check back later.</div>
+        </div>
+    }
+    else
+    {
+        <!-- List -->
+        <div id="npList" class="row g-3">
+            @foreach (var notice in Model)
+            {
+                var approvedAt = notice.ApprovedAt?.ToString("yyyy-MM-dd") ?? "";
+                var displayDate = notice.ApprovedAt?.ToString("MMM dd, yyyy");
+                <div class="col-12 col-md-6 col-lg-4 np-item-col" data-title="@notice.Title" data-author="@notice.CreatedBy" data-date="@approvedAt" data-content="@notice.Content">
+                    <div class="card h-100 border-0 shadow-sm simple-card">
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title h6 mb-0">@notice.Title</h5>
+                                <span class="badge bg-light text-primary border"><i class="fas fa-check-circle me-1"></i>Approved</span>
+                            </div>
+                            <p class="text-muted small mb-2">
+                                <i class="far fa-calendar me-1"></i>@displayDate
+                            </p>
+                            <div class="mb-3">
+                                @if (!string.IsNullOrEmpty(notice.Content) && notice.Content.Length > 200)
+                                {
+                                    <p class="card-text">@(notice.Content.Substring(0, 200) + "...")</p>
+                                }
+                                else
+                                {
+                                    <p class="card-text">@notice.Content</p>
+                                }
+                            </div>
+                            <div class="mt-auto">
+                                <a href="@Url.Action("Details", new { id = notice.Id })" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-eye me-1"></i> Read Full Notice
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<style>
+    .hero-notices { margin-top: 2.5rem; }
+    @@media (min-width: 768px) { .hero-notices { margin-top: 3.25rem; } }
+    .hero-notices h1, .hero-notices p { text-align: center; margin: 0; }
+    .hero-notices__count { text-align: center; }
+    /* Make "Official Notices" bigger and subtitle pure black */
+    .hero-notices h1 { font-size: 2.25rem; font-weight: 700; }
+    @@media (min-width: 768px) { .hero-notices h1 { font-size: 2.6rem; } }
+    .hero-notices p { color: #000 !important; }
+    .simple-card { transition: transform .15s ease, box-shadow .15s ease; }
+    .simple-card:hover { transform: translateY(-2px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.08) !important; }
+    .card-title { line-height: 1.2; }
+    .card-text { color: #444; }
+    @* Escape Razor for media query *@
+    @@media (max-width: 575.98px) {
+        .card-text { font-size: 0.95rem; }
+    }
+</style>
+
+<script>
+    (function () {
+        const listEl = document.getElementById('npList');
+        const searchEl = document.getElementById('npSearch');
+        const clearBtn = document.getElementById('npClearBtn');
+        const sortLabel = document.getElementById('npSortLabel');
+        const totalCount = document.getElementById('npTotalCount');
+        const shownCount = document.getElementById('npShownCount');
+
+        function normalize(s) { return (s || '').toString().toLowerCase().trim(); }
+        function updateShownCount() {
+            if (!listEl || !shownCount) return;
+            shownCount.textContent = listEl.querySelectorAll('.np-item-col:not([hidden])').length;
+        }
+
+        function filterItems() {
+            if (!listEl) return;
+            const q = normalize(searchEl && searchEl.value);
+            const items = listEl.querySelectorAll('.np-item-col');
+            items.forEach(el => {
+                const title = normalize(el.getAttribute('data-title'));
+                const author = normalize(el.getAttribute('data-author'));
+                const content = normalize(el.getAttribute('data-content'));
+                el.hidden = !!q && !(title.includes(q) || author.includes(q) || content.includes(q));
+            });
+            updateShownCount();
+        }
+
+        function sortItems(mode) {
+            if (!listEl) return;
+            const items = Array.from(listEl.querySelectorAll('.np-item-col'));
+            let compare;
+            switch (mode) {
+                case 'date_asc':
+                    compare = (a, b) => (a.getAttribute('data-date') || '').localeCompare(b.getAttribute('data-date') || '');
+                    sortLabel && (sortLabel.textContent = 'Oldest');
+                    break;
+                case 'title_asc':
+                    compare = (a, b) => (a.getAttribute('data-title') || '').localeCompare(b.getAttribute('data-title') || '');
+                    sortLabel && (sortLabel.textContent = 'Title A–Z');
+                    break;
+                case 'title_desc':
+                    compare = (a, b) => (b.getAttribute('data-title') || '').localeCompare(a.getAttribute('data-title') || '');
+                    sortLabel && (sortLabel.textContent = 'Title Z–A');
+                    break;
+                case 'date_desc':
+                default:
+                    compare = (a, b) => (b.getAttribute('data-date') || '').localeCompare(a.getAttribute('data-date') || '');
+                    sortLabel && (sortLabel.textContent = 'Latest');
+                    break;
+            }
+            items.sort(compare).forEach(el => listEl.appendChild(el));
+        }
+
+        if (searchEl) searchEl.addEventListener('input', filterItems);
+        if (clearBtn) clearBtn.addEventListener('click', () => { if (searchEl) searchEl.value = ''; filterItems(); sortItems('date_desc'); });
+        document.querySelectorAll('.np-sort').forEach(el => el.addEventListener('click', (e) => { e.preventDefault(); sortItems(el.getAttribute('data-sort')); }));
+
+        // Initial state
+        sortItems('date_desc');
+        filterItems();
+        if (totalCount && shownCount && listEl) shownCount.textContent = listEl.querySelectorAll('.np-item-col').length;
+    })();
+</script>

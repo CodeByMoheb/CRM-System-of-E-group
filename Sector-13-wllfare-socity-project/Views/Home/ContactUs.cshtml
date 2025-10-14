@@ -1,0 +1,170 @@
+@{
+    ViewData["Title"] = "Contact Us";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Popups -->
+@if (TempData["SuccessMessage"] != null || TempData["ErrorMessage"] != null)
+{
+    <div id="success-popup" style="display:none;">@TempData["SuccessMessage"]</div>
+    <div id="error-popup" style="display:none;">@TempData["ErrorMessage"]</div>
+
+    <script>
+        window.onload = function () {
+            var success = document.getElementById('success-popup');
+            if (success && success.innerHTML.trim() !== '') {
+                success.style.display = 'block';
+                setTimeout(function () {
+                    success.style.opacity = '0';
+                    setTimeout(function () { success.style.display = 'none'; }, 600);
+                }, 3000);
+            }
+
+            var error = document.getElementById('error-popup');
+            if (error && error.innerHTML.trim() !== '') {
+                error.style.display = 'block';
+                setTimeout(function () {
+                    error.style.opacity = '0';
+                    setTimeout(function () { error.style.display = 'none'; }, 600);
+                }, 4000);
+            }
+        };
+    </script>
+}
+
+<style>
+    #success-popup {
+        position: fixed;
+        top: 150px;
+        right: 30px;
+        background: #23408e;
+        color: #fff;
+        padding: 16px 28px;
+        border-radius: 6px;
+        box-shadow: 0 2px 12px rgba(7, 218, 88, 0.18);
+        font-size: 1.08rem;
+        font-weight: 600;
+        z-index: 9999;
+        opacity: 1;
+        transition: opacity 0.6s;
+    }
+
+    #error-popup {
+        position: fixed;
+        top: 150px;
+        right: 30px;
+        background: #c0392b;
+        color: #fff;
+        padding: 16px 28px;
+        border-radius: 6px;
+        box-shadow: 0 2px 12px rgba(231, 76, 60, 0.2);
+        font-size: 1.08rem;
+        font-weight: 600;
+        z-index: 9999;
+        opacity: 1;
+        transition: opacity 0.6s;
+    }
+
+    /* Contact Section Styles */
+    .contact-row { display:flex; gap:32px; align-items:stretch; flex-wrap:wrap; }
+    .contact-left, .contact-right { flex: 1 1 480px; min-width: 280px; max-width:520px; }
+    .contact-left .card { height:100%; display:flex; flex-direction:column; padding:32px 24px 28px 24px; border-radius:8px; box-shadow:0 2px 12px rgba(44,62,80,0.08); background:#fff; }
+    .contact-left form { display:flex; flex-direction:column; gap:14px; }
+    .contact-right { display:flex; flex-direction:column; gap:32px; }
+    .contact-right .map-card, .contact-right .address-card { flex:1; border-radius:8px; box-shadow:0 2px 12px rgba(44,62,80,0.08); background:#fff; overflow:hidden; padding:16px; }
+    .contact-right .map-card iframe { width:100%; height:100%; border:0; border-radius:6px; display:block; }
+    .address-inner { padding:16px; display:flex; flex-direction:column; gap:18px; height:100%; box-sizing:border-box; }
+
+    @@media (max-width: 900px) {
+        .contact-row { flex-direction:column; }
+        .contact-left, .contact-right { max-width:100%; }
+        .contact-right .map-card iframe { height:320px; }
+        .contact-left .card { height:auto; }
+    }
+</style>
+
+<div style="background: #f3f3f3; min-height: 100vh; padding: 0; margin: 0;">
+  <div style="max-width: 1100px; margin: 0 auto; padding: 40px 10px;">
+    
+    <!-- Heading -->
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h1 style="font-size: 2.3rem; font-weight: 700; color: #23408e; margin-bottom: 8px;">Contact Us</h1>
+      <div style="font-size: 1rem; color: #888; margin-bottom: 18px;">
+       <a href="@Url.Action("Index", "Home")" style="color: #23408e; text-decoration: none;">Home</a> 
+       <span style="color: #444;">•</span> 
+       <span style="color: #23408e;">Contact us</span>
+      </div>
+    </div>
+
+    <!-- Contact Row -->
+    <div class="contact-row">
+
+      <!-- Left: Contact Form -->
+      <div class="contact-left">
+        <div class="card">
+          <h2 style="font-size:1.25rem; font-weight:700; color:#222; margin-bottom:18px; letter-spacing:1px;">CONTACT FORM</h2>
+
+          <form asp-controller="Contact" asp-action="SendMessage" method="post">
+            <div>
+              <label style="font-size:0.98rem; color:#222; margin-bottom:4px; display:block;">Name</label>
+              <input type="text" name="FullName" placeholder="Name" required style="padding:9px 12px; border-radius:4px; border:1.2px solid #bfc7d1; font-size:1rem; width:100%;" />
+            </div>
+
+            <div>
+              <label style="font-size:0.98rem; color:#222; margin-bottom:4px; display:block;">Email</label>
+              <input type="email" name="Email" placeholder="Email" required style="padding:9px 12px; border-radius:4px; border:1.2px solid #bfc7d1; font-size:1rem; width:100%;" />
+            </div>
+
+            <div>
+              <label style="font-size:0.98rem; color:#222; margin-bottom:4px; display:block;">Message</label>
+              <textarea name="Message" placeholder="Message" rows="6" required style="padding:9px 12px; border-radius:4px; border:1.2px solid #bfc7d1; font-size:1rem; width:100%; resize:vertical;"></textarea>
+            </div>
+
+            <div style="margin-top:10px;">
+              <button type="submit" style="background:#23408e; color:#fff; font-weight:600; border:none; border-radius:4px; padding:10px 0; font-size:1.08rem; width:100%;">SEND</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right: Map + Address -->
+      <div class="contact-right">
+
+        <!-- Map -->
+        <div class="map-card">
+          <h3 style="font-size:1.05rem; font-weight:700; color:#222; margin:6px 0 12px 0;">OUR LOCATION</h3>
+          <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d542.3557943635032!2d90.39058062535932!3d23.87116043460385!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c5002078f285%3A0x299a186c81a7c98f!2sE-Group!5e0!3m2!1sen!2sus!4v1757834503017!5m2!1sen!2sus"
+                  width="100%" height="100%" style="border:0; border-radius:6px;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+
+        <!-- Address -->
+        <div class="address-card">
+          <div class="address-inner">
+            <div style="border-bottom:1px solid #23408e22; padding-bottom:12px;">
+              <div style="font-weight:700; color:#23408e; font-size:1.08rem; margin-bottom:6px;">
+                <i class="fas fa-map-marker-alt" style="margin-right:7px;"></i> Visit Office
+              </div>
+              <div style="font-size:0.88rem; color:#222;">23 Gareeb-e-Newaz Ave,Uttara, Dhaka 1230, Bangladesh</div>
+            </div>
+
+            <div style="border-bottom:1px solid #23408e22; padding-bottom:12px;">
+              <div style="font-weight:700; color:#23408e; font-size:1.08rem; margin-bottom:6px;">
+                <i class="fas fa-phone-alt" style="margin-right:7px;"></i> Phone/WhatsApp
+              </div>
+              <div style="font-size:0.98rem; color:#222;">+880 1717 111 111</div>
+            </div>
+
+            <div>
+              <div style="font-weight:700; color:#23408e; font-size:1.08rem; margin-bottom:6px;">
+                <i class="fas fa-envelope" style="margin-right:7px;"></i> Email
+              </div>
+              <div style="font-size:0.98rem; color:#222;">info@e-groupbd.com</div>
+            </div>
+          </div>
+        </div>
+
+      </div> <!-- contact-right -->
+    </div> <!-- contact-row -->
+
+  </div>
+</div>

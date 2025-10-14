@@ -1,0 +1,101 @@
+﻿@model ManPowerViewModel
+
+@{
+    ViewData["Title"] = "Manpower Management";
+    Layout = "~/Views/Shared/_DashBoardLayout.cshtml";
+}
+
+<div class="row">
+    <!-- Form Card -->
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header text-white text-center" style="font-size:25px;background-color:#3B3B98">
+                @(Model.ManPower.Id == 0 ? "Add Manpower" : "Edit Manpower")
+            </div>
+            <div class="card-body">
+                <form asp-action="Save" method="post">
+                    <input type="hidden" asp-for="ManPower.Id" />
+
+                    <div class="form-group mb-3">
+                        <label asp-for="ManPower.ManPowerType"></label>
+                        <input asp-for="ManPower.ManPowerType" class="form-control" placeholder="Manpower Type" />
+                        <span asp-validation-for="ManPower.ManPowerType" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="ManPower.ServiceId"></label>
+                        <select asp-for="ManPower.ServiceId" asp-items="Model.Services" class="form-control">
+                            <option value="">-- Select Service --</option>
+                        </select>
+                        <span asp-validation-for="ManPower.ServiceId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="ManPower.ManPowerDay"></label>
+                        <input asp-for="ManPower.ManPowerDay" class="form-control" placeholder="Number of Days" />
+                        <span asp-validation-for="ManPower.ManPowerDay" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="ManPower.ManPowerPrice"></label>
+                        <input asp-for="ManPower.ManPowerPrice" class="form-control" placeholder="Price Per Day" />
+                        <span asp-validation-for="ManPower.ManPowerPrice" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-success">@(Model.ManPower.Id == 0 ? "Add" : "Update")</button>
+                        <a asp-action="Index" class="btn btn-secondary">Clear</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- List Card -->
+    <div class="col-md-8">
+        <div class="card shadow-sm p-2">
+            <div class="card-header text-white text-center" style="font-size:25px;background-color:#596275">
+                Manpower List
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped mb-0" id="ManPowerTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Type</th>
+                                <th>Service</th>
+                                <th>Days</th>
+                                <th>Price/Day</th>
+                                <th>Total</th>
+                                <th style="width: 150px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.ManPowerList)
+                            {
+                                <tr>
+                                    <td>@item.ManPowerType</td>
+                                    <td>@item.Service?.Name</td>
+                                    <td>@item.ManPowerDay</td>
+                                    <td>@item.ManPowerPrice</td>
+                                    <td>@(item.ManPowerDay * item.ManPowerPrice)</td>
+                                    <td>
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning me-1">Edit</a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        new DataTable('#ManPowerTable');
+    </script>
+}
+

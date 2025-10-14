@@ -1,0 +1,293 @@
+@model Sector_13_Welfare_Society___Digital_Management_System.Models.BookingListViewModel
+
+@{
+    ViewData["Title"] = "Completed Services";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-check-circle me-2"></i>Completed Services
+                    </h4>
+                    <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#filtersCollapse" aria-expanded="false" aria-controls="filtersCollapse">
+                        <i class="fas fa-filter me-1"></i>Filters
+                    </button>
+                </div>
+                
+                <!-- Filters Section -->
+                <div class="collapse" id="filtersCollapse">
+                    <div class="card-body border-bottom">
+                        <form method="get" class="row g-3">
+                            <div class="col-md-8">
+                                <label for="search" class="form-label">Search</label>
+                                <input type="text" class="form-control" id="search" name="search" value="@Model.Search" placeholder="Search by name, email, phone, or booking number...">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">&nbsp;</label>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search me-1"></i>Search
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    @if (Model.Bookings.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Booking #</th>
+                                        <th>Customer</th>
+                                        <th>Contact</th>
+                                        <th>Service</th>
+                                        <th>Amount</th>
+                                        <th>Service Date</th>
+                                        <th>Completion Time</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var booking in Model.Bookings)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@booking.BookingNumber</strong>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <strong>@booking.CustomerName</strong>
+                                                    @if (!string.IsNullOrEmpty(booking.CompanyName))
+                                                    {
+                                                        <br><small class="text-muted">@booking.CompanyName</small>
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <i class="fas fa-envelope me-1"></i>@booking.CustomerEmail<br>
+                                                    <i class="fas fa-phone me-1"></i>@booking.CustomerPhone
+                                                </div>
+                                            </td>
+                                            <td>
+                                                @if (booking.BookingItems.Any())
+                                                {
+                                                    <div>
+                                                        @foreach (var item in booking.BookingItems.Take(2))
+                                                        {
+                                                            <span class="badge bg-success me-1">@item.ServiceName</span>
+                                                        }
+                                                        @if (booking.BookingItems.Count > 2)
+                                                        {
+                                                            <span class="badge bg-secondary">+@(booking.BookingItems.Count - 2) more</span>
+                                                        }
+                                                    </div>
+                                                }
+                                            </td>
+                                            <td>
+                                                <strong>@booking.TotalAmount.ToString("C") @booking.Currency</strong>
+                                            </td>
+                                            <td>
+                                                @if (booking.ServiceDate.HasValue)
+                                                {
+                                                    @booking.ServiceDate.Value.ToString("dd/MM/yyyy")
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (booking.ServiceDate.HasValue)
+                                                {
+                                                    var timeDiff = DateTime.Now - booking.ServiceDate.Value;
+                                                    if (timeDiff.TotalDays < 1)
+                                                    {
+                                                        <span class="text-success">Today</span>
+                                                    }
+                                                    else if (timeDiff.TotalDays < 7)
+                                                    {
+                                                        <span class="text-info">@((int)timeDiff.TotalDays) day(s) ago</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">@((int)timeDiff.TotalDays) day(s) ago</span>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <button type="button" class="btn btn-sm btn-outline-info" onclick="viewInvoice(@booking.Id)" title="View Invoice">
+                                                        <i class="fas fa-file-invoice"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-outline-success" onclick="viewDetails(@booking.Id)" title="View Details">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        @if (Model.TotalPages > 1)
+                        {
+                            <nav aria-label="Completed services pagination">
+                                <ul class="pagination justify-content-center">
+                                    @if (Model.HasPreviousPage)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=@Model.PreviousPage&search=@Model.Search">Previous</a>
+                                        </li>
+                                    }
+                                    
+                                    @for (int i = Math.Max(1, Model.CurrentPage - 2); i <= Math.Min(Model.TotalPages, Model.CurrentPage + 2); i++)
+                                    {
+                                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                            <a class="page-link" href="?page=@i&search=@Model.Search">@i</a>
+                                        </li>
+                                    }
+                                    
+                                    @if (Model.HasNextPage)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=@Model.NextPage&search=@Model.Search">Next</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </nav>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-check-circle fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No completed services found</h5>
+                            <p class="text-muted">No services have been completed yet.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Invoice Modal -->
+<div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="invoiceModalLabel">Invoice</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="invoiceModalBody">
+                <!-- Invoice content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="printInvoice()">
+                    <i class="fas fa-print me-1"></i>Print
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Details Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsModalLabel">Service Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="detailsModalBody">
+                <!-- Details content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .modal-content {
+        background: white !important;
+        border: none;
+        border-radius: 8px;
+    }
+    
+    .modal-body {
+        background: white !important;
+        padding: 0;
+    }
+    
+    .modal-header {
+        background: white !important;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .modal-footer {
+        background: white !important;
+        border-top: 1px solid #dee2e6;
+    }
+    
+    #invoiceModalBody {
+        background: white !important;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        function viewInvoice(bookingId) {
+            $('#invoiceModalBody').html('<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading invoice...</div>');
+            $('#invoiceModal').modal('show');
+            
+            $.get('@Url.Action("Invoice", "Booking")', { id: bookingId })
+                .done(function(data) {
+                    $('#invoiceModalBody').html(data);
+                })
+                .fail(function() {
+                    $('#invoiceModalBody').html('<div class="alert alert-danger">Failed to load invoice.</div>');
+                });
+        }
+
+        function viewDetails(bookingId) {
+            $('#detailsModalBody').html('<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading details...</div>');
+            $('#detailsModal').modal('show');
+            
+            // For now, we'll show basic details. You can create a separate action for detailed view if needed
+            $.get('@Url.Action("Invoice", "Booking")', { id: bookingId })
+                .done(function(data) {
+                    $('#detailsModalBody').html(data);
+                })
+                .fail(function() {
+                    $('#detailsModalBody').html('<div class="alert alert-danger">Failed to load details.</div>');
+                });
+        }
+
+        function printInvoice() {
+            var printContent = document.getElementById('invoiceModalBody').innerHTML;
+            var originalContent = document.body.innerHTML;
+            document.body.innerHTML = printContent;
+            window.print();
+            document.body.innerHTML = originalContent;
+            location.reload();
+        }
+    </script>
+}

@@ -1,0 +1,156 @@
+@model Sector_13_Welfare_Society___Digital_Management_System.Models.ServiceCategory
+@{
+    ViewData["Title"] = "Create Service Category";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box">
+                <h4 class="page-title">Create Service Category</h4>
+                <div class="page-title-right">
+                    <ol class="breadcrumb m-0">
+                        <li class="breadcrumb-item"><a href="/Dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="@Url.Action("Index")">Services</a></li>
+                        <li class="breadcrumb-item"><a href="@Url.Action("Categories")">Categories</a></li>
+                        <li class="breadcrumb-item active">Create</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Category Information</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateCategory" method="post">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Name" class="form-label">Category Name *</label>
+                                    <input asp-for="Name" class="form-control" required placeholder="Enter category name">
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="DisplayOrder" class="form-label">Display Order</label>
+                                    <input asp-for="DisplayOrder" type="number" class="form-control" value="0" placeholder="Display order">
+                                    <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="3" placeholder="Enter category description"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="IconClass" class="form-label">Icon Class</label>
+                            <input asp-for="IconClass" class="form-control" placeholder="e.g., fas fa-certificate">
+                            <div class="form-text">Font Awesome icon class (e.g., fas fa-certificate, fas fa-shield-alt)</div>
+                            <span asp-validation-for="IconClass" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input asp-for="IsActive" class="form-check-input" checked>
+                                <label asp-for="IsActive" class="form-check-label">
+                                    Active Category
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="@Url.Action("Categories")" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i> Back to Categories
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i> Create Category
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">Icon Examples</h6>
+                </div>
+                <div class="card-body">
+                    <div class="icon-examples">
+                        <div class="icon-example mb-3">
+                            <i class="fas fa-certificate text-primary me-2"></i>
+                            <code>fas fa-certificate</code>
+                        </div>
+                        <div class="icon-example mb-3">
+                            <i class="fas fa-shield-alt text-success me-2"></i>
+                            <code>fas fa-shield-alt</code>
+                        </div>
+                        <div class="icon-example mb-3">
+                            <i class="fas fa-leaf text-info me-2"></i>
+                            <code>fas fa-leaf</code>
+                        </div>
+                        <div class="icon-example mb-3">
+                            <i class="fas fa-cogs text-warning me-2"></i>
+                            <code>fas fa-cogs</code>
+                        </div>
+                        <div class="icon-example mb-3">
+                            <i class="fas fa-globe text-danger me-2"></i>
+                            <code>fas fa-globe</code>
+                        </div>
+                        <div class="icon-example mb-3">
+                            <i class="fas fa-award text-primary me-2"></i>
+                            <code>fas fa-award</code>
+                        </div>
+                        <div class="icon-example mb-3">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <code>fas fa-check-circle</code>
+                        </div>
+                        <div class="icon-example">
+                            <i class="fas fa-star text-warning me-2"></i>
+                            <code>fas fa-star</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">Category Tips</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-lightbulb text-warning me-2"></i>
+                            Use clear, descriptive names
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-lightbulb text-warning me-2"></i>
+                            Set display order for proper sorting
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-lightbulb text-warning me-2"></i>
+                            Choose appropriate icons
+                        </li>
+                        <li>
+                            <i class="fas fa-lightbulb text-warning me-2"></i>
+                            Write helpful descriptions
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

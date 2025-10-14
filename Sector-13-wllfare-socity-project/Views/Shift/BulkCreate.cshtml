@@ -1,0 +1,249 @@
+@model List<Sector_13_Welfare_Society___Digital_Management_System.Models.Shift>
+
+@{
+    ViewData["Title"] = "Bulk Create Shifts";
+    Layout = "_DashboardLayout";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h4><i class="fas fa-plus-circle"></i> Bulk Create Shifts</h4>
+                </div>
+                <div class="card-body">
+                    @if (TempData["ShiftCreateError"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @TempData["ShiftCreateError"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Instructions:</strong> Use this form to create multiple shifts at once. You can add up to 10 shifts in a single operation.
+                    </div>
+
+                    <form asp-action="BulkCreate" method="post" id="bulkForm">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        
+                        <div id="shiftsContainer">
+                            <!-- Shift rows will be added here dynamically -->
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <div>
+                                <button type="button" class="btn btn-success me-2" id="addShiftBtn">
+                                    <i class="fas fa-plus"></i> Add Shift
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" id="clearAllBtn">
+                                    <i class="fas fa-trash"></i> Clear All
+                                </button>
+                            </div>
+                            <div>
+                                <a href="@Url.Action("Index")" class="btn btn-secondary me-2">
+                                    <i class="fas fa-arrow-left"></i> Back to Shifts
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Create All Shifts
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Template for shift row -->
+<template id="shiftRowTemplate">
+    <div class="shift-row border rounded p-3 mb-3 bg-light">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="mb-0">Shift <span class="shift-number">1</span></h6>
+            <button type="button" class="btn btn-sm btn-outline-danger remove-shift">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label class="form-label">Shift Name <span class="text-danger">*</span></label>
+                    <input type="text" name="shifts[0].Name" class="form-control shift-name" placeholder="e.g., Morning Shift" required />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label class="form-label">Start Time <span class="text-danger">*</span></label>
+                    <input type="time" name="shifts[0].StartTime" class="form-control shift-start-time" required />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label class="form-label">End Time <span class="text-danger">*</span></label>
+                    <input type="time" name="shifts[0].EndTime" class="form-control shift-end-time" required />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="mb-3">
+                    <label class="form-label">Duration</label>
+                    <div class="form-control-plaintext duration-display">-</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea name="shifts[0].Description" class="form-control shift-description" rows="2" placeholder="Optional description"></textarea>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input type="checkbox" name="shifts[0].IsActive" class="form-check-input shift-active" checked />
+                        <label class="form-check-label">Active</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            let shiftCount = 0;
+
+            // Add initial shift
+            addShiftRow();
+
+            // Add shift button
+            $('#addShiftBtn').click(function() {
+                if (shiftCount >= 10) {
+                    alert('Maximum 10 shifts allowed at once.');
+                    return;
+                }
+                addShiftRow();
+            });
+
+            // Clear all button
+            $('#clearAllBtn').click(function() {
+                if (confirm('Are you sure you want to clear all shifts?')) {
+                    $('#shiftsContainer').empty();
+                    shiftCount = 0;
+                    addShiftRow(); // Add one empty row
+                }
+            });
+
+            // Remove shift button
+            $(document).on('click', '.remove-shift', function() {
+                if (shiftCount > 1) {
+                    $(this).closest('.shift-row').remove();
+                    shiftCount--;
+                    updateShiftNumbers();
+                } else {
+                    alert('At least one shift is required.');
+                }
+            });
+
+            // Duration calculation
+            $(document).on('change', '.shift-start-time, .shift-end-time', function() {
+                var row = $(this).closest('.shift-row');
+                var startTime = row.find('.shift-start-time').val();
+                var endTime = row.find('.shift-end-time').val();
+                
+                if (startTime && endTime) {
+                    var start = new Date('2000-01-01T' + startTime);
+                    var end = new Date('2000-01-01T' + endTime);
+                    
+                    if (end < start) {
+                        end.setDate(end.getDate() + 1); // Handle overnight shifts
+                    }
+                    
+                    var duration = end - start;
+                    var hours = Math.floor(duration / (1000 * 60 * 60));
+                    var minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
+                    
+                    row.find('.duration-display').text(hours + 'h ' + minutes + 'm');
+                } else {
+                    row.find('.duration-display').text('-');
+                }
+            });
+
+            function addShiftRow() {
+                var template = $('#shiftRowTemplate').html();
+                var newRow = $(template);
+                
+                // Update the index in the name attributes
+                newRow.html(newRow.html().replace(/shifts\[0\]/g, 'shifts[' + shiftCount + ']'));
+                newRow.find('.shift-number').text(shiftCount + 1);
+                
+                $('#shiftsContainer').append(newRow);
+                shiftCount++;
+            }
+
+            function updateShiftNumbers() {
+                $('.shift-row').each(function(index) {
+                    $(this).find('.shift-number').text(index + 1);
+                    
+                    // Update name attributes
+                    var newIndex = index;
+                    $(this).find('input, textarea').each(function() {
+                        var name = $(this).attr('name');
+                        if (name) {
+                            $(this).attr('name', name.replace(/shifts\[\d+\]/, 'shifts[' + newIndex + ']'));
+                        }
+                    });
+                });
+            }
+
+            // Form validation
+            $('#bulkForm').on('submit', function(e) {
+                var hasValidShifts = false;
+                var errors = [];
+
+                $('.shift-row').each(function(index) {
+                    var name = $(this).find('.shift-name').val().trim();
+                    var startTime = $(this).find('.shift-start-time').val();
+                    var endTime = $(this).find('.shift-end-time').val();
+
+                    if (name && startTime && endTime) {
+                        hasValidShifts = true;
+                        
+                        // Check for duplicate names
+                        var duplicateCount = 0;
+                        $('.shift-name').each(function() {
+                            if ($(this).val().trim() === name) {
+                                duplicateCount++;
+                            }
+                        });
+                        
+                        if (duplicateCount > 1) {
+                            errors.push('Duplicate shift name: ' + name);
+                        }
+
+                        // Check for same start and end time
+                        if (startTime === endTime) {
+                            errors.push('Start and end time cannot be the same for shift: ' + name);
+                        }
+                    }
+                });
+
+                if (!hasValidShifts) {
+                    e.preventDefault();
+                    alert('Please fill in at least one complete shift.');
+                    return false;
+                }
+
+                if (errors.length > 0) {
+                    e.preventDefault();
+                    alert('Please fix the following errors:\n' + errors.join('\n'));
+                    return false;
+                }
+            });
+        });
+    </script>
+}

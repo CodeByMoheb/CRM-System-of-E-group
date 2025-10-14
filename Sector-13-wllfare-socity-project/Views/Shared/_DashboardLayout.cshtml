@@ -1,0 +1,999 @@
+@using Microsoft.AspNetCore.Identity
+@using Sector_13_Welfare_Society___Digital_Management_System.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var userName = User.Identity?.Name ?? "User";
+    var roles = User.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Role).Select(c => c.Value).ToList();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="google-site-verification" content="7elQopzAjDXovrXO9xcC1begtgUBoljhtkcYvVaE1No" />
+    <title>@ViewData["Title"] - Dashboard | Ethical Group LTD</title>
+    <link rel="icon" type="image/x-icon" href="https://res.cloudinary.com/dmnpdzcvd/image/upload/v1757492842/ee_u33nfn.png" />
+    <link rel="preload" href="~/lib/bootstrap/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"></noscript>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        .quick-actions .btn {
+            border-radius: 2rem;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(91,63,162,0.08);
+            transition: transform 0.18s cubic-bezier(.4,2,.6,1), box-shadow 0.18s, background 0.18s;
+            padding: 0.75rem 1.5rem;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .quick-actions .btn i {
+            font-size: 1.2em;
+        }
+        .quick-actions .btn:hover, .quick-actions .btn:focus {
+            transform: scale(1.07) translateY(-2px);
+            box-shadow: 0 6px 18px rgba(91,63,162,0.18);
+            filter: brightness(1.08);
+        }
+        .quick-actions .btn-outline-primary {
+            background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+            color: #fff;
+            border: none;
+        }
+        .quick-actions .btn-outline-success {
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+            color: #fff;
+            border: none;
+        }
+        .quick-actions .btn-outline-info {
+            background: linear-gradient(90deg, #43cea2 0%, #185a9d 100%);
+            color: #fff;
+            border: none;
+        }
+        .quick-actions .btn-outline-danger {
+            background: linear-gradient(90deg, #ff512f 0%, #dd2476 100%);
+            color: #fff;
+            border: none;
+        }
+        .quick-actions .btn-info {
+            background: linear-gradient(90deg, #2193b0 0%, #6dd5ed 100%);
+            color: #fff;
+            border: none;
+        }
+        .quick-actions .btn-success {
+            background: linear-gradient(90deg, #56ab2f 0%, #a8e063 100%);
+            color: #fff;
+            border: none;
+        }
+
+        .sidebar {
+            max-height: 100vh;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+            /* Sidebar nav links */
+            .sidebar .nav-link {
+                color:#214273 !important; 
+            }
+
+                /* Active link style */
+                .sidebar .nav-link.active {
+                    font-weight: 600;
+                    color: #3498db !important;
+                }
+
+                /* Hover effect */
+                .sidebar .nav-link:hover {
+                    color: rebeccapurple !important;
+                }
+
+        .nav-link-violet {
+            color: violet !important;
+        }
+
+            /* Optional: make active links also violet */
+            .nav-link-violet.active {
+                color: #3498db !important;
+                font-weight: 600; /* optional: make active link bold */
+            }
+
+        .nav-link.active,
+        .nav-link[aria-expanded="true"] {
+            color:#2ecc71 !important;
+            font-weight: 600;
+        }
+
+        .arrow {
+            margin-left: auto;
+            transition: transform 0.2s ease;
+        }
+        /* Default hide on desktop */
+        .toggle-icon {
+            display: none;
+        }
+
+        /* Show only on tablets/mobiles */
+        @@media (max-width: 991px) {
+            .toggle-icon {
+                display: inline-block;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header d-flex justify-content-center align-items-center">
+                <a href="@Url.Action("Index", "Home")"><img src="https://res.cloudinary.com/dmnpdzcvd/image/upload/v1757492842/ee_u33nfn.png" alt="Logo" class="sidebar-logo" /> </a>
+                <button class="sidebar-toggle-btn" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+                    <i class="fas fa-chevron-left toggle-icon"></i>
+                </button>
+
+            </div>
+            <div class="sidebar-title text-center fw-bold">Dashboard</div>
+            <hr>
+            <ul class="sidebar-menu">
+                @if (roles.Contains("Manager")) {
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center justify-content-between
+                            @(new[] {"Employee","Attendance","SalaryCalculator","Shift"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) ? "active" : "")"
+                           data-bs-toggle="collapse"
+                           href="#submenuProducts"
+                           role="button"
+                           aria-expanded="@(new[] {"Employee","Attendance","SalaryCalculator","Shift"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) ? "true" : "false")"
+                           aria-controls="submenuProducts">
+
+                            <span>
+                                <i class="fas fa-users ms-1"></i> <span class="menu-text">Emp Manage</span>
+                            </span>
+                            <i class="arrow fas fa-chevron-down ms-1"></i>
+                        </a>
+
+                        <div class="collapse submenu
+                            @(new[] {"Employee","Attendance","SalaryCalculator","Shift"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) ? "show" : "")"
+                             id="submenuProducts">
+
+                            <ul class="nav flex-column" style="margin-left:25px">
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Employee" ? "active" : "")"
+                                       asp-controller="Employee" asp-action="Index">
+                                        <i class="fas fa-users"></i> Employees
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Attendance" ? "active" : "")"
+                                       asp-controller="Attendance" asp-action="Index">
+                                        <i class="fas fa-calendar-check"></i> Attendance
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "LeaveApproval" && ViewContext.RouteData.Values["action"]?.ToString() == "History" ? "active" : "")"
+                                       asp-controller="LeaveApproval" asp-action="History">
+                                        <i class="fas fa-history"></i> Leave History
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "SalaryCalculator" ? "active" : "")"
+                                       asp-controller="SalaryCalculator" asp-action="Index">
+                                        <i class="fas fa-money-check-alt"></i> Salary
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Shift" ? "active" : "")"
+                                       asp-controller="Shift" asp-action="Index">
+                                        <i class="fas fa-clock"></i> Shift Management
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center justify-content-between @(new[] {"Notice","ManagerTools"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) ? "active" : "")"
+                           data-bs-toggle="collapse"
+                           href="#submenuNotice"
+                           role="button"
+                           aria-expanded="@(new[] {"Notice","ManagerTools"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) ? "true" : "false")"
+                           aria-controls="submenuNotice">
+                            <span><i class="fas fa-bell ms-1"></i> <span class="menu-text">Notice</span></span>
+                            <i class="arrow fas fa-chevron-down ms-1"></i>
+                        </a>
+                        <div class="collapse submenu @(new[] {"Notice","ManagerTools"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) ? "show" : "")" id="submenuNotice">
+                            <ul class="nav flex-column" style="margin-left:25px">
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Notice" && ViewContext.RouteData.Values["action"]?.ToString() == "Create" ? "active" : "")"
+                                       asp-controller="Notice" asp-action="Create">
+                                        <i class="fas fa-plus"></i> Create Notice
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Notice" && ViewContext.RouteData.Values["action"]?.ToString() == "ManagerList" ? "active" : "")"
+                                       asp-controller="Notice" asp-action="ManagerList">
+                                        <i class="fas fa-list"></i> My Notices
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ManagerTools" && ViewContext.RouteData.Values["action"]?.ToString() == "Notifications" ? "active" : "")"
+                                       asp-controller="ManagerTools" asp-action="Notifications">
+                                        <i class="fas fa-bell"></i> Notifications Status
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white @(ViewContext.RouteData.Values["controller"]?.ToString() == "Booking" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
+                           asp-controller="Booking" asp-action="Index">
+                            <i class="fas fa-donate me-2"></i> <span class="menu-text">Book Us</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white @(ViewContext.RouteData.Values["controller"]?.ToString() == "Category" && ViewContext.RouteData.Values["action"]?.ToString() == "Category" ? "active" : "")"
+                           asp-controller="Category" asp-action="Category">
+                            <i class="fas fa-donate me-2"></i> Category
+                        </a>
+                    </li>
+                    
+
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center justify-content-between @(ViewContext.RouteData.Values["controller"]?.ToString() == "PermanentMember" ? "active" : "")"
+                           data-bs-toggle="collapse"
+                           href="#submenuPermanentMember"
+                           role="button"
+                           aria-expanded="@(ViewContext.RouteData.Values["controller"]?.ToString() == "PermanentMember" ? "true" : "false")"
+                           aria-controls="submenuPermanentMember">
+                            <span><i class="fas fa-address-book ms-1"></i><span class="menu-text">Members</span></span>
+                            <i class="arrow fas fa-chevron-down ms-1"></i>
+                        </a>
+                        <div class="collapse submenu @(ViewContext.RouteData.Values["controller"]?.ToString() == "PermanentMember" ? "show" : "")" id="submenuPermanentMember">
+                            <ul class="nav flex-column" style="margin-left:25px">
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "PermanentMember" && ViewContext.RouteData.Values["action"]?.ToString() == "ManagerList" ? "active" : "")"
+                                       asp-controller="PermanentMember" asp-action="ManagerList">
+                                        <i class="fas fa-address-book"></i> Members
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center justify-content-between @(new[] {"Gallery"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) ? "active" : "")"
+                           data-bs-toggle="collapse"
+                           href="#submenuGallery"
+                           role="button"
+                           aria-expanded="@(new[] {"Gallery"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) ? "true" : "false")"
+                           aria-controls="submenuGallery">
+                            <span><i class="fas fa-images ms-1"></i> <span class="menu-text">Gallery</span></span>
+                            <i class=" arrow fas fa-chevron-down ms-1"></i>
+                        </a>
+                        <div class="collapse submenu @(new[] {"Gallery"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) ? "show" : "")" id="submenuGallery">
+                            <ul class="nav flex-column" style="margin-left:25px">
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Gallery" && ViewContext.RouteData.Values["action"]?.ToString() == "Manage" ? "active" : "")"
+                                       asp-controller="Gallery" asp-action="Manage">
+                                        <i class="fas fa-images"></i> Manage Gallery
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Gallery" && ViewContext.RouteData.Values["action"]?.ToString() == "Upload" ? "active" : "")"
+                                       asp-controller="Gallery" asp-action="Upload">
+                                        <i class="fas fa-upload"></i> Upload Images
+                                    </a>
+                                </li>
+                                @* <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Gallery" && ViewContext.RouteData.Values["action"]?.ToString() == "Test" ? "active" : "")"
+                                       asp-controller="Gallery" asp-action="Test">
+                                        <i class="fas fa-bug"></i> Test Upload
+                                    </a>
+                                </li> *@
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center justify-content-between @(new[] {"Service","Booking","Manpower","LocationCharge"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) ? "active" : "")"
+                           data-bs-toggle="collapse"
+                           href="#submenuService"
+                           role="button"
+                           aria-expanded="@(new[] {"Service","Booking","Manpower","LocationCharge"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) ? "true" : "false")"
+                           aria-controls="submenuService">
+                            <span><i class="fas fa-tools ms-1"></i> <span class="menu-text">Service</span></span>
+                            <i class="arrow fas fa-chevron-down ms-1"></i>
+                        </a>
+                        <div class="collapse submenu @(new[] {"Service","Booking","Manpower","LocationCharge"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) ? "show" : "")" id="submenuService">
+                            <ul class="nav flex-column" style="margin-left:25px">
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "LocationCharge" && ViewContext.RouteData.Values["action"]?.ToString() == "LocationCharge" ? "active" : "")"
+                                       asp-controller="LocationCharge" asp-action="LocationCharge">
+                                        <i class="fas fa-donate"></i> LocationCharge
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Manpower" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
+                                       asp-controller="Manpower" asp-action="Index">
+                                        <i class="fas fa-donate"></i> ManPower
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Service" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
+                                       asp-controller="Service" asp-action="Index">
+                                        <i class="fas fa-tools"></i> Manage Services
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Booking" && ViewContext.RouteData.Values["action"]?.ToString() == "AllBookings" ? "active" : "")"
+                                       asp-controller="Booking" asp-action="AllBookings">
+                                        <i class="fas fa-calendar-check"></i> All Bookings
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Booking" && ViewContext.RouteData.Values["action"]?.ToString() == "CompletedServices" ? "active" : "")"
+                                       asp-controller="Booking" asp-action="CompletedServices">
+                                        <i class="fas fa-check-circle"></i> Completed Services
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Service" && ViewContext.RouteData.Values["action"]?.ToString() == "Categories" ? "active" : "")"
+                                       asp-controller="Service" asp-action="Categories">
+                                        <i class="fas fa-tags"></i> Service Categories
+                                    </a>
+                                </li>
+                                @* <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Booking" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
+                                       asp-controller="Booking" asp-action="Index">
+                                        <i class="fas fa-calendar-plus"></i> View Bookings
+                                    </a>
+                                </li> *@
+                               
+                            </ul>
+                        </div>
+                    </li>
+
+
+                    @* <!-- Member Directory Menu -->
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center justify-content-between @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDirectory" ? "active" : "")"
+                           data-bs-toggle="collapse"
+                           href="#submenuMemberDirectory"
+                           role="button"
+                           aria-expanded="@(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDirectory" ? "true" : "false")"
+                           aria-controls="submenuMemberDirectory">
+                            <span><i class="fas fa-address-book ms-1"></i> <span class="menu-text">Directory</span></span>
+                            <i class="arrow fas fa-chevron-down ms-1"></i>
+                        </a>
+                        <div class="collapse submenu @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDirectory" ? "show" : "")" id="submenuMemberDirectory">
+                            <ul class="nav flex-column" style="margin-left:25px">
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDirectory" ? "active" : "")"
+                                       asp-controller="MemberDirectory" asp-action="Index">
+                                        <i class="fas fa-table"></i> Buyers & Clients
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li> *@
+
+                    <!-- Member Directory Menu -->
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center justify-content-between @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDirectory" ? "active" : "")"
+                           data-bs-toggle="collapse"
+                           href="#submenuMemberDirectory"
+                           role="button"
+                           aria-expanded="@(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDirectory" ? "true" : "false")"
+                           aria-controls="submenuMemberDirectory">
+                            <span><i class="fas fa-address-book ms-1"></i> <span class="menu-text">Member Directory</span></span>
+                            <i class="arrow fas fa-chevron-down ms-1"></i>
+                        </a>
+                        <div class="collapse submenu @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDirectory" ? "show" : "")" id="submenuMemberDirectory">
+                            <ul class="nav flex-column" style="margin-left:25px">
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDirectory" ? "active" : "")"
+                                       asp-controller="MemberDirectory" asp-action="Index">
+                                        <i class="fas fa-table"></i> Buyers & Clients
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                                        <a class="nav-link text-white @(ViewContext.RouteData.Values["controller"]?.ToString() == "ClientsServices"
+                                && ViewContext.RouteData.Values["action"]?.ToString() == "ClientsServices"
+                                ? "active" : "")"
+                           asp-controller="ClientsServices" asp-action="Index">
+                            <i class="fas fa-handshake me-2"></i> Client Services
+                        </a>
+                    </li>
+
+
+                }
+                @if (roles.Contains("Admin")) {
+                    <li><a href="@Url.Action("ListUsers", "UserManagement")" class="@(roles.Contains("Admin") ? "active" : "")">
+                        <i class="fas fa-users"></i>
+                        <span class="menu-text">Admin</span>
+                    </a></li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center justify-content-between @(new[] {"Notice"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) ? "active" : "")"
+                           data-bs-toggle="collapse"
+                           href="#submenuNotice"
+                           role="button"
+                           aria-expanded="@(new[] {"Notice"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) ? "true" : "false")"
+                           aria-controls="submenuNotice">
+                            <span><i class="fas fa-bell ms-1"></i> <span class="menu-text">Notice</span></span>
+                            <i class="arrow fas fa-chevron-down ms-1"></i>
+                        </a>
+                        <div class="collapse submenu @(new[] {"Notice"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) ? "show" : "")" id="submenuNotice">
+                            <ul class="nav flex-column" style="margin-left:25px">
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Notice" && ViewContext.RouteData.Values["action"]?.ToString() == "AllNotices" ? "active" : "")"
+                                       asp-controller="Notice" asp-action="AllNotices">
+                                        <i class="fas fa-list"></i> All Notices
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Notice" && ViewContext.RouteData.Values["action"]?.ToString() == "PublicList" ? "active" : "")"
+                                       asp-controller="Notice" asp-action="PublicList">
+                                        <i class="fas fa-eye"></i> Published Notices
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                }
+                @if (roles.Contains("Member")) {
+                    <!-- Member Dashboard -->
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDashboard" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
+                           asp-controller="MemberDashboard" asp-action="Index">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span class="menu-text">Dashboard</span>
+                        </a>
+                    </li>
+
+                    <!-- My Orders Menu -->
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center justify-content-between @(new[] {"MemberDashboard"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) && new[] {"Orders","OrderDetails"}.Contains(ViewContext.RouteData.Values["action"]?.ToString()) ? "active" : "")"
+                           data-bs-toggle="collapse"
+                           href="#submenuOrders"
+                           role="button"
+                           aria-expanded="@(new[] {"MemberDashboard"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) && new[] {"Orders","OrderDetails"}.Contains(ViewContext.RouteData.Values["action"]?.ToString()) ? "true" : "false")"
+                           aria-controls="submenuOrders">
+                            <span><i class="fas fa-shopping-bag ms-1"></i> <span class="menu-text">My Orders</span></span>
+                            <i class="arrow fas fa-chevron-down ms-1"></i>
+                        </a>
+                        <div class="collapse submenu @(new[] {"MemberDashboard"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) && new[] {"Orders","OrderDetails"}.Contains(ViewContext.RouteData.Values["action"]?.ToString()) ? "show" : "")" id="submenuOrders">
+                            <ul class="nav flex-column" style="margin-left:25px">
+                                @* <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDashboard" && ViewContext.RouteData.Values["action"]?.ToString() == "Orders" ? "active" : "")"
+                                       asp-controller="MemberDashboard" asp-action="Orders">
+                                        <i class="fas fa-list"></i> All Orders
+                                    </a>
+                                </li> *@
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDashboard" && ViewContext.RouteData.Values["action"]?.ToString() == "Orders" ? "active" : "")"
+                                       asp-controller="MemberDashboard" asp-action="Orders" asp-route-status="Pending">
+                                        <i class="fas fa-clock"></i> Pending Orders
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDashboard" && ViewContext.RouteData.Values["action"]?.ToString() == "Orders" ? "active" : "")"
+                                       asp-controller="MemberDashboard" asp-action="Orders" asp-route-status="Completed">
+                                        <i class="fas fa-check-circle"></i> Completed Orders
+                                    </a>
+                                </li>
+                                @* <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDashboard" && ViewContext.RouteData.Values["action"]?.ToString() == "Bookings" ? "active" : "")"
+                                       asp-controller="MemberDashboard" asp-action="Bookings">
+                                        <i class="fas fa-calendar-check"></i> My Bookings
+                                    </a>
+                                </li> *@
+                            </ul>
+                        </div>
+                    </li>
+
+
+                    <!-- Browse Services -->
+                    @* <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Booking" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
+                           asp-controller="Booking" asp-action="Index">
+                            <i class="fas fa-store"></i>
+                            <span class="menu-text">Browse Services</span>
+                        </a>
+                    </li> *@
+
+                    <!-- Payment & Billing -->
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center justify-content-between @(new[] {"MemberDashboard"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) && new[] {"Payments","Invoices","PaymentHistory"}.Contains(ViewContext.RouteData.Values["action"]?.ToString()) ? "active" : "")"
+                           data-bs-toggle="collapse"
+                           href="#submenuPayments"
+                           role="button"
+                           aria-expanded="@(new[] {"MemberDashboard"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) && new[] {"Payments","Invoices","PaymentHistory"}.Contains(ViewContext.RouteData.Values["action"]?.ToString()) ? "true" : "false")"
+                           aria-controls="submenuPayments">
+                            <span><i class="fas fa-credit-card ms-1"></i> <span class="menu-text">Payments</span></span>
+                            <i class="arrow fas fa-chevron-down ms-1"></i>
+                        </a>
+                        <div class="collapse submenu @(new[] {"MemberDashboard"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) && new[] {"Payments","Invoices","PaymentHistory"}.Contains(ViewContext.RouteData.Values["action"]?.ToString()) ? "show" : "")" id="submenuPayments">
+                            <ul class="nav flex-column" style="margin-left:25px">
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDashboard" && ViewContext.RouteData.Values["action"]?.ToString() == "PaymentHistory" ? "active" : "")"
+                                       asp-controller="MemberDashboard" asp-action="PaymentHistory">
+                                        <i class="fas fa-history"></i> Payment History
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDashboard" && ViewContext.RouteData.Values["action"]?.ToString() == "Invoices" ? "active" : "")"
+                                       asp-controller="MemberDashboard" asp-action="Invoices">
+                                        <i class="fas fa-file-invoice"></i> My Invoices
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDashboard" && ViewContext.RouteData.Values["action"]?.ToString() == "AuditReports" ? "active" : "")"
+                                       asp-controller="MemberDashboard" asp-action="AuditReports">
+                                        <i class="fas fa-file-alt"></i> View Audit Reports
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDashboard" && ViewContext.RouteData.Values["action"]?.ToString() == "CorrectiveActionPlans" ? "active" : "")"
+                                       asp-controller="MemberDashboard" asp-action="CorrectiveActionPlans">
+                                        <i class="fas fa-tasks"></i> View CAPs
+                                    </a>
+                                </li>
+                                @* <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDashboard" && ViewContext.RouteData.Values["action"]?.ToString() == "PendingPayments" ? "active" : "")"
+                                       asp-controller="MemberDashboard" asp-action="PendingPayments">
+                                        <i class="fas fa-exclamation-triangle"></i> Pending Payments
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Payment" ? "active" : "")"
+                                       href="#" onclick="redirectToPayment()">
+                                        <i class="fas fa-credit-card"></i> Make Payment
+                                    </a>
+                                </li> *@
+                            </ul>
+                        </div>
+                    </li>
+
+                    <!-- Account Settings -->
+                    @* <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center justify-content-between @(new[] {"MemberDashboard"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) && new[] {"Profile","Settings"}.Contains(ViewContext.RouteData.Values["action"]?.ToString()) ? "active" : "")"
+                           data-bs-toggle="collapse"
+                           href="#submenuAccount"
+                           role="button"
+                           aria-expanded="@(new[] {"MemberDashboard"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) && new[] {"Profile","Settings"}.Contains(ViewContext.RouteData.Values["action"]?.ToString()) ? "true" : "false")"
+                           aria-controls="submenuAccount">
+                            <span><i class="fas fa-user-cog ms-1"></i> <span class="menu-text">Account</span></span>
+                            <i class="arrow fas fa-chevron-down ms-1"></i>
+                        </a>
+                        <div class="collapse submenu @(new[] {"MemberDashboard"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) && new[] {"Profile","Settings"}.Contains(ViewContext.RouteData.Values["action"]?.ToString()) ? "show" : "")" id="submenuAccount">
+                            <ul class="nav flex-column" style="margin-left:25px">
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDashboard" && ViewContext.RouteData.Values["action"]?.ToString() == "Profile" ? "active" : "")"
+                                       asp-controller="MemberDashboard" asp-action="Profile">
+                                        <i class="fas fa-user"></i> My Profile
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Account" && ViewContext.RouteData.Values["action"]?.ToString() == "ChangePassword" ? "active" : "")"
+                                       asp-controller="Account" asp-action="ChangePassword">
+                                        <i class="fas fa-key"></i> Change Password
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDashboard" && ViewContext.RouteData.Values["action"]?.ToString() == "Settings" ? "active" : "")"
+                                       asp-controller="MemberDashboard" asp-action="Settings">
+                                        <i class="fas fa-cog"></i> Preferences
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li> *@
+
+                }
+                @if (roles.Contains("President")) {
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" && ViewContext.RouteData.Values["action"]?.ToString() == "President" ? "active" : "")"
+                           asp-controller="Dashboard" asp-action="President">
+                            <i class="fas fa-crown"></i>
+                            <span class="menu-text">President</span>
+                        </a>
+                    </li>
+
+                }
+                @if (roles.Contains("Secretary")) {
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" 
+                                            && ViewContext.RouteData.Values["action"]?.ToString() == "Secretary" 
+                                            ? "active" : "")"
+                           asp-controller="Dashboard" asp-action="Secretary">
+                            <i class="fas fa-user-graduate"></i>
+                            <span class="menu-text">Secretary</span>
+                        </a>
+                    </li>
+
+
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center justify-content-between @(new[] {"Notice"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) ? "active" : "")"
+                           data-bs-toggle="collapse"
+                           href="#submenuNotice"
+                           role="button"
+                           aria-expanded="@(new[] {"Notice"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) ? "true" : "false")"
+                           aria-controls="submenuNotice">
+                            <span><i class="fas fa-bell ms-1"></i> <span class="menu-text">Notice Management</span></span>
+                            <i class="arrow fas fa-chevron-down ms-1"></i>
+                        </a>
+                        <div class="collapse submenu @(new[] {"Notice"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) ? "show" : "")" id="submenuNotice">
+                            <ul class="nav flex-column" style="margin-left:25px">
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Notice" && ViewContext.RouteData.Values["action"]?.ToString() == "SecretaryList" ? "active" : "")"
+                                       asp-controller="Notice" asp-action="SecretaryList">
+                                        <i class="fas fa-clock"></i> Pending Approvals
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Notice" && ViewContext.RouteData.Values["action"]?.ToString() == "PublicList" ? "active" : "")"
+                                       asp-controller="Notice" asp-action="PublicList">
+                                        <i class="fas fa-eye"></i> Published Notices
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Booking" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
+                           asp-controller="Booking" asp-action="Index">
+                            <i class="fas fa-donate"></i>
+                            <span class="menu-text">Book Us</span>
+                        </a>
+                    </li>
+
+                }
+            </ul>
+        </nav>
+        <!-- Mobile overlay for sidebar -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+        
+        <!-- Mainbar -->
+        <div class="mainbar" id="mainbar">
+            <!-- Topbar -->
+            <div class="topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle-mobile" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="brand-section">
+                        <img src="https://res.cloudinary.com/dmnpdzcvd/image/upload/v1757492842/ee_u33nfn.png" alt="Logo" class="logo-img" />
+                        <span class="brand-text">Ethical-Group</span>
+                    </div>
+                </div>
+               
+                <div class="topbar-center">
+                    <form class="d-none d-md-block">
+                        <input class="search-bar" type="search" placeholder="Search members, events..." aria-label="Search" />
+                    </form>
+                </div>
+                <div class="topbar-right">
+                    
+                    <button class="theme-switcher btn btn-light border" onclick="toggleTheme()" aria-label="Switch theme">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                   
+                    <div class="manubar-options d-none d-lg-flex">
+                        <a href="@Url.Action("AboutUs", "Home")" class="manubar-link">About Us</a>
+                        <a href="@Url.Action("Gallery", "Home")" class="manubar-link">Gallery</a>
+                        <a href="@Url.Action("ContactUs", "Home")" class="manubar-link">Contact</a>
+                        <a href="@Url.Action("Index", "Booking")" class="manubar-link donate">Book Us</a>
+                    </div>
+                    <div class="notifications position-relative">
+                        <button class="p-0 border-0 notifications-btn" onclick="toggleNotificationsDropdown()" aria-label="Notifications">
+                            <i class="fas fa-bell"></i>
+                            <span id="notificationDot" class="notification-dot"></span>
+                        </button>
+                        <div id="notificationsDropdown" class="notifications-dropdown shadow-lg">
+                            <div class="notification-header">Notifications</div>
+                            <div class="notification-item">
+                                <i class="fas fa-info-circle text-primary me-2"></i> Welcome to the E-group Dashboard!
+                            </div>
+                            <div class="notification-item">
+                                <i class="fas fa-calendar-alt text-success me-2"></i> Upcoming event: Audit Certification.
+                            </div>
+                          
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="dropdown user-info position-relative " style="margin-left: 15px;">
+                    <button class="p-0 border-0 user-profile-btn dropdown-toggle" type="button" id="profileDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false">
+
+                        <img src="@(ViewBag.ProfilePictureUrl ?? Url.Content("~/Photos/logo.png"))" alt="Profile" class="rounded-circle" style="height:36px;width:36px;object-fit:cover;border:2px solid #e0e7ff;box-shadow:0 2px 8px rgba(91,63,162,0.08);background:#fff;">
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end p-0" aria-labelledby="profileDropdownBtn" style="min-width: 260px; border-radius: 16px; overflow: hidden;">
+                        <li class="profile-header text-center p-3" >
+                            <img src="@(ViewBag.ProfilePictureUrl ?? Url.Content("~/Photos/logo.png"))" alt="Profile" class="rounded-circle mb-2" style="width:100px;height:100px;">
+                            <div class="fw-bold" style="color: #333;">@ViewBag.FullName</div>
+                            <div style="font-size:0.95rem;color:#333">@ViewBag.Role</div>
+                        </li>
+                        <li>
+                            <form method="get" action="@Url.Action("EditProfile", "Account")" class="m-0">
+                                <button type="submit" class="dropdown-item d-flex align-items-center gap-2">
+                                    <i class="fas fa-user-edit"></i> Edit Profile
+                                </button>
+                            </form>
+                        </li>
+                        <li>
+                            <form method="get" action="@Url.Action("ChangePassword", "Account")" class="m-0">
+                                <button type="submit" class="dropdown-item d-flex align-items-center gap-2">
+                                    <i class="fas fa-key"></i> Change Password
+                                </button>
+                            </form>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                                <button type="submit" class="dropdown-item text-danger d-flex align-items-center gap-2">
+                                    <i class="fas fa-sign-out-alt"></i> Sign Out
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+            <!-- Main Content -->
+            <div class="main-content">
+                
+               
+                @RenderBody()
+            </div>
+
+
+            <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P6RD5GCL"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-L53VQ78ZL0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-L53VQ78ZL0');
+</script>
+
+
+            <!-- Footer -->
+            <footer class="main-footer">
+                <div class="footer-container">
+                    <div class="footer-links mb-2">
+                        <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook"></i></a>
+                        <a href="https://youtube.com" target="_blank"><i class="fab fa-youtube"></i></a>
+                    </div>
+                    <div>Copyright © 2025 E-Group. All rights reserved.</div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" defer></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <script>
+// Sidebar toggle functionality
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainbar = document.getElementById('mainbar');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            if (window.innerWidth <= 991) {
+                // Mobile/tablet behavior
+                sidebar.classList.toggle('show');
+                overlay?.classList.toggle('show');
+            } else {
+                // Desktop behavior → explicit collapse/expand
+                if (sidebar.classList.contains("collapsed")) {
+                    sidebar.classList.remove("collapsed");
+                    mainbar.classList.remove("collapsed");
+                    localStorage.setItem("sidebarCollapsed", "false");
+                } else {
+                    sidebar.classList.add("collapsed");
+                    mainbar.classList.add("collapsed");
+                    localStorage.setItem("sidebarCollapsed", "true");
+                }
+            }
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            const sidebar = document.getElementById('sidebar');
+            const mainbar = document.getElementById('mainbar');
+
+            if (window.innerWidth > 991) {
+                if (localStorage.getItem("sidebarCollapsed") === "true") {
+                    sidebar.classList.add("collapsed");
+                    mainbar.classList.add("collapsed");
+                } else {
+                    sidebar.classList.remove("collapsed");
+                    mainbar.classList.remove("collapsed");
+                }
+            } else {
+                sidebar.classList.remove("show");
+            }
+        });
+
+
+
+
+// Close sidebar function for mobile
+function closeSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    if (window.innerWidth <= 991) {
+        sidebar.classList.remove('show');
+        if (overlay) {
+            overlay.classList.remove('show');
+        }
+    }
+}
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', function(event) {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.querySelector('.sidebar-toggle-mobile');
+    
+    if (window.innerWidth <= 991 && sidebar && sidebar.classList.contains('show')) {
+        if (!sidebar.contains(event.target) && !sidebarToggle.contains(event.target)) {
+            closeSidebar();
+        }
+    }
+});
+
+// Handle window resize
+window.addEventListener('resize', function() {
+    const sidebar = document.getElementById('sidebar');
+    const mainbar = document.getElementById('mainbar');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    if (window.innerWidth > 991) {
+        // Desktop view - remove mobile classes
+        sidebar.classList.remove('show');
+        if (overlay) {
+            overlay.classList.remove('show');
+        }
+    } else {
+        // Mobile view - remove desktop collapse classes
+        sidebar.classList.remove('collapsed');
+        mainbar.classList.remove('collapsed');
+    }
+});
+
+// Notifications dropdown
+function toggleNotificationsDropdown() {
+    const dropdown = document.getElementById('notificationsDropdown');
+    if (dropdown) {
+        dropdown.style.display = (dropdown.style.display === 'block' ? 'none' : 'block');
+    }
+}
+
+// Close notifications dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('notificationsDropdown');
+    const btn = document.querySelector('.notifications-btn');
+    if (dropdown && btn && !btn.contains(event.target) && !dropdown.contains(event.target)) {
+        dropdown.style.display = 'none';
+    }
+});
+
+// Theme toggle
+function toggleTheme() {
+    const body = document.body;
+    const themeBtn = document.querySelector('.theme-switcher i');
+    
+    body.classList.toggle('dark-theme');
+    
+    // Update icon based on theme
+    if(body.classList.contains('dark-theme')) {
+        localStorage.setItem('theme', 'dark');
+        if (themeBtn) {
+            themeBtn.className = 'fas fa-sun';
+        }
+    } else {
+        localStorage.setItem('theme', 'light');
+        if (themeBtn) {
+            themeBtn.className = 'fas fa-moon';
+        }
+    }
+}
+
+// Load saved theme on page load
+window.onload = function() {
+    const savedTheme = localStorage.getItem('theme');
+    const themeBtn = document.querySelector('.theme-switcher i');
+    
+    if(savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        if (themeBtn) {
+            themeBtn.className = 'fas fa-sun';
+        }
+    } else {
+        if (themeBtn) {
+            themeBtn.className = 'fas fa-moon';
+        }
+    }
+    
+    // Load sidebar state
+    const sidebarState = localStorage.getItem('sidebarCollapsed');
+    if (sidebarState === 'true' && window.innerWidth > 991) {
+        const sidebar = document.getElementById('sidebar');
+        const mainbar = document.getElementById('mainbar');
+        if (sidebar && mainbar) {
+            sidebar.classList.add('collapsed');
+            mainbar.classList.add('collapsed');
+        }
+    }
+}
+
+// Save sidebar state when toggled
+function saveSidebarState() {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar && window.innerWidth > 991) {
+        localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+    }
+}
+
+// Update toggleSidebar to save state
+const originalToggleSidebar = toggleSidebar;
+toggleSidebar = function() {
+    originalToggleSidebar();
+    saveSidebarState();
+};
+
+// Redirect to payment function
+function redirectToPayment() {
+    // Get pending orders and redirect to payment
+    fetch('@Url.Action("Orders", "MemberDashboard", new { status = "Pending" })')
+        .then(response => {
+            if (response.ok) {
+                window.location.href = '@Url.Action("Orders", "MemberDashboard", new { status = "Pending" })';
+            }
+        })
+        .catch(() => {
+            window.location.href = '@Url.Action("Orders", "MemberDashboard", new { status = "Pending" })';
+        });
+}
+
+// Sidebar dropdown toggle
+        function toggleSidebarDropdown(event) {
+            event.preventDefault();
+            var parent = event.target.closest('.sidebar-dropdown-parent');
+            var dropdown = parent.querySelector('.sidebar-dropdown');
+
+            if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+                dropdown.style.display = 'block';
+
+                // Scroll the dropdown into view smoothly
+                dropdown.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+                dropdown.style.display = 'none';
+            }
+        }
+
+</script>
+</body>
+</html> 

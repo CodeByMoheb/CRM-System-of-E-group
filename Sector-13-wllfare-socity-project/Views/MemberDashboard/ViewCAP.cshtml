@@ -1,0 +1,391 @@
+@model CAPViewModel
+
+@{
+    ViewData["Title"] = "Corrective Action Plan";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0 text-gray-800">
+                    <i class="fas fa-tasks me-2"></i>Corrective Action Plan - Booking #B-@Model.Booking.Id
+                </h1>
+                <div class="btn-group">
+                    <a href="@Url.Action("Index")" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                    <a href="@Url.Action("ViewAuditReport", new { id = Model.Booking.Id })" class="btn btn-outline-primary">
+                        <i class="fas fa-file-alt me-2"></i>View Audit Report
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CAP Overview -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-warning shadow" role="alert">
+                <div class="d-flex align-items-start">
+                    <i class="fas fa-exclamation-triangle fa-2x text-warning me-3 mt-1"></i>
+                    <div>
+                        <h5 class="alert-heading">Corrective Action Required</h5>
+                        <p class="mb-2">Your audit has identified areas that require improvement. Please review the action items below and provide your responses. You will receive email notifications for any updates.</p>
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>Expected completion: @Model.ExpectedCompletionDate?.ToString("MMM dd, yyyy")
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Overview -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Total Issues
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalIssues</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Completed
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.CompletedActions</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Pending
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.PendingActions</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Overdue
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.OverdueActions</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Bar -->
+    @if (Model.TotalIssues > 0)
+    {
+        var progressPercentage = (Model.CompletedActions * 100) / Model.TotalIssues;
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="font-weight-bold">Overall Progress</span>
+                            <span class="font-weight-bold">@progressPercentage%</span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: @progressPercentage%" 
+                                 aria-valuenow="@progressPercentage" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Action Items -->
+    <div class="row">
+        <div class="col-12">
+            @if (Model.ActionPlans.Any())
+            {
+                @foreach (var action in Model.ActionPlans.OrderBy(a => a.Priority == "Critical" ? 1 : a.Priority == "High" ? 2 : a.Priority == "Medium" ? 3 : 4).ThenBy(a => a.DueDate))
+                {
+                    <div class="card shadow mb-4 cap-item cap-@action.Status.ToLower().Replace(" ", "-")">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold">
+                                <i class="fas fa-@(action.Priority == "Critical" ? "exclamation-triangle text-danger" : 
+                                                action.Priority == "High" ? "exclamation-circle text-warning" : 
+                                                action.Priority == "Medium" ? "info-circle text-info" : "check-circle text-success") me-2"></i>
+                                Action Item #@action.Id
+                            </h6>
+                            <div>
+                                <span class="badge badge-@(action.Priority.ToLower()) me-2">@action.Priority Priority</span>
+                                <span class="badge badge-@(action.Status == "Completed" ? "success" : action.Status == "Pending" ? "warning" : action.Status == "Overdue" ? "danger" : "info")">
+                                    @action.Status
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h6 class="text-primary mb-2">Issue Identified:</h6>
+                                    <p class="text-muted">@action.IssueDescription</p>
+                                    
+                                    <h6 class="text-primary mb-2">Required Action:</h6>
+                                    <p>@action.RequiredAction</p>
+                                    
+                                    @if (!string.IsNullOrEmpty(action.MemberResponse))
+                                    {
+                                        <h6 class="text-success mb-2">Your Response:</h6>
+                                        <div class="alert alert-light">
+                                            <i class="fas fa-quote-left me-2"></i>@action.MemberResponse
+                                        </div>
+                                    }
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <strong>Due Date:</strong><br>
+                                        <span class="@(action.DueDate < DateTime.Now && action.Status != "Completed" ? "text-danger" : "")">
+                                            @action.DueDate.ToString("MMM dd, yyyy")
+                                        </span>
+                                    </div>
+                                    
+                                    @if (action.CompletedDate.HasValue)
+                                    {
+                                        <div class="mb-3">
+                                            <strong>Completed:</strong><br>
+                                            <span class="text-success">@action.CompletedDate.Value.ToString("MMM dd, yyyy")</span>
+                                        </div>
+                                    }
+                                    
+                                    @if (action.Status != "Completed")
+                                    {
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary btn-sm" 
+                                                    onclick="showResponseModal(@action.Id, '@action.MemberResponse')">
+                                                <i class="fas fa-reply me-1"></i>
+                                                @(string.IsNullOrEmpty(action.MemberResponse) ? "Add Response" : "Update Response")
+                                            </button>
+                                            <button type="button" class="btn btn-success btn-sm" 
+                                                    onclick="showCompletionModal(@action.Id)">
+                                                <i class="fas fa-check me-1"></i>Mark Complete
+                                            </button>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="alert alert-success mb-0 text-center">
+                                            <i class="fas fa-check-circle fa-2x mb-2 d-block"></i>
+                                            <strong>Completed!</strong>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="card shadow">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-clipboard-check fa-4x text-gray-300 mb-3"></i>
+                        <h4 class="text-gray-600">No Action Items</h4>
+                        <p class="text-gray-500">All corrective actions have been completed!</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Response Modal -->
+<div class="modal fade" id="responseModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add/Update Response</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="responseForm">
+                <div class="modal-body">
+                    <input type="hidden" id="responseCapId" name="capId">
+                    <div class="mb-3">
+                        <label for="memberResponse" class="form-label">Your Response:</label>
+                        <textarea class="form-control" id="memberResponse" name="memberResponse" rows="4" 
+                                  placeholder="Describe what actions you have taken or plan to take..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Response</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Completion Modal -->
+<div class="modal fade" id="completionModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Mark Action Complete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="completionForm">
+                <div class="modal-body">
+                    <input type="hidden" id="completionCapId" name="capId">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Are you sure this action item has been completed? Please provide details about what was done.
+                    </div>
+                    <div class="mb-3">
+                        <label for="completionNote" class="form-label">Completion Details:</label>
+                        <textarea class="form-control" id="completionNote" name="completionNote" rows="4" 
+                                  placeholder="Describe what actions were completed..." required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Mark Complete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function showResponseModal(capId, existingResponse) {
+            $('#responseCapId').val(capId);
+            $('#memberResponse').val(existingResponse || '');
+            $('#responseModal').modal('show');
+        }
+
+        function showCompletionModal(capId) {
+            $('#completionCapId').val(capId);
+            $('#completionNote').val('');
+            $('#completionModal').modal('show');
+        }
+
+        $('#responseForm').submit(function(e) {
+            e.preventDefault();
+            
+            var formData = new FormData(this);
+            
+            $.post('@Url.Action("UpdateCAPResponse")', {
+                capId: formData.get('capId'),
+                memberResponse: formData.get('memberResponse')
+            })
+            .done(function(response) {
+                $('#responseModal').modal('hide');
+                location.reload();
+            })
+            .fail(function() {
+                alert('Error updating response. Please try again.');
+            });
+        });
+
+        $('#completionForm').submit(function(e) {
+            e.preventDefault();
+            
+            var formData = new FormData(this);
+            
+            if (!formData.get('completionNote').trim()) {
+                alert('Please provide completion details.');
+                return;
+            }
+            
+            $.post('@Url.Action("MarkCAPCompleted")', {
+                capId: formData.get('capId'),
+                completionNote: formData.get('completionNote')
+            })
+            .done(function(response) {
+                $('#completionModal').modal('hide');
+                location.reload();
+            })
+            .fail(function() {
+                alert('Error marking item complete. Please try again.');
+            });
+        });
+    </script>
+}
+
+<style>
+    .cap-item {
+        border-left: 4px solid #6c757d;
+    }
+    
+    .cap-pending {
+        border-left-color: #ffc107;
+    }
+    
+    .cap-in-progress {
+        border-left-color: #17a2b8;
+    }
+    
+    .cap-completed {
+        border-left-color: #28a745;
+    }
+    
+    .cap-overdue {
+        border-left-color: #dc3545;
+    }
+    
+    .badge-critical {
+        background-color: #dc3545;
+    }
+    
+    .badge-high {
+        background-color: #fd7e14;
+    }
+    
+    .badge-medium {
+        background-color: #ffc107;
+        color: #212529;
+    }
+    
+    .badge-low {
+        background-color: #6f42c1;
+    }
+</style>
