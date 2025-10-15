@@ -114,11 +114,11 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                              }
                          }
 
-                         // Sign in the employee using the default password
-                         await _signInManager.SignInAsync(employeeUser, model.RememberMe);
-                         
-                         // Redirect to Member dashboard (which will show employee-specific content)
-                         return RedirectToAction("Member", "Dashboard");
+                        // Sign in the employee using the default password
+                        await _signInManager.SignInAsync(employeeUser, model.RememberMe);
+                        
+                        // Redirect EMP users to Dashboard/Member (Employee Dashboard)
+                        return RedirectToAction("Member", "Dashboard");
                      }
                  }
                 else
@@ -193,7 +193,19 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                         else if (roles.Contains("Manager"))
                             return RedirectToAction("Manager", "Dashboard");
                         else if (roles.Contains("Member"))
-                            return RedirectToAction("Member", "Dashboard");
+                        {
+                            // Check if this is a Gmail/Email user (not EMP user)
+                            if (user.Email != null && user.Email.Contains("@gmail.com"))
+                            {
+                                // Redirect Gmail users to MemberDashboard (Customer Dashboard)
+                                return RedirectToAction("Index", "MemberDashboard");
+                            }
+                            else
+                            {
+                                // Redirect other email users to MemberDashboard as well
+                                return RedirectToAction("Index", "MemberDashboard");
+                            }
+                        }
                         else
                             return RedirectToAction("Index", "Dashboard");
                         }
@@ -255,7 +267,10 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                     else if (model.SelectedRole == "Manager")
                         return RedirectToAction("Manager", "Dashboard");
                     else if (model.SelectedRole == "Member")
-                        return RedirectToAction("Member", "Dashboard");
+                    {
+                        // New members (Gmail/Email users) go to MemberDashboard
+                        return RedirectToAction("Index", "MemberDashboard");
+                    }
                     else
                         return RedirectToAction("Index", "Dashboard");
                 }
@@ -665,8 +680,21 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
             {
                 // Update any authentication tokens
                 await _signInManager.UpdateExternalAuthenticationTokensAsync(info);
+                
+                // Get user info to determine redirect
+                var user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+                if (user != null)
+                {
+                    var roles = await _userManager.GetRolesAsync(user);
+                    if (roles.Contains("Member"))
+                    {
+                        // External login users (Gmail, etc.) go to MemberDashboard
+                        return RedirectToAction("Index", "MemberDashboard");
+                    }
+                }
+                
+                // Fallback to Dashboard/Member for other roles
                 return LocalRedirect("/Dashboard/Member");
-
             }
             else
             {
@@ -713,7 +741,9 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                         
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         await _signInManager.UpdateExternalAuthenticationTokensAsync(info);
-                        return LocalRedirect("/Dashboard/Member");
+                        
+                        // External login users (Gmail, etc.) go to MemberDashboard
+                        return RedirectToAction("Index", "MemberDashboard");
                     }
                 }
                 foreach (var error in result.Errors)
