@@ -454,73 +454,14 @@
 
                 }
                 @if (roles.Contains("Member")) {
-                    <!-- Member Dashboard -->
+                    <!-- Employee Dashboard - Clean Interface -->
                     <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDashboard" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
-                           asp-controller="MemberDashboard" asp-action="Index">
-                            <i class="fas fa-tachometer-alt"></i>
-                            <span class="menu-text">Dashboard</span>
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" && ViewContext.RouteData.Values["action"]?.ToString() == "Member" ? "active" : "")"
+                           asp-controller="Dashboard" asp-action="Member">
+                            <i class="fas fa-user-clock"></i>
+                            <span class="menu-text">Employee Attendance</span>
                         </a>
                     </li>
-
-                    <!-- My Orders Menu -->
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center justify-content-between @(new[] {"MemberDashboard"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) && new[] {"Orders","OrderDetails"}.Contains(ViewContext.RouteData.Values["action"]?.ToString()) ? "active" : "")"
-                           data-bs-toggle="collapse"
-                           href="#submenuOrders"
-                           role="button"
-                           aria-expanded="@(new[] {"MemberDashboard"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) && new[] {"Orders","OrderDetails"}.Contains(ViewContext.RouteData.Values["action"]?.ToString()) ? "true" : "false")"
-                           aria-controls="submenuOrders">
-                            <span><i class="fas fa-shopping-bag ms-1"></i> <span class="menu-text">My Orders</span></span>
-                            <i class="arrow fas fa-chevron-down ms-1"></i>
-                        </a>
-                        <div class="collapse submenu @(new[] {"MemberDashboard"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) && new[] {"Orders","OrderDetails"}.Contains(ViewContext.RouteData.Values["action"]?.ToString()) ? "show" : "")" id="submenuOrders">
-                            <ul class="nav flex-column" style="margin-left:25px">
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDashboard" && ViewContext.RouteData.Values["action"]?.ToString() == "Orders" ? "active" : "")"
-                                       asp-controller="MemberDashboard" asp-action="Orders" asp-route-status="Pending">
-                                        <i class="fas fa-clock"></i> Pending Orders
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDashboard" && ViewContext.RouteData.Values["action"]?.ToString() == "Orders" ? "active" : "")"
-                                       asp-controller="MemberDashboard" asp-action="Orders" asp-route-status="Completed">
-                                        <i class="fas fa-check-circle"></i> Completed Orders
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-
-                    <!-- Payment & Billing -->
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center justify-content-between @(new[] {"MemberDashboard"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) && new[] {"Payments","Invoices","PaymentHistory"}.Contains(ViewContext.RouteData.Values["action"]?.ToString()) ? "active" : "")"
-                           data-bs-toggle="collapse"
-                           href="#submenuPayments"
-                           role="button"
-                           aria-expanded="@(new[] {"MemberDashboard"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) && new[] {"Payments","Invoices","PaymentHistory"}.Contains(ViewContext.RouteData.Values["action"]?.ToString()) ? "true" : "false")"
-                           aria-controls="submenuPayments">
-                            <span><i class="fas fa-credit-card ms-1"></i> <span class="menu-text">Payments</span></span>
-                            <i class="arrow fas fa-chevron-down ms-1"></i>
-                        </a>
-                        <div class="collapse submenu @(new[] {"MemberDashboard"}.Contains(ViewContext.RouteData.Values["controller"]?.ToString()) && new[] {"Payments","Invoices","PaymentHistory"}.Contains(ViewContext.RouteData.Values["action"]?.ToString()) ? "show" : "")" id="submenuPayments">
-                            <ul class="nav flex-column" style="margin-left:25px">
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDashboard" && ViewContext.RouteData.Values["action"]?.ToString() == "PaymentHistory" ? "active" : "")"
-                                       asp-controller="MemberDashboard" asp-action="PaymentHistory">
-                                        <i class="fas fa-history"></i> Payment History
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberDashboard" && ViewContext.RouteData.Values["action"]?.ToString() == "Invoices" ? "active" : "")"
-                                       asp-controller="MemberDashboard" asp-action="Invoices">
-                                        <i class="fas fa-file-invoice"></i> My Invoices
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-
                 }
                 @if (roles.Contains("President")) {
                     <li class="nav-item">
