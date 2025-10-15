@@ -15,7 +15,7 @@
         <dt class="col-sm-2">Joining Date</dt>
         <dd class="col-sm-10">@Model.JoiningDate.ToShortDateString()</dd>
         <dt class="col-sm-2">Base Salary</dt>
-        <dd class="col-sm-10">@Model.BaseSalary.ToString("C")</dd>
+        <dd class="col-sm-10">$@Model.BaseSalary.ToString("F2")</dd>
     </dl>
     <form asp-action="Delete" method="post">
         <input type="hidden" asp-for="Id" />

@@ -35,7 +35,7 @@
                                 Total Paid
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                @Model.Sum(p => p.Amount).ToString("C")
+                                $@Model.Sum(p => p.Amount).ToString("F2")
                             </div>
                         </div>
                         <div class="col-auto">
@@ -73,7 +73,7 @@
                                 This Month
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                @Model.Where(p => p.Date.Month == DateTime.Now.Month && p.Date.Year == DateTime.Now.Year).Sum(p => p.Amount).ToString("C")
+                                $@Model.Where(p => p.Date.Month == DateTime.Now.Month && p.Date.Year == DateTime.Now.Year).Sum(p => p.Amount).ToString("F2")
                             </div>
                         </div>
                         <div class="col-auto">
@@ -93,7 +93,7 @@
                                 Average Payment
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                @(Model.Count > 0 ? (Model.Sum(p => p.Amount) / Model.Count).ToString("C") : "$0.00")
+                                @(Model.Count > 0 ? "$" + (Model.Sum(p => p.Amount) / Model.Count).ToString("F2") : "$0.00")
                             </div>
                         </div>
                         <div class="col-auto">
@@ -145,7 +145,7 @@
                                             </td>
                                             <td>@payment.Description</td>
                                             <td>
-                                                <strong class="text-success">@payment.Amount.ToString("C")</strong>
+                                                <strong class="text-success">$@payment.Amount.ToString("F2")</strong>
                                             </td>
                                             <td>
                                                 <span class="badge badge-success">@payment.Status</span>

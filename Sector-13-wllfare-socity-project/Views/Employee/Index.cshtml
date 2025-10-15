@@ -98,7 +98,7 @@
                                             </span>
                                         </td>
                                         <td>@(employee.Shift?.Name ?? "No Shift")</td>
-                                        <td>@employee.BaseSalary.ToString("C")</td>
+                                        <td>$@employee.BaseSalary.ToString("F2")</td>
                                         <td>
                                             <span class="badge @(employee.IsActive ? "bg-success" : "bg-danger")">
                                                 @(employee.IsActive ? "Active" : "Inactive")

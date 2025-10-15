@@ -100,7 +100,7 @@
                                     </td>
                                     <td>@invoice.Type</td>
                                     <td>@invoice.Date.ToString("MMM dd, yyyy")</td>
-                                    <td>@invoice.Amount.ToString("C")</td>
+                                    <td>$@invoice.Amount.ToString("F2")</td>
                                     <td>
                                         <span class="badge badge-@(invoice.Status == "Paid" ? "success" : invoice.Status == "Pending" ? "warning" : "secondary")">
                                             @invoice.Status

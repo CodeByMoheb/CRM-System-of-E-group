@@ -93,7 +93,7 @@
                                                 }
                                             </td>
                                             <td>
-                                                <strong>@booking.TotalAmount.ToString("C") @booking.Currency</strong>
+                                                <strong>$@booking.TotalAmount.ToString("F2")</strong>
                                             </td>
                                             <td>
                                                 @if (booking.ServiceDate.HasValue)

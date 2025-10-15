@@ -71,7 +71,7 @@
                                                 <small class="font-monospace">@booking.BookingNumber</small>
                                             </td>
                                             <td>
-                                                <strong class="text-success">@booking.TotalAmount.ToString("C")</strong>
+                                                <strong class="text-success">$@booking.TotalAmount.ToString("F2")</strong>
                                             </td>
                                             <td>
                                                 <span class="badge badge-@(booking.PaymentStatus == "Pending" ? "warning" : booking.PaymentStatus == "Completed" ? "info" : booking.BookingStatus == "Processing" ? "primary" : booking.BookingStatus == "Completed" ? "success" : booking.BookingStatus == "Cancelled" ? "danger" : "secondary")">
