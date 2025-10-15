@@ -86,27 +86,21 @@
                             </div>
                         </div>
 
-                        <!-- Quick Actions Row -->
+                        <!-- Employee Actions - Simplified -->
                         <div class="row mt-4">
                             <div class="col-12">
                                 <div class="quick-actions">
                                     <div class="row g-3 justify-content-center">
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <a href="@Url.Action("MyAttendance", "EmployeeAttendance")" class="btn btn-outline-primary w-100 quick-action-btn">
                                                 <i class="fas fa-history me-2"></i>
                                                 <span>My Attendance</span>
                                             </a>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <a href="@Url.Action("LeaveRequest", "Dashboard")" class="btn btn-outline-warning w-100 quick-action-btn">
                                                 <i class="fas fa-calendar-plus me-2"></i>
                                                 <span>Apply Leave</span>
-                                            </a>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <a href="@Url.Action("MyLeaves", "EmployeeAttendance")" class="btn btn-outline-info w-100 quick-action-btn">
-                                                <i class="fas fa-calendar-check me-2"></i>
-                                                <span>Leave Status</span>
                                             </a>
                                         </div>
                                     </div>
@@ -114,12 +108,12 @@
                             </div>
                         </div>
 
-                        <!-- Today's Summary -->
+                        <!-- Today's Summary - Essential Info Only -->
                         <div class="row mt-4">
                             <div class="col-12">
                                 <div class="today-summary">
-                                    <div class="row g-3">
-                                        <div class="col-md-3">
+                                    <div class="row g-3 justify-content-center">
+                                        <div class="col-md-4">
                                             <div class="summary-card bg-gradient-success text-white">
                                                 <div class="card-body text-center p-3">
                                                     <i class="fas fa-clock fa-2x mb-2"></i>
@@ -128,7 +122,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-4">
                                             <div class="summary-card bg-gradient-info text-white">
                                                 <div class="card-body text-center p-3">
                                                     <i class="fas fa-calendar-day fa-2x mb-2"></i>
@@ -137,21 +131,12 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-4">
                                             <div class="summary-card bg-gradient-warning text-white">
                                                 <div class="card-body text-center p-3">
                                                     <i class="fas fa-clock fa-2x mb-2"></i>
                                                     <h6 class="mb-1">Current Time</h6>
                                                     <div class="fw-bold" id="current-time">@DateTime.Now.ToString("HH:mm:ss")</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="summary-card bg-gradient-secondary text-white">
-                                                <div class="card-body text-center p-3">
-                                                    <i class="fas fa-user-tie fa-2x mb-2"></i>
-                                                    <h6 class="mb-1">Employee Type</h6>
-                                                    <div class="fw-bold">Active</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -177,99 +162,7 @@
         </div>
     }
 
-    <!-- Member Dashboard Statistics -->
-    <div class="row">
-        <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                My Orders</div>
-                            <div class="h5 mb-0 font-weight-bold">@ViewBag.OrderCount</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Pending Orders</div>
-                            <div class="h5 mb-0 font-weight-bold">@ViewBag.PendingOrderCount</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-clock fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                Recent Notices</div>
-                            <div class="h5 mb-0 font-weight-bold">@ViewBag.RecentNoticesCount</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-newspaper fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Quick Action Links -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card border-0 shadow-lg">
-                <div class="card-header bg-gradient-primary text-white py-3 border-0">
-                    <h5 class="mb-0">
-                        <i class="fas fa-bolt me-2"></i>
-                        Quick Actions
-                    </h5>
-                </div>
-                <div class="card-body p-4">
-                    <div class="row g-3">
-                        <div class="col-md-3">
-                            <a href="@Url.Action("Index", "Booking")" class="btn btn-outline-primary w-100 quick-action-btn">
-                                <i class="fas fa-plus-circle me-2"></i>
-                                <span>New Booking</span>
-                            </a>
-                        </div>
-                        <div class="col-md-3">
-                            <a href="@Url.Action("Index", "MemberDashboard")" class="btn btn-outline-success w-100 quick-action-btn">
-                                <i class="fas fa-list me-2"></i>
-                                <span>My Orders</span>
-                            </a>
-                        </div>
-                        <div class="col-md-3">
-                            <a href="@Url.Action("Index", "Notice")" class="btn btn-outline-info w-100 quick-action-btn">
-                                <i class="fas fa-bell me-2"></i>
-                                <span>View Notices</span>
-                            </a>
-                        </div>
-                        <div class="col-md-3">
-                            <a href="@Url.Action("Profile", "MemberDashboard")" class="btn btn-outline-secondary w-100 quick-action-btn">
-                                <i class="fas fa-user me-2"></i>
-                                <span>My Profile</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Employee-focused content only - no order/booking sections -->
 
    
 </div>
