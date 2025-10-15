@@ -188,6 +188,18 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                     await _context.SaveChangesAsync();
                 }
 
+                // Create Invoice for the booking (using existing structure)
+                var invoice = new Invoice
+                {
+                    InvoiceId = GenerateInvoiceNumber(),
+                    CompanyCalId = booking.Id.ToString(),
+                    InvoiceDate = DateTime.Now,
+                    IsApproved = false  // Set default value for IsApproved column
+                };
+
+                _context.Invoices.Add(invoice);
+                await _context.SaveChangesAsync();
+
                 // Send email notifications to manager and customer
                 await SendBookingNotificationEmails(booking);
 
@@ -390,6 +402,11 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
         private string GenerateBookingNumber()
         {
             return $"EG-{DateTime.Now:yyyyMMdd}-{Guid.NewGuid().ToString("N")[..8].ToUpper()}";
+        }
+
+        private string GenerateInvoiceNumber()
+        {
+            return $"INV-{DateTime.Now:yyyyMMdd}-{Guid.NewGuid().ToString("N")[..8].ToUpper()}";
         }
 
         // Private method to send booking notification emails
@@ -1265,6 +1282,17 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
 
                 await _context.SaveChangesAsync();
 
+                // Update corresponding invoice (using existing structure)
+                var invoice = await _context.Invoices
+                    .FirstOrDefaultAsync(i => i.CompanyCalId == booking.Id.ToString());
+                
+                if (invoice != null)
+                {
+                    // Update invoice with available properties
+                    invoice.InvoiceDate = DateTime.Now;
+                    await _context.SaveChangesAsync();
+                }
+
                 // Send confirmation email and SMS
                 await SendPaymentConfirmationAsync(booking.Id);
 
@@ -1289,6 +1317,47 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                 .OrderByDescending(b => b.BookingDate)
                 .ToListAsync();
             return View(pending);
+        }
+
+        // MANAGER: Approve payment
+        [HttpPost]
+        [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Manager,Admin")]
+        public async Task<IActionResult> ApprovePayment(int bookingId)
+        {
+            try
+            {
+                var booking = await _context.Bookings.FindAsync(bookingId);
+                if (booking == null)
+                {
+                    return Json(new { success = false, message = "Booking not found" });
+                }
+
+                // Update booking status
+                booking.PaymentStatus = "Completed";
+                booking.BookingStatus = "Confirmed";
+                booking.PaymentDate = DateTime.Now;
+
+                // Update corresponding invoice (using existing structure)
+                var invoice = await _context.Invoices
+                    .FirstOrDefaultAsync(i => i.CompanyCalId == booking.Id.ToString());
+                
+                if (invoice != null)
+                {
+                    // Update invoice with available properties
+                    invoice.InvoiceDate = DateTime.Now;
+                }
+
+                await _context.SaveChangesAsync();
+
+                // Send completion email
+                await SendBookingCompletionEmails(booking);
+
+                return Json(new { success = true, message = "Payment approved successfully" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
         }
 
         // MANAGER: Review a specific bank transfer

@@ -9,8 +9,8 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Models
         public int PendingOrders { get; set; }
         public int CompletedOrders { get; set; }
         public int CartItemCount { get; set; }
-        public CompanyCal? RecentBooking { get; set; }
-        public List<CompanyCal> RecentBookings { get; set; } = new();
+        public Booking? RecentBooking { get; set; }
+        public List<Booking> RecentBookings { get; set; } = new();
         public Order? RecentOrder { get; set; }
         public decimal TotalSpent => Orders.Where(o => o.OrderStatus == "Completed").Sum(o => o.TotalAmount);
     }

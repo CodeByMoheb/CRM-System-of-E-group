@@ -16,8 +16,8 @@
                     <a href="@Url.Action("Invoices")" class="btn btn-outline-primary">
                         <i class="fas fa-file-invoice me-2"></i>View Invoices
                     </a>
-                    <a href="@Url.Action("PendingPayments")" class="btn btn-outline-warning">
-                        <i class="fas fa-exclamation-triangle me-2"></i>Pending Payments
+                    <a href="@Url.Action("Orders", new { status = "Pending" })" class="btn btn-outline-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Pending Orders
                     </a>
                 </div>
             </div>

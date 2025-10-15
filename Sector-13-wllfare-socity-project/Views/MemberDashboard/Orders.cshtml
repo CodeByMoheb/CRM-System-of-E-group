@@ -45,68 +45,60 @@
                                     @foreach (var booking in Model.Bookings)
                                     {
                                         <tr>
-                                            <td><strong>B-@booking.Id</strong></td>
+                                            <td><strong>@booking.BookingNumber</strong></td>
                                             <td>
-                                                @if (booking.Service != null)
+                                                @if (booking.BookingItems?.Any() == true)
                                                 {
-                                                    @booking.Service.Name
+                                                    @booking.BookingItems.First().ServiceName
                                                 }
                                                 else
                                                 {
-                                                    <span class="text-muted">General Service</span>
+                                                    <span class="text-muted">Service Booking</span>
                                                 }
                                             </td>
                                             <td>
-                                                @if (booking.Service != null)
+                                                @if (booking.BookingItems?.Any() == true)
                                                 {
-                                                    @booking.Service.ServiceType
+                                                    @booking.BookingItems.First().ServiceType
                                                 }
                                                 else
                                                 {
                                                     <span class="text-muted">N/A</span>
                                                 }
                                             </td>
-                                            <td>@booking.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                            <td>@booking.BookingDate.ToString("MMM dd, yyyy")</td>
                                             <td>
-                                                <small class="font-monospace">R-@booking.Id-@booking.CreatedAt.ToString("yyyyMM")</small>
+                                                <small class="font-monospace">@booking.BookingNumber</small>
                                             </td>
                                             <td>
-                                                @if (booking.Total.HasValue && booking.Total.Value > 0)
-                                                {
-                                                    <strong class="text-success">@booking.Total.Value.ToString("C")</strong>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-muted">Quote Required</span>
-                                                }
+                                                <strong class="text-success">@booking.TotalAmount.ToString("C")</strong>
                                             </td>
                                             <td>
-                                                <span class="badge badge-@(booking.Status == "Pending Payment" ? "warning" : booking.Status == "Paid" ? "info" : booking.Status == "Processing" ? "primary" : booking.Status == "Audit Complete" ? "success" : booking.Status == "CAP Required" ? "danger" : "secondary")">
-                                                    @(string.IsNullOrEmpty(booking.Status) ? "Pending Payment" : booking.Status)
+                                                <span class="badge badge-@(booking.PaymentStatus == "Pending" ? "warning" : booking.PaymentStatus == "Completed" ? "info" : booking.BookingStatus == "Processing" ? "primary" : booking.BookingStatus == "Completed" ? "success" : booking.BookingStatus == "Cancelled" ? "danger" : "secondary")">
+                                                    @(booking.PaymentStatus == "Pending" ? "Pending Payment" : booking.PaymentStatus == "Completed" ? "Paid" : booking.BookingStatus ?? "Pending")
                                                 </span>
                                             </td>
                                             <td>
                                                 <div class="btn-group">
-                                                    @if (string.IsNullOrEmpty(booking.Status) || booking.Status == "Pending Payment")
+                                                    @if (booking.PaymentStatus == "Pending")
                                                     {
                                                         <a href="@Url.Action("ProcessPayment", "Booking", new { id = booking.Id })" 
                                                            class="btn btn-sm btn-success">
                                                             <i class="fas fa-credit-card"></i>
                                                         </a>
                                                     }
-                                                    else if (booking.Status == "Audit Complete")
+                                                    else if (booking.BookingStatus == "Completed")
                                                     {
-                                                        <a href="@Url.Action("ViewAuditReport", "MemberDashboard", new { id = booking.Id })" 
-                                                           class="btn btn-sm btn-primary">
+                                                        <a href="@Url.Action("Invoice", "Booking", new { id = booking.Id })" 
+                                                           class="btn btn-sm btn-primary" title="View Invoice">
                                                             <i class="fas fa-file-alt"></i>
                                                         </a>
                                                     }
-                                                    else if (booking.Status == "CAP Required")
+                                                    else if (booking.BookingStatus == "Cancelled")
                                                     {
-                                                        <a href="@Url.Action("ViewCAP", "MemberDashboard", new { id = booking.Id })" 
-                                                           class="btn btn-sm btn-warning">
-                                                            <i class="fas fa-tasks"></i>
-                                                        </a>
+                                                        <span class="btn btn-sm btn-secondary disabled" title="Cancelled">
+                                                            <i class="fas fa-times"></i>
+                                                        </span>
                                                     }
                                                     
                                                     <a href="@Url.Action("Details", "Booking", new { id = booking.Id })" 

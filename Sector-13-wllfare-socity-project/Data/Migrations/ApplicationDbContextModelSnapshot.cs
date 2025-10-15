@@ -368,7 +368,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ApprovalRequests");
+                    b.ToTable("ApprovalRequests", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.Attendance", b =>
@@ -417,7 +417,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("Attendances");
+                    b.ToTable("Attendances", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.AuditQuestion", b =>
@@ -467,7 +467,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasIndex("ServiceId");
 
-                    b.ToTable("AuditQuestions");
+                    b.ToTable("AuditQuestions", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.AuditResponse", b =>
@@ -528,7 +528,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasIndex("BookingId");
 
-                    b.ToTable("AuditResponses");
+                    b.ToTable("AuditResponses", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.AuditSession", b =>
@@ -582,7 +582,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasIndex("BookingId");
 
-                    b.ToTable("AuditSessions");
+                    b.ToTable("AuditSessions", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.Booking", b =>
@@ -669,7 +669,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
                     b.HasIndex("BookingNumber")
                         .IsUnique();
 
-                    b.ToTable("Bookings");
+                    b.ToTable("Bookings", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.BookingItem", b =>
@@ -743,7 +743,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasIndex("ServiceId");
 
-                    b.ToTable("BookingItems");
+                    b.ToTable("BookingItems", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.BuyerContact", b =>
@@ -791,7 +791,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BuyerContacts");
+                    b.ToTable("BuyerContacts", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.CartItem", b =>
@@ -889,7 +889,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CartItems");
+                    b.ToTable("CartItems", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.Category", b =>
@@ -935,7 +935,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.ClientContact", b =>
@@ -983,7 +983,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ClientContacts");
+                    b.ToTable("ClientContacts", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.ClientsServices", b =>
@@ -1026,7 +1026,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ClientsServices");
+                    b.ToTable("ClientsServices", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.CompanyCal", b =>
@@ -1101,7 +1101,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasIndex("ServiceId");
 
-                    b.ToTable("CompanyCals");
+                    b.ToTable("CompanyCals", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.CorrectiveActionPlan", b =>
@@ -1167,7 +1167,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasIndex("AuditSessionId");
 
-                    b.ToTable("CorrectiveActionPlans");
+                    b.ToTable("CorrectiveActionPlans", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.Customer", b =>
@@ -1229,7 +1229,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.Donor", b =>
@@ -1295,7 +1295,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Donors");
+                    b.ToTable("Donors", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.Employee", b =>
@@ -1374,7 +1374,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasIndex("ShiftId");
 
-                    b.ToTable("Employees");
+                    b.ToTable("Employees", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.GalleryImage", b =>
@@ -1421,7 +1421,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("GalleryImages");
+                    b.ToTable("GalleryImages", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.Invoice", b =>
@@ -1461,7 +1461,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Invoices");
+                    b.ToTable("Invoices", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.Leave", b =>
@@ -1524,7 +1524,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("Leaves");
+                    b.ToTable("Leaves", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.LeaveBalance", b =>
@@ -1568,7 +1568,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("LeaveBalances");
+                    b.ToTable("LeaveBalances", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.LeaveEntitlementPolicy", b =>
@@ -1608,7 +1608,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("LeaveEntitlementPolicies");
+                    b.ToTable("LeaveEntitlementPolicies", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.LocationCharge", b =>
@@ -1646,7 +1646,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("LocationCharges");
+                    b.ToTable("LocationCharges", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.ManPower", b =>
@@ -1692,7 +1692,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasIndex("ServiceId");
 
-                    b.ToTable("ManPowers");
+                    b.ToTable("ManPowers", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.Notice", b =>
@@ -1730,7 +1730,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Notices");
+                    b.ToTable("Notices", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.Order", b =>
@@ -1834,7 +1834,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.OrderItem", b =>
@@ -1931,7 +1931,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasIndex("ServiceId");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderItems", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.PaymentRecord", b =>
@@ -2001,7 +2001,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("PaymentRecords");
+                    b.ToTable("PaymentRecords", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.PermanentMember", b =>
@@ -2076,7 +2076,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PermanentMembers");
+                    b.ToTable("PermanentMembers", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.Role", b =>
@@ -2107,7 +2107,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.Service", b =>
@@ -2167,7 +2167,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasIndex("ServiceCategoryId");
 
-                    b.ToTable("Services");
+                    b.ToTable("Services", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.ServiceCategory", b =>
@@ -2205,7 +2205,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ServiceCategories");
+                    b.ToTable("ServiceCategories", (string)null);
                 });
 
             modelBuilder.Entity("Sector_13_Welfare_Society___Digital_Management_System.Models.Shift", b =>
@@ -2242,7 +2242,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data.Migrations
 
                     b.HasKey("ShiftId");
 
-                    b.ToTable("Shifts");
+                    b.ToTable("Shifts", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

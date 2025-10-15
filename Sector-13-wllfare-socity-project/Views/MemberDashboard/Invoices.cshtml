@@ -107,11 +107,7 @@
                                         </span>
                                     </td>
                                     <td>
-                                        @if (invoice.Type == "Order")
-                                        {
-                                            <a href="@Url.Action("OrderDetails", "MemberDashboard", new { id = invoice.Id })" class="btn btn-sm btn-outline-primary">View Order</a>
-                                        }
-                                        else if (invoice.Type == "Booking")
+                                        @if (invoice.Type == "Booking")
                                         {
                                             <a href="@Url.Action("Invoice", "Booking", new { id = invoice.Id })" class="btn btn-sm btn-outline-info">View Invoice</a>
                                         }
