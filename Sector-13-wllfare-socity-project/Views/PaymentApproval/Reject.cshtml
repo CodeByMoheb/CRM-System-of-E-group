@@ -1,0 +1,275 @@
+@model Sector_13_Welfare_Society___Digital_Management_System.Models.PaymentRecord
+
+@{
+    ViewData["Title"] = "Reject Payment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .reject-container {
+        background: #f8f9fa;
+        min-height: 100vh;
+        padding: 20px;
+    }
+    
+    .reject-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .reject-header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #e9ecef;
+    }
+    
+    .reject-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #dc3545;
+        margin-bottom: 10px;
+    }
+    
+    .payment-details {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        padding: 10px 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .detail-row:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+    
+    .detail-label {
+        font-weight: 600;
+        color: #555;
+    }
+    
+    .detail-value {
+        color: #333;
+    }
+    
+    .amount-display {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #dc3545;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: #dc3545;
+        box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+    }
+    
+    .btn-reject {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        margin-right: 10px;
+    }
+    
+    .btn-reject:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+    }
+    
+    .btn-cancel {
+        background: #6c757d;
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+    
+    .btn-cancel:hover {
+        background: #5a6268;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-2px);
+    }
+    
+    .warning-box {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .warning-box i {
+        color: #721c24;
+        margin-right: 8px;
+    }
+    
+    .required {
+        color: #dc3545;
+    }
+</style>
+
+<div class="reject-container">
+    <div class="reject-card">
+        <div class="reject-header">
+            <h1 class="reject-title">
+                <i class="fas fa-times-circle me-2"></i>
+                Reject Payment
+            </h1>
+            <p class="text-muted">Provide a reason for rejecting this payment</p>
+        </div>
+
+        <div class="warning-box">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Warning:</strong> Once rejected, this payment cannot be approved again. Please provide a clear reason for rejection.
+        </div>
+
+        <div class="payment-details">
+            <h5 class="mb-3">
+                <i class="fas fa-receipt me-2"></i>
+                Payment Details
+            </h5>
+            
+            <div class="detail-row">
+                <span class="detail-label">Payment ID:</span>
+                <span class="detail-value">#@Model.Id</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Customer Name:</span>
+                <span class="detail-value">@Model.CustomerName</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Customer Email:</span>
+                <span class="detail-value">@Model.CustomerEmail</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Customer Phone:</span>
+                <span class="detail-value">@Model.CustomerPhone</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Payment Method:</span>
+                <span class="detail-value">@Model.PaymentMethod</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Amount:</span>
+                <span class="detail-value amount-display">৳@Model.Amount.ToString("N2")</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Transaction ID:</span>
+                <span class="detail-value">@(Model.TransactionId ?? "N/A")</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Payment Date:</span>
+                <span class="detail-value">@Model.CreatedAt.ToString("MMM dd, yyyy HH:mm")</span>
+            </div>
+            
+            @if (!string.IsNullOrEmpty(Model.Notes))
+            {
+                <div class="detail-row">
+                    <span class="detail-label">Notes:</span>
+                    <span class="detail-value">@Model.Notes</span>
+                </div>
+            }
+        </div>
+
+        <form method="post" action="@Url.Action("Reject", "PaymentApproval", new { id = Model.Id })">
+            <div class="form-group">
+                <label class="form-label" for="rejectionReason">
+                    Rejection Reason <span class="required">*</span>
+                </label>
+                <select class="form-control" id="rejectionReason" name="reason" required>
+                    <option value="">Select a reason for rejection</option>
+                    <option value="Invalid payment proof">Invalid payment proof</option>
+                    <option value="Insufficient funds">Insufficient funds</option>
+                    <option value="Wrong amount">Wrong amount</option>
+                    <option value="Duplicate payment">Duplicate payment</option>
+                    <option value="Payment not received">Payment not received</option>
+                    <option value="Customer request">Customer request</option>
+                    <option value="Technical issue">Technical issue</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="additionalNotes">Additional Notes (Optional)</label>
+                <textarea class="form-control" id="additionalNotes" name="additionalNotes" rows="3" 
+                          placeholder="Provide additional details about the rejection..."></textarea>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn-reject" onclick="return confirm('Are you sure you want to reject this payment? This action cannot be undone.')">
+                    <i class="fas fa-times me-2"></i>
+                    Reject Payment
+                </button>
+                <a href="@Url.Action("History", "PaymentApproval")" class="btn-cancel">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('rejectionReason').addEventListener('change', function() {
+    const additionalNotes = document.getElementById('additionalNotes');
+    if (this.value === 'Other') {
+        additionalNotes.placeholder = 'Please specify the reason for rejection...';
+        additionalNotes.required = true;
+    } else {
+        additionalNotes.placeholder = 'Provide additional details about the rejection...';
+        additionalNotes.required = false;
+    }
+});
+</script>
