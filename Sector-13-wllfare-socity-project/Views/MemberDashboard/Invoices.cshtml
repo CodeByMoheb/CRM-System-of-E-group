@@ -1,4 +1,4 @@
-@model List<Sector_13_Welfare_Society___Digital_Management_System.Models.InvoiceViewModel>
+@model Sector_13_Welfare_Society___Digital_Management_System.Models.PaginationModel<Sector_13_Welfare_Society___Digital_Management_System.Models.InvoiceViewModel>
 
 @{
     ViewData["Title"] = "My Invoices";
@@ -14,6 +14,14 @@
         overflow: hidden;
         transition: all 0.3s ease;
         border: 1px solid #e9ecef;
+        height: 100%;
+    }
+    
+    .invoices-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+        margin-bottom: 30px;
     }
     
     .invoice-card:hover {
@@ -243,7 +251,74 @@
         50% { transform: translateY(-20px) rotate(180deg); }
     }
     
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+    }
+    
+    .pagination {
+        display: flex;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        gap: 5px;
+    }
+    
+    .page-item {
+        margin: 0;
+    }
+    
+    .page-link {
+        display: block;
+        padding: 10px 15px;
+        text-decoration: none;
+        color: #667eea;
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .page-link:hover {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+        transform: translateY(-2px);
+    }
+    
+    .page-item.active .page-link {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+    }
+    
+    .page-item.disabled .page-link {
+        color: #6c757d;
+        background: #f8f9fa;
+        border-color: #dee2e6;
+        cursor: not-allowed;
+    }
+    
+    .pagination-info {
+        text-align: center;
+        margin-top: 15px;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    
+    @@media (max-width: 1200px) {
+        .invoices-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
     @@media (max-width: 768px) {
+        .invoices-grid {
+            grid-template-columns: 1fr;
+        }
+        
         .invoice-body {
             padding: 20px;
         }
@@ -257,7 +332,49 @@
         }
         
         .summary-stats {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .stat-item {
+            padding: 12px;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+        }
+        
+        .pagination {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .page-link {
+            padding: 8px 12px;
+            font-size: 0.9rem;
+        }
+    }
+    
+    @@media (max-width: 480px) {
+        .summary-stats {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .stat-item {
+            padding: 10px;
+        }
+        
+        .stat-number {
+            font-size: 1.3rem;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
         }
     }
 </style>
@@ -281,96 +398,135 @@
         </h3>
         <div class="summary-stats">
             <div class="stat-item">
-                <div class="stat-number">@Model.Count()</div>
+                <div class="stat-number">@Model.TotalItems</div>
                 <div class="stat-label">Total Invoices</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number" style="color: #28a745;">@Model.Count(i => i.Status == "Paid")</div>
+                <div class="stat-number" style="color: #28a745;">@Model.Items.Count(i => i.Status == "Paid")</div>
                 <div class="stat-label">Paid Invoices</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number" style="color: #ffc107;">@Model.Count(i => i.Status == "Pending")</div>
+                <div class="stat-number" style="color: #ffc107;">@Model.Items.Count(i => i.Status == "Pending")</div>
                 <div class="stat-label">Pending Invoices</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number" style="color: #667eea;">$@Model.Sum(i => i.Amount).ToString("F2")</div>
+                <div class="stat-number" style="color: #667eea;">$@Model.Items.Sum(i => i.Amount).ToString("F2")</div>
                 <div class="stat-label">Total Amount</div>
             </div>
         </div>
     </div>
 
     <!-- Invoices List -->
-    @if (Model.Any())
+    @if (Model.Items.Any())
     {
-        @foreach (var invoice in Model)
-        {
-            <div class="invoice-card">
-                <!-- Invoice Header -->
-                <div class="invoice-header">
-                    <h3 class="invoice-title">
-                        <i class="fas fa-file-invoice me-2"></i>
-                        Invoice #@invoice.Number
-                    </h3>
-                    <p class="invoice-subtitle">@invoice.Type - @invoice.Date.ToString("MMMM dd, yyyy")</p>
-                </div>
+        <div class="invoices-grid">
+            @foreach (var invoice in Model.Items)
+            {
+                <div class="invoice-card">
+                    <!-- Invoice Header -->
+                    <div class="invoice-header">
+                        <h3 class="invoice-title">
+                            <i class="fas fa-file-invoice me-2"></i>
+                            Invoice #@invoice.Number
+                        </h3>
+                        <p class="invoice-subtitle">@invoice.Type - @invoice.Date.ToString("MMMM dd, yyyy")</p>
+                    </div>
 
-                <!-- Invoice Body -->
-                <div class="invoice-body">
-                    <!-- Invoice Details -->
-                    <div class="invoice-details">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="detail-row">
-                                    <span class="detail-label">Invoice Number:</span>
-                                    <span class="detail-value">@invoice.Number</span>
+                    <!-- Invoice Body -->
+                    <div class="invoice-body">
+                        <!-- Invoice Details -->
+                        <div class="invoice-details">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="detail-row">
+                                        <span class="detail-label">Invoice Number:</span>
+                                        <span class="detail-value">@invoice.Number</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Invoice Date:</span>
+                                        <span class="detail-value">@invoice.Date.ToString("MMMM dd, yyyy")</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Type:</span>
+                                        <span class="detail-value">@invoice.Type</span>
+                                    </div>
                                 </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Invoice Date:</span>
-                                    <span class="detail-value">@invoice.Date.ToString("MMMM dd, yyyy")</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Type:</span>
-                                    <span class="detail-value">@invoice.Type</span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="detail-row">
-                                    <span class="detail-label">Amount:</span>
-                                    <span class="detail-value amount-display">$@invoice.Amount.ToString("F2")</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Status:</span>
-                                    <span class="status-badge status-@invoice.Status.ToLower()">@invoice.Status</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Payment Due:</span>
-                                    <span class="detail-value">@invoice.Date.AddDays(30).ToString("MMM dd, yyyy")</span>
+                                <div class="col-md-6">
+                                    <div class="detail-row">
+                                        <span class="detail-label">Amount:</span>
+                                        <span class="detail-value amount-display">$@invoice.Amount.ToString("F2")</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Status:</span>
+                                        <span class="status-badge status-@invoice.Status.ToLower()">@invoice.Status</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Payment Due:</span>
+                                        <span class="detail-value">@invoice.Date.AddDays(30).ToString("MMM dd, yyyy")</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Action Buttons -->
-                    <div class="action-buttons">
-                        @if (invoice.Type == "Booking")
-                        {
-                            <a href="@Url.Action("Invoice", "Booking", new { id = invoice.Id })" class="btn-premium">
-                                <i class="fas fa-eye"></i> View Full Invoice
-                            </a>
-                        }
-                        
-                        @if (invoice.Status == "Pending")
-                        {
-                            <a href="@Url.Action("Index", "Payment", new { orderId = invoice.Id })" class="btn-outline-premium">
-                                <i class="fas fa-credit-card"></i> Pay Now
-                            </a>
-                        }
-                        
-                        <button onclick="window.print()" class="btn-outline-premium">
-                            <i class="fas fa-print"></i> Print Invoice
-                        </button>
+                        <!-- Action Buttons -->
+                        <div class="action-buttons">
+                            @if (invoice.Type == "Booking")
+                            {
+                                <button type="button" class="btn-premium" onclick="viewInvoice(@invoice.Id)">
+                                    <i class="fas fa-eye"></i> View Full Invoice
+                                </button>
+                            }
+                            
+                            @if (invoice.Status == "Pending")
+                            {
+                                <a href="@Url.Action("Index", "Payment", new { orderId = invoice.Id })" class="btn-outline-premium">
+                                    <i class="fas fa-credit-card"></i> Pay Now
+                                </a>
+                            }
+                            
+                            <button onclick="window.print()" class="btn-outline-premium">
+                                <i class="fas fa-print"></i> Print Invoice
+                            </button>
+                        </div>
                     </div>
                 </div>
+            }
+        </div>
+        
+        <!-- Pagination -->
+        @if (Model.TotalPages > 1)
+        {
+            <div class="pagination-container">
+                <ul class="pagination">
+                    @if (Model.HasPreviousPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=@Model.PreviousPage">
+                                <i class="fas fa-chevron-left"></i> Previous
+                            </a>
+                        </li>
+                    }
+                    
+                    @for (int i = Math.Max(1, Model.CurrentPage - 2); i <= Math.Min(Model.TotalPages, Model.CurrentPage + 2); i++)
+                    {
+                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                            <a class="page-link" href="?page=@i">@i</a>
+                        </li>
+                    }
+                    
+                    @if (Model.HasNextPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=@Model.NextPage">
+                                Next <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+            
+            <div class="pagination-info">
+                Showing @Model.StartIndex to @Model.EndIndex of @Model.TotalItems invoices
             </div>
         }
     }
@@ -386,3 +542,354 @@
         </div>
     }
 </div>
+
+<!-- Invoice Modal -->
+<div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="invoiceModalLabel">Invoice Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="invoiceModalBody">
+                <!-- Invoice content will be loaded here -->
+                <div class="text-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="printInvoice()">Print Invoice</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function viewInvoice(invoiceId) {
+    // Show the modal
+    var modal = new bootstrap.Modal(document.getElementById('invoiceModal'));
+    modal.show();
+    
+    // Load invoice data
+    loadInvoiceData(invoiceId);
+}
+
+function loadInvoiceData(invoiceId) {
+    // Show loading spinner
+    document.getElementById('invoiceModalBody').innerHTML = `
+        <div class="text-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    `;
+    
+    // Fetch invoice data
+    fetch('@Url.Action("InvoiceById", "Booking")' + '?id=' + invoiceId)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(data => {
+            // Load the invoice modal content
+            document.getElementById('invoiceModalBody').innerHTML = data;
+        })
+        .catch(error => {
+            console.error('Error loading invoice:', error);
+            document.getElementById('invoiceModalBody').innerHTML = `
+                <div class="alert alert-danger" role="alert">
+                    <h4 class="alert-heading">Error!</h4>
+                    <p>Failed to load invoice details. Please try again.</p>
+                </div>
+            `;
+        });
+}
+
+function printInvoice() {
+    // Get the modal content
+    var modalContent = document.getElementById('invoiceModalBody');
+    
+    // Create a new window for printing
+    var printWindow = window.open('', '_blank');
+    
+    // Get all the styles from the current page
+    var styles = '';
+    var styleSheets = document.styleSheets;
+    for (var i = 0; i < styleSheets.length; i++) {
+        try {
+            var rules = styleSheets[i].cssRules || styleSheets[i].rules;
+            for (var j = 0; j < rules.length; j++) {
+                styles += rules[j].cssText + '\n';
+            }
+        } catch (e) {
+            // Skip stylesheets that can't be accessed due to CORS
+        }
+    }
+    
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>Invoice</title>
+            <style>
+                ${styles}
+                
+                /* Print-specific styles */
+                body { 
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+                    margin: 0; 
+                    padding: 20px;
+                    background: white;
+                    color: #333;
+                }
+                
+                .invoice-container {
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    color: #333;
+                    background: white;
+                    padding: 15px;
+                    max-width: 100%;
+                    margin: 0;
+                    border-radius: 8px;
+                    font-size: 0.9rem;
+                }
+                
+                .invoice-logo {
+                    height: 30px;
+                    width: auto;
+                    object-fit: contain;
+                }
+                
+                .invoice-title {
+                    color: #007bff;
+                    font-size: 1.5rem;
+                    font-weight: 700;
+                    letter-spacing: 1px;
+                }
+                
+                .invoice-details p {
+                    margin-bottom: 0.15rem;
+                    font-size: 0.85rem;
+                }
+                
+                .company-address p {
+                    margin-bottom: 0.15rem;
+                    font-size: 0.8rem;
+                }
+                
+                .client-info p, .payment-info p {
+                    margin-bottom: 0.15rem;
+                    font-size: 0.85rem;
+                }
+                
+                .invoice-table {
+                    border: none;
+                    margin-bottom: 0;
+                    width: 100%;
+                    table-layout: fixed;
+                }
+                
+                .invoice-table thead th {
+                    background-color: #f8f9fa;
+                    color: #333;
+                    border: none;
+                    border-bottom: 2px solid #dee2e6;
+                    font-weight: 600;
+                    padding: 8px 6px;
+                    font-size: 0.8rem;
+                }
+                
+                .invoice-table th:nth-child(1),
+                .invoice-table td:nth-child(1) {
+                    width: 50%;
+                }
+                
+                .invoice-table th:nth-child(2),
+                .invoice-table td:nth-child(2) {
+                    width: 15%;
+                    text-align: center;
+                }
+                
+                .invoice-table th:nth-child(3),
+                .invoice-table td:nth-child(3) {
+                    width: 15%;
+                    text-align: center;
+                }
+                
+                .invoice-table th:nth-child(4),
+                .invoice-table td:nth-child(4) {
+                    width: 20%;
+                    text-align: right;
+                }
+                
+                .invoice-table tbody td {
+                    border: none;
+                    border-bottom: 1px solid #dee2e6;
+                    padding: 6px 6px;
+                    vertical-align: middle;
+                    font-size: 0.8rem;
+                }
+                
+                .invoice-table tbody tr:last-child td {
+                    border-bottom: none;
+                }
+                
+                .totals-table {
+                    border: none;
+                    margin-top: 10px;
+                    width: 100%;
+                }
+                
+                .totals-table td {
+                    border: none;
+                    padding: 4px 0;
+                    font-size: 0.8rem;
+                }
+                
+                .balance-due {
+                    border-top: 2px solid #007bff !important;
+                    background-color: #f8f9fa;
+                }
+                
+                .balance-due td {
+                    padding-top: 8px;
+                    padding-bottom: 8px;
+                }
+                
+                .footer-line {
+                    border-top: 1px solid #dee2e6;
+                    margin: 10px 0 5px 0;
+                }
+                
+                .text-primary {
+                    color: #007bff !important;
+                }
+                
+                .fw-bold {
+                    font-weight: 700 !important;
+                }
+                
+                .small {
+                    font-size: 0.875rem;
+                }
+                
+                /* Hide elements that shouldn't print */
+                .btn, .modal-header, .modal-footer, .spinner-border, .alert {
+                    display: none !important;
+                }
+                
+                .modal-body {
+                    padding: 0 !important;
+                }
+                
+                @@media print {
+                    body { margin: 0; padding: 0; }
+                    .invoice-container { 
+                        font-size: 10px; 
+                        padding: 10px; 
+                        max-width: none; 
+                        margin: 0;
+                        width: 100%;
+                    }
+                    .invoice-logo { height: 25px; }
+                    .invoice-title { font-size: 1.2rem; }
+                    .invoice-table {
+                        border: 1px solid #000 !important;
+                        width: 100% !important;
+                        table-layout: fixed;
+                    }
+                    
+                    .invoice-table thead th {
+                        background-color: #f8f9fa !important;
+                        -webkit-print-color-adjust: exact;
+                        border: 1px solid #000 !important;
+                        border-bottom: 2px solid #007bff !important;
+                        padding: 4px 4px;
+                        font-size: 0.7rem;
+                    }
+                    
+                    .invoice-table tbody td {
+                        border: 1px solid #000 !important;
+                        padding: 3px 4px;
+                        font-size: 0.7rem;
+                    }
+                    
+                    .totals-table {
+                        border: 1px solid #000 !important;
+                    }
+                    
+                    .totals-table td {
+                        border: 1px solid #000 !important;
+                        padding: 2px 0;
+                        font-size: 0.7rem;
+                    }
+                    
+                    .invoice-table th:nth-child(1),
+                    .invoice-table td:nth-child(1) {
+                        width: 50% !important;
+                    }
+                    
+                    .invoice-table th:nth-child(2),
+                    .invoice-table td:nth-child(2) {
+                        width: 15% !important;
+                        text-align: center;
+                    }
+                    
+                    .invoice-table th:nth-child(3),
+                    .invoice-table td:nth-child(3) {
+                        width: 15% !important;
+                        text-align: center;
+                    }
+                    
+                    .invoice-table th:nth-child(4),
+                    .invoice-table td:nth-child(4) {
+                        width: 20% !important;
+                        text-align: right;
+                    }
+                    .invoice-table tbody td {
+                        padding: 3px 4px;
+                        font-size: 0.7rem;
+                    }
+                    .totals-table td {
+                        padding: 2px 0;
+                        font-size: 0.7rem;
+                    }
+                    .balance-due {
+                        background-color: #f8f9fa !important;
+                        -webkit-print-color-adjust: exact;
+                    }
+                    .balance-due td {
+                        padding-top: 4px;
+                        padding-bottom: 4px;
+                    }
+                    .footer-line {
+                        margin: 10px 0 5px 0;
+                    }
+                    .invoice-details p,
+                    .company-address p,
+                    .client-info p,
+                    .payment-info p {
+                        margin-bottom: 0.1rem;
+                        font-size: 0.7rem;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            ${modalContent.innerHTML}
+        </body>
+        </html>
+    `);
+    
+    printWindow.document.close();
+    
+    // Wait for content to load, then print
+    printWindow.onload = function() {
+        printWindow.print();
+    };
+}
+</script>
