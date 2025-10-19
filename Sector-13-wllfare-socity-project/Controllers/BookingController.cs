@@ -366,12 +366,18 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
         {
             try
             {
+                Console.WriteLine($"UpdateStatus called: ID={id}, Status={status}");
+                
                 var booking = await _context.Bookings.FindAsync(id);
                 if (booking == null)
                 {
+                    Console.WriteLine($"Booking not found for ID: {id}");
                     return Json(new { success = false, message = "Booking not found" });
                 }
 
+                Console.WriteLine($"Found booking: ID={booking.Id}, Current Status={booking.BookingStatus}");
+                
+                var oldStatus = booking.BookingStatus;
                 booking.BookingStatus = status;
                 
                 if (status == "Completed")
@@ -379,7 +385,11 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                     booking.ServiceDate = DateTime.Now;
                 }
 
-                await _context.SaveChangesAsync();
+                Console.WriteLine($"About to save changes: Old Status={oldStatus}, New Status={booking.BookingStatus}");
+                
+                // Simple save without transaction to avoid execution strategy conflicts
+                var changesSaved = await _context.SaveChangesAsync();
+                Console.WriteLine($"SaveChanges returned: {changesSaved}");
 
                 // Send email notifications if status is updated to Completed
                 if (status == "Completed")
@@ -387,11 +397,37 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                     await SendBookingCompletionEmails(booking);
                 }
 
-                return Json(new { success = true, message = "Status updated successfully" });
+                return Json(new { 
+                    success = true, 
+                    message = "Status updated successfully",
+                    oldStatus = oldStatus,
+                    newStatus = status,
+                    actualStatus = status
+                });
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                Console.WriteLine($"Error in UpdateStatus: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                
+                // Try direct SQL update as fallback
+                try
+                {
+                    Console.WriteLine("Trying direct SQL update as fallback...");
+                    await UpdateBookingStatusDirectly(id, status);
+                    return Json(new { 
+                        success = true, 
+                        message = "Status updated via fallback method",
+                        oldStatus = "Unknown",
+                        newStatus = status,
+                        actualStatus = status
+                    });
+                }
+                catch (Exception fallbackEx)
+                {
+                    Console.WriteLine($"Fallback also failed: {fallbackEx.Message}");
+                    return Json(new { success = false, message = ex.Message });
+                }
             }
         }
 
@@ -2030,28 +2066,28 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                     await connection.OpenAsync();
                     using (var command = connection.CreateCommand())
                     {
-                        if (!string.IsNullOrEmpty(bankTranId))
+                        // Update BookingStatus instead of PaymentStatus
+                        command.CommandText = "UPDATE Bookings SET BookingStatus = @status WHERE Id = @bookingId";
+                        
+                        // Add ServiceDate if status is Completed
+                        if (status == "Completed")
                         {
-                            command.CommandText = "UPDATE Bookings SET PaymentStatus = @status, TransactionId = @bankTranId, PaymentDate = @paymentDate, BookingStatus = @bookingStatus WHERE Id = @bookingId";
-                            command.Parameters.Add(new SqlParameter("@bankTranId", bankTranId));
-                            command.Parameters.Add(new SqlParameter("@paymentDate", DateTime.Now));
-                            command.Parameters.Add(new SqlParameter("@bookingStatus", status == "Completed" ? "Confirmed" : "Pending"));
-                        }
-                        else
-                        {
-                            command.CommandText = "UPDATE Bookings SET PaymentStatus = @status WHERE Id = @bookingId";
+                            command.CommandText = "UPDATE Bookings SET BookingStatus = @status, ServiceDate = @serviceDate WHERE Id = @bookingId";
+                            command.Parameters.Add(new SqlParameter("@serviceDate", DateTime.Now));
                         }
                         
                         command.Parameters.Add(new SqlParameter("@status", status));
                         command.Parameters.Add(new SqlParameter("@bookingId", bookingId));
                         
-                        await command.ExecuteNonQueryAsync();
+                        var rowsAffected = await command.ExecuteNonQueryAsync();
+                        Console.WriteLine($"Direct SQL update affected {rowsAffected} rows for booking {bookingId}");
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error updating booking status: {ex.Message}");
+                Console.WriteLine($"Error updating booking status directly: {ex.Message}");
+                throw; // Re-throw to be caught by the calling method
             }
         }
 
