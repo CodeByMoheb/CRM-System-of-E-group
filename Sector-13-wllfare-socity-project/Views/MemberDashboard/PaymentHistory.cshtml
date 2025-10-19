@@ -337,6 +337,10 @@
                                     <span class="status-badge status-@payment.Status.ToLower()">@payment.Status</span>
                                 </div>
                                 <div class="detail-row">
+                                    <span class="detail-label">Payment Method:</span>
+                                    <span class="detail-value">@(payment.Type == "Booking" ? "Online Payment" : "Order Payment")</span>
+                                </div>
+                                <div class="detail-row">
                                     <span class="detail-label">Description:</span>
                                     <span class="detail-value">@payment.Description</span>
                                 </div>
