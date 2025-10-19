@@ -334,10 +334,24 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Data
                 entity.Property(e => e.PaymentMethod).HasMaxLength(50);
                 entity.Property(e => e.Status).HasMaxLength(50);
                 entity.Property(e => e.TransactionId).HasMaxLength(100);
+                entity.Property(e => e.RequiresApproval).IsRequired();
+                entity.Property(e => e.ApprovalStatus).HasMaxLength(50);
+                entity.Property(e => e.CustomerName).HasMaxLength(255);
+                entity.Property(e => e.CustomerEmail).HasMaxLength(255);
+                entity.Property(e => e.CustomerPhone).HasMaxLength(50);
+                entity.Property(e => e.RejectionReason).HasMaxLength(1000);
+                entity.Property(e => e.RejectedBy).HasMaxLength(255);
+                entity.Property(e => e.PaymentProofUrl).HasMaxLength(1000);
+                entity.Property(e => e.Notes).HasMaxLength(1000);
                 
                 entity.HasOne(e => e.Order)
                     .WithMany()
                     .HasForeignKey(e => e.OrderId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                    
+                entity.HasOne(e => e.Booking)
+                    .WithMany()
+                    .HasForeignKey(e => e.BookingId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
