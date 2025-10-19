@@ -39,6 +39,25 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                 Invoices = _context.Invoices.ToList()
             };
 
+            // Pre-populate customer information for logged-in users
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+                    if (user != null)
+                    {
+                        vm.Customer = new Customer
+                        {
+                            Name = user.Name ?? user.UserName ?? "",
+                            Email = user.Email ?? "",
+                            Phone = user.PhoneNumber ?? ""
+                        };
+                    }
+                }
+            }
+
             return View(vm);
         }
 
@@ -134,6 +153,11 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
 
                 // Create Booking record
                 var bookingNumber = GenerateBookingNumber();
+                
+                // Debug: Log the customer email being saved
+                Console.WriteLine($"Creating booking with CustomerEmail: '{model.Customer.Email}'");
+                Console.WriteLine($"Current logged-in user: {User.Identity?.Name}");
+                
                 var booking = new Booking
                 {
                     BookingNumber = bookingNumber,
@@ -154,6 +178,9 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
 
                 _context.Bookings.Add(booking);
                 await _context.SaveChangesAsync();
+                
+                // Debug: Log the saved booking details
+                Console.WriteLine($"Booking saved successfully! ID: {booking.Id}, CustomerEmail: '{booking.CustomerEmail}', BookingNumber: '{booking.BookingNumber}'");
 
                 // Create BookingItem for the service
                 if (service != null)
@@ -987,7 +1014,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                 return NotFound();
             }
 
-            return View("DetailedInvoice", booking);
+            return PartialView("_InvoiceModal", booking);
         }
 
         // POST: Booking/AddToCart - Add booking to cart for logged-in users
@@ -1226,6 +1253,23 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
             return View(booking);
         }
 
+        // GET: Booking/ManualPayment/{id}
+        [HttpGet]
+        public async Task<IActionResult> ManualPayment(int id)
+        {
+            var booking = await _context.Bookings
+                .Include(b => b.BookingItems)
+                .ThenInclude(bi => bi.Service)
+                .FirstOrDefaultAsync(b => b.Id == id);
+
+            if (booking == null)
+            {
+                return NotFound();
+            }
+
+            return View(booking);
+        }
+
         // POST: Booking/ManualPayment
         [HttpPost]
         public async Task<IActionResult> ManualPayment(int bookingId, string transactionId, IFormFile paymentReceipt, string paymentNotes)
@@ -1235,7 +1279,8 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                 var booking = await _context.Bookings.FindAsync(bookingId);
                 if (booking == null)
                 {
-                    return NotFound();
+                    TempData["Error"] = "Booking not found.";
+                    return RedirectToAction("Index", "Home");
                 }
 
                 // Save receipt file if provided
@@ -1254,7 +1299,6 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                     {
                         await paymentReceipt.CopyToAsync(stream);
                     }
-                    // Public path for web
                     savedReceiptPath = $"/uploads/payments/{fileName}";
                 }
 
@@ -1264,17 +1308,18 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                 booking.PaymentStatus = "Pending Verification";
                 booking.PaymentDate = DateTime.Now;
 
-                // Append receipt path and notes into Notes field for manager visibility
+                // Add payment details to notes
                 var notesBuilder = new StringBuilder();
                 if (!string.IsNullOrWhiteSpace(booking.Notes))
                 {
                     notesBuilder.AppendLine(booking.Notes);
                 }
+                notesBuilder.AppendLine($"Manual Payment - Transaction ID: {transactionId}, Submitted: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
                 if (!string.IsNullOrWhiteSpace(paymentNotes))
                 {
-                    notesBuilder.AppendLine($"User Notes: {paymentNotes}");
+                    notesBuilder.AppendLine($"Notes: {paymentNotes}");
                 }
-                if (!string.IsNullOrWhiteSpace(savedReceiptPath))
+                if (!string.IsNullOrEmpty(savedReceiptPath))
                 {
                     notesBuilder.AppendLine($"Receipt: {savedReceiptPath}");
                 }
@@ -1282,27 +1327,33 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
 
                 await _context.SaveChangesAsync();
 
-                // Update corresponding invoice (using existing structure)
-                var invoice = await _context.Invoices
-                    .FirstOrDefaultAsync(i => i.CompanyCalId == booking.Id.ToString());
-                
-                if (invoice != null)
+                // Create payment record for manual bank transfer
+                var paymentRecord = new PaymentRecord
                 {
-                    // Update invoice with available properties
-                    invoice.InvoiceDate = DateTime.Now;
-                    await _context.SaveChangesAsync();
-                }
+                    BookingId = booking.Id,
+                    PaymentMethod = "Bank Transfer",
+                    Amount = booking.TotalAmount,
+                    Currency = "BDT",
+                    Status = "Pending",
+                    RequiresApproval = true,
+                    ApprovalStatus = "Pending",
+                    CustomerName = booking.CustomerName,
+                    CustomerEmail = booking.CustomerEmail,
+                    CustomerPhone = booking.CustomerPhone ?? "",
+                    Notes = "Manual bank transfer - awaiting manager approval",
+                    CreatedAt = DateTime.Now
+                };
+                
+                _context.PaymentRecords.Add(paymentRecord);
+                await _context.SaveChangesAsync();
 
-                // Send confirmation email and SMS
-                await SendPaymentConfirmationAsync(booking.Id);
-
-                TempData["Success"] = "Payment proof submitted successfully! We will verify your payment and send confirmation within 24 hours.";
+                TempData["Success"] = "Thank you! Your payment has been submitted and is waiting for approval.";
                 return RedirectToAction("BookingSuccess", new { id = booking.Id });
             }
             catch (Exception ex)
             {
                 TempData["Error"] = "An error occurred while processing your payment. Please try again.";
-                return RedirectToAction("ProcessPayment", new { id = bookingId });
+                return RedirectToAction("ManualPayment", new { id = bookingId });
             }
         }
 
@@ -1336,6 +1387,40 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                 booking.PaymentStatus = "Completed";
                 booking.BookingStatus = "Confirmed";
                 booking.PaymentDate = DateTime.Now;
+
+                // Update or create payment record
+                var paymentRecord = await _context.PaymentRecords
+                    .FirstOrDefaultAsync(p => p.BookingId == bookingId);
+                
+                if (paymentRecord != null)
+                {
+                    paymentRecord.Status = "Completed";
+                    paymentRecord.ApprovalStatus = "Approved";
+                    paymentRecord.ApprovedBy = User.Identity?.Name ?? "Manager";
+                    paymentRecord.ApprovedAt = DateTime.Now;
+                }
+                else
+                {
+                    // Create new payment record for manual approval
+                    paymentRecord = new PaymentRecord
+                    {
+                        BookingId = bookingId,
+                        PaymentMethod = "Bank Transfer",
+                        Amount = booking.TotalAmount,
+                        Currency = "BDT",
+                        Status = "Completed",
+                        RequiresApproval = true,
+                        ApprovalStatus = "Approved",
+                        CustomerName = booking.CustomerName,
+                        CustomerEmail = booking.CustomerEmail,
+                        CustomerPhone = booking.CustomerPhone ?? "",
+                        ApprovedBy = User.Identity?.Name ?? "Manager",
+                        ApprovedAt = DateTime.Now,
+                        VerifiedAt = DateTime.Now,
+                        VerifiedBy = User.Identity?.Name ?? "Manager"
+                    };
+                    _context.PaymentRecords.Add(paymentRecord);
+                }
 
                 // Update corresponding invoice (using existing structure)
                 var invoice = await _context.Invoices
@@ -1380,9 +1465,45 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
         {
             var booking = await _context.Bookings.FindAsync(id);
             if (booking == null) return NotFound();
+            
             booking.PaymentStatus = "Completed";
             booking.PaymentDate = DateTime.Now;
             booking.BookingStatus = "Confirmed";
+            
+            // Update or create payment record
+            var paymentRecord = await _context.PaymentRecords
+                .FirstOrDefaultAsync(p => p.BookingId == id);
+            
+            if (paymentRecord != null)
+            {
+                paymentRecord.Status = "Completed";
+                paymentRecord.ApprovalStatus = "Approved";
+                paymentRecord.ApprovedBy = User.Identity?.Name ?? "Manager";
+                paymentRecord.ApprovedAt = DateTime.Now;
+            }
+            else
+            {
+                // Create new payment record for manual approval
+                paymentRecord = new PaymentRecord
+                {
+                    BookingId = id,
+                    PaymentMethod = "Bank Transfer",
+                    Amount = booking.TotalAmount,
+                    Currency = "BDT",
+                    Status = "Completed",
+                    RequiresApproval = true,
+                    ApprovalStatus = "Approved",
+                    CustomerName = booking.CustomerName,
+                    CustomerEmail = booking.CustomerEmail,
+                    CustomerPhone = booking.CustomerPhone ?? "",
+                    ApprovedBy = User.Identity?.Name ?? "Manager",
+                    ApprovedAt = DateTime.Now,
+                    VerifiedAt = DateTime.Now,
+                    VerifiedBy = User.Identity?.Name ?? "Manager"
+                };
+                _context.PaymentRecords.Add(paymentRecord);
+            }
+            
             await _context.SaveChangesAsync();
             await NotifyCustomerAsync(booking);
             TempData["Success"] = "Payment approved and booking confirmed.";
@@ -1446,27 +1567,36 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
             await _context.SaveChangesAsync();
 
             // Create payment request data
+            var baseUrl = $"{Request.Scheme}://{Request.Host}";
+            
+            Console.WriteLine($"=== SSL Payment Request Debug ===");
+            Console.WriteLine($"Base URL: {baseUrl}");
+            Console.WriteLine($"Registered URL: {registeredUrl}");
+            Console.WriteLine($"Store ID: {storeId}");
+            Console.WriteLine($"Transaction ID: {tranId}");
+            Console.WriteLine($"Total Amount: {booking.TotalAmount:F2}");
+            
             var paymentData = new Dictionary<string, string>
             {
                 ["store_id"] = storeId,
                 ["store_passwd"] = storePassword,
                 ["total_amount"] = booking.TotalAmount.ToString("F2"),
-                ["currency"] = "BDT", // SSL Commerz typically uses BDT
+                ["currency"] = "BDT",
                 ["tran_id"] = tranId,
                 ["product_category"] = "Services",
                 ["product_name"] = $"Service Booking - {booking.BookingNumber}",
                 ["product_profile"] = "general",
-                ["cus_name"] = booking.CustomerName,
-                ["cus_email"] = booking.CustomerEmail,
+                ["cus_name"] = booking.CustomerName ?? "Customer",
+                ["cus_email"] = booking.CustomerEmail ?? "customer@example.com",
                 ["cus_add1"] = booking.CustomerAddress ?? "Dhaka",
                 ["cus_add2"] = "",
                 ["cus_city"] = "Dhaka",
                 ["cus_state"] = "Dhaka",
                 ["cus_postcode"] = "1000",
                 ["cus_country"] = "Bangladesh",
-                ["cus_phone"] = booking.CustomerPhone,
+                ["cus_phone"] = booking.CustomerPhone ?? "01700000000",
                 ["cus_fax"] = "",
-                ["ship_name"] = booking.CustomerName,
+                ["ship_name"] = booking.CustomerName ?? "Customer",
                 ["ship_add1"] = booking.CustomerAddress ?? "Dhaka",
                 ["ship_add2"] = "",
                 ["ship_city"] = "Dhaka",
@@ -1477,11 +1607,18 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                 ["value_b"] = booking.BookingNumber,
                 ["value_c"] = booking.CompanyName ?? "",
                 ["value_d"] = booking.SpecialRequirements ?? "",
-                ["success_url"] = $"{Request.Scheme}://{Request.Host}/Booking/PaymentSuccess",
-                ["fail_url"] = $"{Request.Scheme}://{Request.Host}/Booking/PaymentFail",
-                ["cancel_url"] = $"{Request.Scheme}://{Request.Host}/Booking/PaymentCancel",
-                ["ipn_url"] = $"{Request.Scheme}://{Request.Host}/Booking/IPN"
+                ["success_url"] = $"{baseUrl}/Booking/PaymentSuccess",
+                ["fail_url"] = $"{baseUrl}/Booking/PaymentFail",
+                ["cancel_url"] = $"{baseUrl}/Booking/PaymentCancel",
+                ["ipn_url"] = $"{baseUrl}/Booking/IPN"
             };
+            
+            // Log all parameters being sent
+            Console.WriteLine("=== SSL Payment Parameters ===");
+            foreach (var param in paymentData)
+            {
+                Console.WriteLine($"{param.Key}: {param.Value}");
+            }
 
             try
             {
@@ -1490,25 +1627,51 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                 {
                     client.Timeout = TimeSpan.FromSeconds(30);
                     var content = new FormUrlEncodedContent(paymentData);
+                    
+                    Console.WriteLine($"=== SSL API Call ===");
+                    Console.WriteLine($"URL: {sessionApiUrl}");
+                    Console.WriteLine($"Content Type: {content.Headers.ContentType}");
+                    
                     var response = await client.PostAsync(sessionApiUrl, content);
                     var responseContent = await response.Content.ReadAsStringAsync();
+                    
+                    Console.WriteLine($"=== SSL API Response ===");
+                    Console.WriteLine($"Status Code: {response.StatusCode}");
+                    Console.WriteLine($"Response Content: {responseContent}");
 
                     if (response.IsSuccessStatusCode)
                     {
-                        var sslResponse = JsonSerializer.Deserialize<SSLCommerzResponse>(responseContent);
-                        
-                        if (sslResponse != null && sslResponse.Status == "SUCCESS" && !string.IsNullOrEmpty(sslResponse.GatewayPageURL))
+                        try
                         {
-                            return Redirect(sslResponse.GatewayPageURL);
+                            var sslResponse = JsonSerializer.Deserialize<SSLCommerzResponse>(responseContent);
+                            
+                            Console.WriteLine($"=== SSL Response Parsed ===");
+                            Console.WriteLine($"Status: {sslResponse?.Status}");
+                            Console.WriteLine($"Gateway URL: {sslResponse?.GatewayPageURL}");
+                            Console.WriteLine($"Failed Reason: {sslResponse?.FailedReason}");
+                            
+                            if (sslResponse != null && sslResponse.Status == "SUCCESS" && !string.IsNullOrEmpty(sslResponse.GatewayPageURL))
+                            {
+                                Console.WriteLine("Redirecting to SSL Gateway...");
+                                return Redirect(sslResponse.GatewayPageURL);
+                            }
+                            else if (sslResponse != null && !string.IsNullOrEmpty(sslResponse.FailedReason))
+                            {
+                                Console.WriteLine($"SSL Error: {sslResponse.FailedReason}");
+                                TempData["Error"] = $"Payment gateway error: {sslResponse.FailedReason}";
+                                return RedirectToAction(nameof(Index));
+                            }
+                            else
+                            {
+                                Console.WriteLine("SSL returned invalid response");
+                                TempData["Error"] = "Payment gateway returned an invalid response. Please try again.";
+                                return RedirectToAction(nameof(Index));
+                            }
                         }
-                        else if (sslResponse != null && !string.IsNullOrEmpty(sslResponse.FailedReason))
+                        catch (Exception ex)
                         {
-                            TempData["Error"] = $"Payment gateway error: {sslResponse.FailedReason}";
-                            return RedirectToAction(nameof(Index));
-                        }
-                        else
-                        {
-                            TempData["Error"] = "Payment gateway returned an invalid response. Please try again.";
+                            Console.WriteLine($"Error parsing SSL response: {ex.Message}");
+                            TempData["Error"] = $"Error processing payment gateway response: {ex.Message}";
                             return RedirectToAction(nameof(Index));
                         }
                     }
@@ -1532,14 +1695,42 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
         {
             try
             {
-                var tranId = Request.Form["tran_id"].ToString() ?? Request.Query["tran_id"].ToString() ?? "";
-                var status = Request.Form["status"].ToString() ?? Request.Query["status"].ToString() ?? "";
-                var bankTranId = Request.Form["bank_tran_id"].ToString() ?? Request.Query["bank_tran_id"].ToString() ?? "";
-                var bookingIdStr = Request.Form["value_a"].ToString() ?? Request.Query["value_a"].ToString() ?? "";
+                // Try multiple parameter name variations
+                var tranId = Request.Form["tran_id"].FirstOrDefault() 
+                    ?? Request.Query["tran_id"].FirstOrDefault()
+                    ?? Request.Form["tranId"].FirstOrDefault()
+                    ?? Request.Query["tranId"].FirstOrDefault()
+                    ?? "";
+                
+                var status = Request.Form["status"].FirstOrDefault() 
+                    ?? Request.Query["status"].FirstOrDefault() 
+                    ?? "";
+                
+                var bankTranId = Request.Form["bank_tran_id"].FirstOrDefault() 
+                    ?? Request.Query["bank_tran_id"].FirstOrDefault() 
+                    ?? "";
+                
+                var bookingIdStr = Request.Form["value_a"].FirstOrDefault() 
+                    ?? Request.Query["value_a"].FirstOrDefault() 
+                    ?? "";
+                
+                // Enhanced debugging
+                Console.WriteLine($"=== SSL Booking Payment Success Callback ===");
+                Console.WriteLine($"TranId: '{tranId}'");
+                Console.WriteLine($"Status: '{status}'");
+                Console.WriteLine($"BankTranId: '{bankTranId}'");
+                Console.WriteLine($"BookingId: '{bookingIdStr}'");
+                Console.WriteLine($"Request Method: {Request.Method}");
+                Console.WriteLine($"Request URL: {Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
+                Console.WriteLine($"All Form Keys: {string.Join(", ", Request.Form.Keys)}");
+                Console.WriteLine($"Form Data: {string.Join(", ", Request.Form.Select(x => $"{x.Key}={x.Value}"))}");
+                Console.WriteLine($"All Query Keys: {string.Join(", ", Request.Query.Keys)}");
+                Console.WriteLine($"Query Data: {string.Join(", ", Request.Query.Select(x => $"{x.Key}={x.Value}"))}");
                 
                 if (string.IsNullOrEmpty(tranId))
                 {
-                    TempData["Error"] = "Invalid transaction ID.";
+                    Console.WriteLine("ERROR: Transaction ID is empty! Redirecting to Index.");
+                    TempData["Error"] = "Invalid transaction ID. Payment callback received but transaction ID was missing.";
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -1572,13 +1763,40 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                             booking.TransactionId = bankTranId;
                         }
                         
+                        // Create payment record
+                        var paymentRecord = new PaymentRecord
+                        {
+                            BookingId = booking.Id,
+                            PaymentMethod = "SSLCommerz",
+                            Amount = booking.TotalAmount,
+                            Currency = "BDT",
+                            TransactionId = bankTranId ?? tranId,
+                            Status = "Completed",
+                            RequiresApproval = false,
+                            ApprovalStatus = "Approved",
+                            CustomerName = booking.CustomerName,
+                            CustomerEmail = booking.CustomerEmail,
+                            CustomerPhone = booking.CustomerPhone ?? "",
+                            VerifiedAt = DateTime.Now,
+                            VerifiedBy = "System",
+                            CreatedAt = DateTime.Now
+                        };
+                        
+                        _context.PaymentRecords.Add(paymentRecord);
                         await _context.SaveChangesAsync();
                         
                         // Send payment confirmation
                         await SendPaymentConfirmationAsync(booking.Id);
                         
-                        TempData["Success"] = "Payment successful! Your booking has been confirmed.";
-                        return RedirectToAction("BookingSuccess", new { id = booking.Id });
+                        // Store success data in TempData for the success page
+                        TempData["PaymentSuccess"] = "true";
+                        TempData["BookingId"] = booking.Id;
+                        TempData["BookingNumber"] = booking.BookingNumber;
+                        TempData["Amount"] = booking.TotalAmount;
+                        TempData["TransactionId"] = bankTranId ?? tranId;
+                        TempData["CustomerName"] = booking.CustomerName;
+                        
+                        return RedirectToAction("PaymentSuccessPage", new { id = booking.Id });
                     }
                     else
                     {
@@ -1630,6 +1848,23 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                 TempData["Error"] = "An error occurred while processing payment failure.";
                 return RedirectToAction(nameof(Index));
             }
+        }
+
+        // GET: Booking/PaymentSuccessPage
+        public async Task<IActionResult> PaymentSuccessPage(int id)
+        {
+            var booking = await _context.Bookings
+                .Include(b => b.BookingItems)
+                .ThenInclude(bi => bi.Service)
+                .FirstOrDefaultAsync(b => b.Id == id);
+
+            if (booking == null)
+            {
+                TempData["Error"] = "Booking not found.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(booking);
         }
 
         // POST: Booking/PaymentCancel
@@ -1722,6 +1957,34 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                                 
                                 if (freshBooking.PaymentStatus == "Completed")
                                 {
+                                    // Create payment record for SSL payment
+                                    var existingPaymentRecord = await newContext.PaymentRecords
+                                        .FirstOrDefaultAsync(pr => pr.BookingId == freshBooking.Id && pr.TransactionId == (bankTranId ?? tranId));
+                                    
+                                    if (existingPaymentRecord == null)
+                                    {
+                                        var paymentRecord = new PaymentRecord
+                                        {
+                                            BookingId = freshBooking.Id,
+                                            PaymentMethod = "SSLCommerz",
+                                            Amount = freshBooking.TotalAmount,
+                                            Currency = "BDT",
+                                            TransactionId = bankTranId ?? tranId,
+                                            Status = "Completed",
+                                            RequiresApproval = false,
+                                            ApprovalStatus = "Approved",
+                                            CustomerName = freshBooking.CustomerName,
+                                            CustomerEmail = freshBooking.CustomerEmail,
+                                            CustomerPhone = freshBooking.CustomerPhone ?? "",
+                                            VerifiedAt = DateTime.Now,
+                                            VerifiedBy = "System",
+                                            CreatedAt = DateTime.Now
+                                        };
+                                        
+                                        newContext.PaymentRecords.Add(paymentRecord);
+                                        await newContext.SaveChangesAsync();
+                                    }
+                                    
                                     await NotifyCustomerAsync(freshBooking);
                                 }
                             }
@@ -1788,7 +2051,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
             }
             catch (Exception ex)
             {
-                // Log error
+                Console.WriteLine($"Error updating booking status: {ex.Message}");
             }
         }
 
@@ -1816,7 +2079,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
             }
             catch (Exception ex)
             {
-                // Best-effort; ignore notification errors
+                Console.WriteLine($"Error sending notification: {ex.Message}");
             }
         }
 
