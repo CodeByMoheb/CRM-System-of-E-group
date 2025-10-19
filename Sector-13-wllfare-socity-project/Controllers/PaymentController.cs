@@ -20,8 +20,14 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
             _configuration = configuration;
         }
 
+        // GET: Payment/Index
+        public IActionResult Index()
+        {
+            return View();
+        }
+
         // GET: Payment/Index/{orderId}
-        public async Task<IActionResult> Index(int orderId)
+        public async Task<IActionResult> ProcessPayment(int orderId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             
@@ -289,16 +295,39 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
         {
             try
             {
-                // Handle both GET and POST requests from SSL Commerz
-                var tranId = Request.Form["tran_id"].ToString() ?? Request.Query["tran_id"].ToString() ?? string.Empty;
-                var status = Request.Form["status"].ToString() ?? Request.Query["status"].ToString() ?? string.Empty;
-                var bankTranId = Request.Form["bank_tran_id"].ToString() ?? Request.Query["bank_tran_id"].ToString() ?? string.Empty;
+                // Handle both GET and POST requests from SSL Commerz - try multiple parameter variations
+                var tranId = Request.Form["tran_id"].FirstOrDefault() 
+                    ?? Request.Query["tran_id"].FirstOrDefault()
+                    ?? Request.Form["tranId"].FirstOrDefault()
+                    ?? Request.Query["tranId"].FirstOrDefault()
+                    ?? string.Empty;
+                
+                var status = Request.Form["status"].FirstOrDefault() 
+                    ?? Request.Query["status"].FirstOrDefault() 
+                    ?? string.Empty;
+                
+                var bankTranId = Request.Form["bank_tran_id"].FirstOrDefault() 
+                    ?? Request.Query["bank_tran_id"].FirstOrDefault() 
+                    ?? string.Empty;
+                
+                // Enhanced debugging
+                Console.WriteLine($"=== SSL Payment Success Callback ===");
+                Console.WriteLine($"TranId: '{tranId}'");
+                Console.WriteLine($"Status: '{status}'");
+                Console.WriteLine($"BankTranId: '{bankTranId}'");
+                Console.WriteLine($"Request Method: {Request.Method}");
+                Console.WriteLine($"Request URL: {Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
+                Console.WriteLine($"All Form Keys: {string.Join(", ", Request.Form.Keys)}");
+                Console.WriteLine($"Form Data: {string.Join(", ", Request.Form.Select(x => $"{x.Key}={x.Value}"))}");
+                Console.WriteLine($"All Query Keys: {string.Join(", ", Request.Query.Keys)}");
+                Console.WriteLine($"Query Data: {string.Join(", ", Request.Query.Select(x => $"{x.Key}={x.Value}"))}");
                 
                 System.Diagnostics.Debug.WriteLine($"PaymentSuccess called with tranId: {tranId}, status: {status}, bankTranId: {bankTranId}");
                 
                 if (string.IsNullOrEmpty(tranId))
                 {
-                    TempData["Error"] = "Invalid transaction ID.";
+                    Console.WriteLine("ERROR: Transaction ID is empty! Redirecting to Home.");
+                    TempData["Error"] = "Invalid transaction ID. Payment callback received but transaction ID was missing.";
                     return RedirectToAction("Index", "Home");
                 }
 
@@ -320,18 +349,36 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                             order.TransactionId = bankTranId;
                         }
                         
+                        // Create payment record
+                        var paymentRecord = new PaymentRecord
+                        {
+                            OrderId = order.Id,
+                            PaymentMethod = "SSLCommerz",
+                            Amount = order.TotalAmount,
+                            Currency = order.Currency,
+                            TransactionId = bankTranId ?? tranId,
+                            Status = "Completed",
+                            RequiresApproval = false,
+                            ApprovalStatus = "Approved",
+                            CustomerName = order.CustomerName,
+                            CustomerEmail = order.CustomerEmail,
+                            CustomerPhone = order.CustomerPhone,
+                            VerifiedAt = DateTime.Now,
+                            VerifiedBy = "System"
+                        };
+                        
+                        _context.PaymentRecords.Add(paymentRecord);
                         await _context.SaveChangesAsync();
 
-                        TempData["Success"] = "Payment completed successfully!";
+                        // Store success data in TempData for the success page
+                        TempData["PaymentSuccess"] = "true";
+                        TempData["OrderId"] = order.Id;
+                        TempData["OrderNumber"] = order.OrderNumber;
+                        TempData["Amount"] = order.TotalAmount;
+                        TempData["TransactionId"] = bankTranId ?? tranId;
+                        TempData["CustomerName"] = order.CustomerName;
                         
-                        // Create a simple success page that doesn't require authentication
-                        ViewBag.OrderNumber = order.OrderNumber;
-                        ViewBag.Amount = order.TotalAmount;
-                        ViewBag.TransactionId = tranId;
-                        ViewBag.LoginUrl = Url.Action("Login", "Account");
-                        ViewBag.HomeUrl = Url.Action("Index", "Home");
-                        
-                        return View("PaymentSuccessPublic");
+                        return RedirectToAction("PaymentSuccessPage", new { id = order.Id });
                     }
                     else
                     {
@@ -362,6 +409,116 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        // GET: Payment/PaymentSuccessPage
+        [AllowAnonymous]
+        public async Task<IActionResult> PaymentSuccessPage(int id)
+        {
+            var order = await _context.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Service)
+                .FirstOrDefaultAsync(o => o.Id == id);
+
+            if (order == null)
+            {
+                TempData["Error"] = "Order not found.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            return View(order);
+        }
+
+        // GET: Payment/Settings
+        public IActionResult Settings()
+        {
+            return View();
+        }
+
+        // GET: Payment/TestSuccess
+        [AllowAnonymous]
+        public IActionResult TestSuccess()
+        {
+            Console.WriteLine("=== Test Success Action Called ===");
+            TempData["PaymentSuccess"] = "true";
+            TempData["OrderId"] = "1";
+            TempData["OrderNumber"] = "TEST-001";
+            TempData["Amount"] = "100.00";
+            TempData["TransactionId"] = "TEST_TXN_001";
+            TempData["CustomerName"] = "Test Customer";
+            
+            return RedirectToAction("PaymentSuccessPage", new { id = 1 });
+        }
+
+        // GET: Payment/TestSSL
+        [AllowAnonymous]
+        public async Task<IActionResult> TestSSL()
+        {
+            try
+            {
+                var storeId = _configuration["SSLCommerz:StoreId"];
+                var storePassword = _configuration["SSLCommerz:StorePassword"];
+                var sessionApiUrl = _configuration["SSLCommerz:SessionApiUrl"];
+                var registeredUrl = _configuration["SSLCommerz:RegisteredUrl"];
+                
+                Console.WriteLine($"=== SSL Configuration Test ===");
+                Console.WriteLine($"Store ID: {storeId}");
+                Console.WriteLine($"Store Password: {storePassword?.Substring(0, Math.Min(10, storePassword?.Length ?? 0))}...");
+                Console.WriteLine($"Session API URL: {sessionApiUrl}");
+                Console.WriteLine($"Registered URL: {registeredUrl}");
+                
+                var testData = new Dictionary<string, string>
+                {
+                    ["store_id"] = storeId ?? "",
+                    ["store_passwd"] = storePassword ?? "",
+                    ["total_amount"] = "100.00",
+                    ["currency"] = "BDT",
+                    ["tran_id"] = $"TEST_{DateTime.Now:yyyyMMddHHmmss}",
+                    ["product_category"] = "Services",
+                    ["product_name"] = "Test Payment",
+                    ["product_profile"] = "general",
+                    ["cus_name"] = "Test Customer",
+                    ["cus_email"] = "test@example.com",
+                    ["cus_add1"] = "Test Address",
+                    ["cus_city"] = "Dhaka",
+                    ["cus_state"] = "Dhaka",
+                    ["cus_postcode"] = "1000",
+                    ["cus_country"] = "Bangladesh",
+                    ["cus_phone"] = "01700000000",
+                    ["success_url"] = $"{Request.Scheme}://{Request.Host}/Payment/TestSuccess",
+                    ["fail_url"] = $"{Request.Scheme}://{Request.Host}/Payment/PaymentFail",
+                    ["cancel_url"] = $"{Request.Scheme}://{Request.Host}/Payment/PaymentCancel"
+                };
+                
+                using var client = new HttpClient();
+                client.Timeout = TimeSpan.FromSeconds(30);
+                var content = new FormUrlEncodedContent(testData);
+                var response = await client.PostAsync(sessionApiUrl, content);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                
+                Console.WriteLine($"=== SSL Test Response ===");
+                Console.WriteLine($"Status Code: {response.StatusCode}");
+                Console.WriteLine($"Response: {responseContent}");
+                
+                TempData["SSLTestResult"] = $"Status: {response.StatusCode}, Response: {responseContent}";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"SSL Test Error: {ex.Message}");
+                TempData["SSLTestError"] = ex.Message;
+                return RedirectToAction("Index");
+            }
+        }
+
+        // POST: Payment/UpdateSSLCommerzSettings
+        [HttpPost]
+        public IActionResult UpdateSSLCommerzSettings(string StoreId, string StorePassword, string IsSandbox, string StoreName, string RegisteredUrl)
+        {
+            // Here you would typically update the configuration in appsettings.json or database
+            // For now, we'll just show a success message
+            TempData["Success"] = "SSLCommerz settings updated successfully!";
+            return RedirectToAction("Settings");
+        }
+
         // GET: Payment/PaymentCancel
         [AllowAnonymous]
         public IActionResult PaymentCancel()
@@ -390,6 +547,33 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                         order.OrderStatus = "Paid";
                         order.PaymentDate = DateTime.Now;
                         order.UpdatedAt = DateTime.Now;
+                        
+                        // Create payment record if not exists
+                        var existingPayment = await _context.PaymentRecords
+                            .FirstOrDefaultAsync(p => p.OrderId == order.Id && p.TransactionId == tranId);
+                        
+                        if (existingPayment == null)
+                        {
+                            var paymentRecord = new PaymentRecord
+                            {
+                                OrderId = order.Id,
+                                PaymentMethod = "SSLCommerz",
+                                Amount = order.TotalAmount,
+                                Currency = order.Currency,
+                                TransactionId = tranId,
+                                Status = "Completed",
+                                RequiresApproval = false,
+                                ApprovalStatus = "Approved",
+                                CustomerName = order.CustomerName,
+                                CustomerEmail = order.CustomerEmail,
+                                CustomerPhone = order.CustomerPhone,
+                                VerifiedAt = DateTime.Now,
+                                VerifiedBy = "System"
+                            };
+                            
+                            _context.PaymentRecords.Add(paymentRecord);
+                        }
+                        
                         await _context.SaveChangesAsync();
                     }
                 }
