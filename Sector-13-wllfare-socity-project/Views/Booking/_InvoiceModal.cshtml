@@ -22,7 +22,7 @@
                 {
                     <p class="text-muted mb-1 small"><strong>Service Date:</strong> @Model.ServiceDate.Value.ToString("dd/MM/yyyy")</p>
                 }
-                <p class="text-muted mb-0 small"><strong>Balance Due:</strong> <span class="text-primary fw-bold">$@Model.TotalAmount.ToString("N2")</span></p>
+                <!-- <p class="text-muted mb-0 small"><strong>Balance Due:</strong> <span class="text-primary fw-bold">$@Model.TotalAmount.ToString("N2")</span></p> -->
             </div>
         </div>
     </div>
@@ -35,34 +35,31 @@
             <h5 class="text-dark mb-3 fw-bold">Bill To:</h5>
             <div class="client-info">
                 <p class="mb-1 fw-bold">@Model.CustomerName</p>
-                @if (!string.IsNullOrEmpty(Model.CompanyName))
+                @if (!string.IsNullOrWhiteSpace(Model.CompanyName))
                 {
                     <p class="mb-1 text-muted small">@Model.CompanyName</p>
                 }
-                <p class="mb-1 small">@Model.CustomerEmail</p>
-                <p class="mb-1 small">@Model.CustomerPhone</p>
-                @if (!string.IsNullOrEmpty(Model.CustomerAddress))
+                @if (!string.IsNullOrWhiteSpace(Model.CustomerEmail))
+                {
+                    <p class="mb-1 small">@Model.CustomerEmail</p>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.CustomerPhone))
+                {
+                    <p class="mb-1 small">@Model.CustomerPhone</p>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.CustomerAddress))
                 {
                     <p class="mb-0 text-muted small">@Model.CustomerAddress</p>
                 }
             </div>
         </div>
-        <div class="col-6 text-end">
-            <h5 class="text-dark mb-3 fw-bold">Payment Information:</h5>
-            <div class="col-6 text-start">
-            
-        </div>
-            <div class="payment-info">
-                <p class="mb-1 small"><strong>Method:</strong> @Model.PaymentMethod</p>
-                <p class="mb-1 small"><strong>Status:</strong> 
-                    <span class="badge bg-@(Model.PaymentStatus == "Completed" ? "success" : Model.PaymentStatus == "Pending" ? "warning" : "danger")">
-                        @Model.PaymentStatus
-                    </span>
-                </p>
-                @if (!string.IsNullOrEmpty(Model.TransactionId))
-                {
-                    <p class="mb-0 small"><strong>Transaction ID:</strong> @Model.TransactionId</p>
-                }
+        <div class="col-6 text-start">
+            <h5 class="text-dark mb-3 fw-bold">Issued By</h5>
+            <div class="company-info">
+                <p class="mb-1 fw-bold">Rasel Parves</p>
+                <p class="mb-1 small">CEO</p>
+                <p class="mb-1 small">E-Group LTD.</p>
+                <p class="mb-0 small text-muted">23 Gareeb-e-Newaz Ave, Sector 13, Dhaka 1230, Bangladesh</p>
             </div>
         </div>
     </div>
@@ -263,7 +260,7 @@
         background-color: #f8f9fa;
         color: #333;
         border: 1px solid #dee2e6;
-        border-bottom: 2px solid #007bff;
+        border-bottom: 2px solidrgb(0, 0, 0);
         font-weight: 600;
         padding: 12px 8px;
         font-size: 0.9rem;
@@ -358,7 +355,7 @@
     }
     
     .balance-due {
-        border-top: 2px solid #007bff !important;
+        border-top: 2px solidrgb(0, 0, 0) !important;
         background-color: #f8f9fa;
     }
     
@@ -373,7 +370,7 @@
     }
     
     .text-primary {
-        color: #007bff !important;
+        color:rgb(0, 0, 0) !important;
     }
     
     .fw-bold {
@@ -423,7 +420,7 @@
             background-color: #f8f9fa !important;
             -webkit-print-color-adjust: exact;
             border: 1px solid #000 !important;
-            border-bottom: 2px solid #007bff !important;
+            border-bottom: 2px solidrgb(0, 0, 0) !important;
         }
         
         .invoice-table tbody td {
@@ -470,7 +467,7 @@
         .balance-due {
             background-color: #f8f9fa !important;
             -webkit-print-color-adjust: exact;
-            border-top: 2px solid #007bff !important;
+            border-top: 2px solidrgb(0, 0, 0) !important;
         }
     }
 </style>
