@@ -5,6 +5,8 @@
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
 }
 
+@Html.AntiForgeryToken()
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
@@ -70,7 +72,7 @@
                                 <tbody>
                                     @foreach (var booking in Model.Bookings)
                                     {
-                                        <tr>
+                                        <tr data-booking-id="@booking.Id">
                                             <td>
                                                 <strong>@booking.BookingNumber</strong>
                                             </td>
@@ -262,19 +264,103 @@
                 });
         }
 
+        function updateStatusInUI(bookingId, status) {
+            // Find the row with the matching booking ID using data attribute
+            const row = document.querySelector(`tr[data-booking-id="${bookingId}"]`);
+            if (row) {
+                // Find the status badge in the 6th column (Status column)
+                const statusCell = row.children[5]; // 6th column (0-indexed)
+                const statusBadge = statusCell.querySelector('.badge');
+                if (statusBadge) {
+                    // Update the badge text and class
+                    statusBadge.textContent = status;
+                    statusBadge.className = 'badge bg-' + getStatusClass(status);
+                    console.log('Updated status in UI for booking', bookingId, 'to', status);
+                } else {
+                    console.error('Status badge not found for booking', bookingId);
+                }
+            } else {
+                console.error('Row not found for booking ID', bookingId);
+            }
+        }
+        
+        function getStatusClass(status) {
+            switch(status) {
+                case 'Pending': return 'warning';
+                case 'Confirmed': return 'info';
+                case 'InProgress': return 'primary';
+                case 'Completed': return 'success';
+                case 'Cancelled': return 'danger';
+                default: return 'secondary';
+            }
+        }
+
         function updateStatus(bookingId, status) {
+            console.log('updateStatus called with bookingId:', bookingId, 'status:', status);
+            
             if (confirm('Are you sure you want to update the booking status to ' + status + '?')) {
-                $.post('@Url.Action("UpdateStatus", "Booking")', { id: bookingId, status: status })
-                    .done(function(response) {
-                        if (response.success) {
-                            location.reload();
-                        } else {
-                            alert('Error: ' + response.message);
-                        }
-                    })
-                    .fail(function() {
-                        alert('Failed to update status.');
-                    });
+                // Show loading state
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = 'Updating...';
+                button.disabled = true;
+                
+                console.log('Making request to:', '@Url.Action("UpdateStatus", "Booking")');
+                
+                // Make the AJAX request
+                fetch('@Url.Action("UpdateStatus", "Booking")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                    },
+                    body: `id=${bookingId}&status=${encodeURIComponent(status)}`
+                })
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Response data:', data);
+                    if (data.success) {
+                        // Log the actual status from the server
+                        console.log('Server response - Old Status:', data.oldStatus);
+                        console.log('Server response - New Status:', data.newStatus);
+                        console.log('Server response - Actual Status:', data.actualStatus);
+                        
+                        // Update the UI immediately
+                        updateStatusInUI(bookingId, status);
+                        
+                        // Show success message with more details
+                        alert(`Status updated successfully!\nOld: ${data.oldStatus}\nNew: ${data.newStatus}\nActual: ${data.actualStatus}`);
+                        
+                        // Reload page after a short delay to ensure database update is complete
+                        setTimeout(() => {
+                            console.log('Reloading page...');
+                            // Try multiple reload methods to ensure it works
+                            if (window.location.reload) {
+                                window.location.reload(true);
+                            } else {
+                                window.location.href = window.location.href;
+                            }
+                        }, 2000); // 2 second delay
+                    } else {
+                        alert('Error: ' + (data.message || 'Unknown error occurred'));
+                        // Reset button
+                        button.textContent = originalText;
+                        button.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to update status: ' + error.message);
+                    // Reset button
+                    button.textContent = originalText;
+                    button.disabled = false;
+                });
             }
         }
 
