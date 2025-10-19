@@ -1,0 +1,241 @@
+@model Sector_13_Welfare_Society___Digital_Management_System.Models.PaymentRecord
+
+@{
+    ViewData["Title"] = "Approve Payment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .approve-container {
+        background: #f8f9fa;
+        min-height: 100vh;
+        padding: 20px;
+    }
+    
+    .approve-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .approve-header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #e9ecef;
+    }
+    
+    .approve-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #28a745;
+        margin-bottom: 10px;
+    }
+    
+    .payment-details {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        padding: 10px 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .detail-row:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+    
+    .detail-label {
+        font-weight: 600;
+        color: #555;
+    }
+    
+    .detail-value {
+        color: #333;
+    }
+    
+    .amount-display {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #28a745;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: #28a745;
+        box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+    }
+    
+    .btn-approve {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        margin-right: 10px;
+    }
+    
+    .btn-approve:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+    }
+    
+    .btn-cancel {
+        background: #6c757d;
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+    
+    .btn-cancel:hover {
+        background: #5a6268;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-2px);
+    }
+    
+    .warning-box {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .warning-box i {
+        color: #856404;
+        margin-right: 8px;
+    }
+</style>
+
+<div class="approve-container">
+    <div class="approve-card">
+        <div class="approve-header">
+            <h1 class="approve-title">
+                <i class="fas fa-check-circle me-2"></i>
+                Approve Payment
+            </h1>
+            <p class="text-muted">Review payment details before approval</p>
+        </div>
+
+        <div class="warning-box">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Warning:</strong> Once approved, this payment cannot be undone. Please verify all details carefully.
+        </div>
+
+        <div class="payment-details">
+            <h5 class="mb-3">
+                <i class="fas fa-receipt me-2"></i>
+                Payment Details
+            </h5>
+            
+            <div class="detail-row">
+                <span class="detail-label">Payment ID:</span>
+                <span class="detail-value">#@Model.Id</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Customer Name:</span>
+                <span class="detail-value">@Model.CustomerName</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Customer Email:</span>
+                <span class="detail-value">@Model.CustomerEmail</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Customer Phone:</span>
+                <span class="detail-value">@Model.CustomerPhone</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Payment Method:</span>
+                <span class="detail-value">@Model.PaymentMethod</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Amount:</span>
+                <span class="detail-value amount-display">৳@Model.Amount.ToString("N2")</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Transaction ID:</span>
+                <span class="detail-value">@(Model.TransactionId ?? "N/A")</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Payment Date:</span>
+                <span class="detail-value">@Model.CreatedAt.ToString("MMM dd, yyyy HH:mm")</span>
+            </div>
+            
+            @if (!string.IsNullOrEmpty(Model.Notes))
+            {
+                <div class="detail-row">
+                    <span class="detail-label">Notes:</span>
+                    <span class="detail-value">@Model.Notes</span>
+                </div>
+            }
+        </div>
+
+        <form method="post" action="@Url.Action("Approve", "PaymentApproval", new { id = Model.Id })">
+            <div class="form-group">
+                <label class="form-label" for="approvalNotes">Approval Notes (Optional)</label>
+                <textarea class="form-control" id="approvalNotes" name="notes" rows="3" 
+                          placeholder="Add any notes about this approval..."></textarea>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn-approve" onclick="return confirm('Are you sure you want to approve this payment?')">
+                    <i class="fas fa-check me-2"></i>
+                    Approve Payment
+                </button>
+                <a href="@Url.Action("History", "PaymentApproval")" class="btn-cancel">
+                    <i class="fas fa-times me-2"></i>
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
