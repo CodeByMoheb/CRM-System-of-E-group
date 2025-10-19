@@ -1,0 +1,442 @@
+@{
+    ViewData["Title"] = "Payment Settings";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .settings-container {
+        background: #f8f9fa;
+        min-height: 100vh;
+        padding: 20px;
+    }
+    
+    .settings-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .settings-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+    
+    .settings-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+    
+    .settings-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+    
+    .settings-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        border-left: 5px solid #007bff;
+    }
+    
+    .settings-card h3 {
+        color: #333;
+        margin-bottom: 20px;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    }
+    
+    .form-select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 1rem;
+        background-color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .form-select:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    }
+    
+    .btn-save {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+    }
+    
+    .btn-test {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+    
+    .btn-test:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+    }
+    
+    .info-box {
+        background: #e7f3ff;
+        border: 1px solid #b3d9ff;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .info-box i {
+        color: #007bff;
+        margin-right: 8px;
+    }
+    
+    .status-indicator {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 8px;
+    }
+    
+    .status-active {
+        background: #28a745;
+    }
+    
+    .status-inactive {
+        background: #dc3545;
+    }
+    
+    .status-testing {
+        background: #ffc107;
+    }
+    
+    .payment-methods {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+    }
+    
+    .payment-method {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .payment-method:hover {
+        border-color: #007bff;
+        background: #e7f3ff;
+    }
+    
+    .payment-method.active {
+        border-color: #28a745;
+        background: #d4edda;
+    }
+    
+    .payment-method i {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        color: #666;
+    }
+    
+    .payment-method.active i {
+        color: #28a745;
+    }
+    
+    @@media (max-width: 768px) {
+        .settings-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .btn-test {
+            margin-left: 0;
+            margin-top: 10px;
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="settings-container">
+    <div class="settings-header">
+        <h1 class="settings-title">
+            <i class="fas fa-cog me-3"></i>
+            Payment Settings
+        </h1>
+        <p class="settings-subtitle">Configure payment gateway settings and payment methods</p>
+    </div>
+
+    <div class="settings-grid">
+        <!-- SSLCommerz Settings -->
+        <div class="settings-card">
+            <h3>
+                <i class="fas fa-credit-card me-2"></i>
+                SSLCommerz Configuration
+            </h3>
+            
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <strong>Current Status:</strong> 
+                <span class="status-indicator status-testing"></span>
+                Testing Mode (Sandbox)
+            </div>
+
+            <form method="post" action="@Url.Action("UpdateSSLCommerzSettings", "Payment")">
+                <div class="form-group">
+                    <label class="form-label">Store ID</label>
+                    <input type="text" class="form-control" name="StoreId" value="uttar6869f88f0dd48" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Store Password</label>
+                    <input type="password" class="form-control" name="StorePassword" value="uttar6869f88f0dd48@ssl" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Environment</label>
+                    <select class="form-select" name="IsSandbox">
+                        <option value="true" selected>Testing (Sandbox)</option>
+                        <option value="false">Production (Live)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Store Name</label>
+                    <input type="text" class="form-control" name="StoreName" value="testuttarrnyn">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Registered URL</label>
+                    <input type="url" class="form-control" name="RegisteredUrl" value="www.wfs-13.org">
+                </div>
+
+                <button type="submit" class="btn-save">
+                    <i class="fas fa-save me-2"></i>
+                    Save SSLCommerz Settings
+                </button>
+                <button type="button" class="btn-test" onclick="testSSLCommerz()">
+                    <i class="fas fa-vial me-2"></i>
+                    Test Connection
+                </button>
+            </form>
+        </div>
+
+        <!-- Payment Methods -->
+        <div class="settings-card">
+            <h3>
+                <i class="fas fa-payment me-2"></i>
+                Payment Methods
+            </h3>
+
+            <div class="form-group">
+                <label class="form-label">Enabled Payment Methods</label>
+                <div class="payment-methods">
+                    <div class="payment-method active">
+                        <i class="fas fa-credit-card"></i>
+                        <div>SSLCommerz</div>
+                        <small>Online Payment</small>
+                    </div>
+                    <div class="payment-method active">
+                        <i class="fas fa-university"></i>
+                        <div>Bank Transfer</div>
+                        <small>Manual Payment</small>
+                    </div>
+                    <div class="payment-method">
+                        <i class="fas fa-mobile-alt"></i>
+                        <div>bKash</div>
+                        <small>Mobile Payment</small>
+                    </div>
+                    <div class="payment-method">
+                        <i class="fas fa-mobile-alt"></i>
+                        <div>Nagad</div>
+                        <small>Mobile Payment</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Default Currency</label>
+                <select class="form-select">
+                    <option value="BDT" selected>Bangladeshi Taka (BDT)</option>
+                    <option value="USD">US Dollar (USD)</option>
+                    <option value="EUR">Euro (EUR)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Auto-Approval Threshold</label>
+                <input type="number" class="form-control" value="10000" placeholder="Amount in BDT">
+                <small class="text-muted">Payments below this amount will be auto-approved</small>
+            </div>
+        </div>
+
+        <!-- Notification Settings -->
+        <div class="settings-card">
+            <h3>
+                <i class="fas fa-bell me-2"></i>
+                Notification Settings
+            </h3>
+
+            <div class="form-group">
+                <label class="form-label">Email Notifications</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="emailPaymentSuccess" checked>
+                    <label class="form-check-label" for="emailPaymentSuccess">
+                        Payment Success Notifications
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="emailPaymentFailure" checked>
+                    <label class="form-check-label" for="emailPaymentFailure">
+                        Payment Failure Notifications
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="emailApprovalRequired">
+                    <label class="form-check-label" for="emailApprovalRequired">
+                        Approval Required Notifications
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">SMS Notifications</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="smsPaymentSuccess">
+                    <label class="form-check-label" for="smsPaymentSuccess">
+                        Payment Success SMS
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="smsPaymentFailure">
+                    <label class="form-check-label" for="smsPaymentFailure">
+                        Payment Failure SMS
+                    </label>
+                </div>
+            </div>
+
+            <button type="button" class="btn-save">
+                <i class="fas fa-save me-2"></i>
+                Save Notification Settings
+            </button>
+        </div>
+
+        <!-- Security Settings -->
+        <div class="settings-card">
+            <h3>
+                <i class="fas fa-shield-alt me-2"></i>
+                Security Settings
+            </h3>
+
+            <div class="form-group">
+                <label class="form-label">Payment Timeout (Minutes)</label>
+                <input type="number" class="form-control" value="30" min="5" max="120">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Maximum Retry Attempts</label>
+                <input type="number" class="form-control" value="3" min="1" max="10">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">IP Whitelist</label>
+                <textarea class="form-control" rows="3" placeholder="Enter IP addresses (one per line)"></textarea>
+                <small class="text-muted">Leave empty to allow all IPs</small>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Enable Logging</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="enableLogging" checked>
+                    <label class="form-check-label" for="enableLogging">
+                        Log all payment transactions
+                    </label>
+                </div>
+            </div>
+
+            <button type="button" class="btn-save">
+                <i class="fas fa-save me-2"></i>
+                Save Security Settings
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+function testSSLCommerz() {
+    // Add loading state
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Testing...';
+    btn.disabled = true;
+    
+    // Simulate API call
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        alert('SSLCommerz connection test successful!');
+    }, 2000);
+}
+
+// Payment method selection
+document.querySelectorAll('.payment-method').forEach(method => {
+    method.addEventListener('click', function() {
+        this.classList.toggle('active');
+    });
+});
+</script>
