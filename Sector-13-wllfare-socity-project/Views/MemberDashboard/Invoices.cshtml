@@ -795,6 +795,26 @@ function printInvoice() {
                         margin: 0;
                         width: 100%;
                     }
+                    
+                    /* Print styles for footer bar */
+                    .footer-color-bar-full {
+                        position: fixed !important;
+                        left: 0 !important;
+                        right: 0 !important;
+                        bottom: 0 !important;
+                        display: flex !important;
+                        width: 100vw !important;
+                        height: 15px !important;
+                        margin: 0 !important;
+                        padding: 0 !important;
+                        -webkit-print-color-adjust: exact;
+                    }
+                    
+                    /* Ensure no page margins in print */
+                    @@page {
+                        margin: 0 !important;
+                        padding: 0 !important;
+                    }
                     .invoice-logo { height: 25px; }
                     .invoice-title { font-size: 1.2rem; }
                     .invoice-table {
@@ -875,6 +895,22 @@ function printInvoice() {
                     .payment-info p {
                         margin-bottom: 0.1rem;
                         font-size: 0.7rem;
+                    }
+                    
+                    /* Watermark in print */
+                    .invoice-container::before {
+                        content: '' !important;
+                        position: absolute !important;
+                        top: 50% !important;
+                        left: 50% !important;
+                        transform: translate(-50%, -50%) !important;
+                        width: 400px !important;
+                        height: 400px !important;
+                        background: url('/E-Group.png') no-repeat center !important;
+                        background-size: contain !important;
+                        opacity: 0.1 !important;
+                        z-index: 1 !important;
+                        pointer-events: none !important;
                     }
                 }
             </style>

@@ -27,7 +27,7 @@
         </div>
     </div>
 
-    <hr class="my-4">
+    <hr class="my-2">
 
     <!-- Customer Information -->
     <div class="row mb-4">
@@ -205,23 +205,137 @@
     <div class="row mt-5">
         <div class="col-12 text-center">
             <hr class="footer-line">
-            <p class="text-muted mb-0 small">
+            <p class="mb-4 small footer-text">
                 <strong>Thank you for choosing our services!</strong><br>
                 For any queries, please contact us at e-groupbd@gmail.com
             </p>
         </div>
     </div>
+    
+    <!-- 3-Color Footer Bar (Full Width, No Margin) -->
+    <div class="footer-color-bar-full">
+        <div class="color-segment blue-segment"></div>
+        <div class="color-segment red-segment"></div>
+        <div class="color-segment green-segment"></div>
+    </div>
 </div>
 
 <style>
     .invoice-container {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: 'Times New Roman', Times, serif;
         color: #333;
         background: white;
         padding: 30px;
         max-width: 800px;
         margin: 0 auto;
         border-radius: 8px;
+        position: relative;
+        overflow: visible;
+        margin-bottom: 0;
+        padding-bottom: 30px;
+    }
+    
+    /* Watermark Logo */
+    .invoice-container::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 500px;
+        height: 500px;
+        background: url('/E-Group.png') no-repeat center;
+        background-size: contain;
+        opacity: 0.15;
+        z-index: 1;
+        pointer-events: none;
+        filter: none !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+    
+    /* Ensure content is above watermark */
+    .invoice-container > * {
+        position: relative;
+        z-index: 10;
+    }
+    
+    /* Ensure all text elements are clearly visible */
+    .invoice-container p,
+    .invoice-container h1,
+    .invoice-container h2,
+    .invoice-container h3,
+    .invoice-container h4,
+    .invoice-container h5,
+    .invoice-container h6,
+    .invoice-container td,
+    .invoice-container th,
+    .invoice-container .text-dark,
+    .invoice-container .text-muted,
+    .invoice-container .text-primary {
+        position: relative;
+        z-index: 15;
+        opacity: 1 !important;
+    }
+
+    /* Make all text fully opaque within the modal */
+    .modal .invoice-container,
+    .modal .invoice-container p,
+    .modal .invoice-container h1,
+    .modal .invoice-container h2,
+    .modal .invoice-container h3,
+    .modal .invoice-container h4,
+    .modal .invoice-container h5,
+    .modal .invoice-container h6,
+    .modal .invoice-container td,
+    .modal .invoice-container th,
+    .modal .invoice-container .text-dark,
+    .modal .invoice-container .text-muted,
+    .modal .invoice-container .text-primary {
+        opacity: 1 !important;
+    }
+
+/* Add Download button to modal footer and client-side logic */
+    /* The below script assumes you have a modal with footer buttons where you want to add "Download" functionality */
+    /* Place this script tag somewhere after your modal HTML (e.g., at the end of the file, or in a <script> block after the modal markup) */
+/* The actual modal HTML is not in this selection, but here's the code for the download button and JS: */
+
+    /* Example HTML markup for modal footer buttons (add or update this in your modal's footer): */
+    /*
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="window.print()">Print</button>
+        <button type="button" class="btn btn-success" id="downloadInvoiceBtn">Download</button>
+    </div>
+    */
+
+    /* JavaScript to download the invoice as a PNG image (using html2canvas) */
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var downloadBtn = document.getElementById('downloadInvoiceBtn');
+            if (downloadBtn) {
+                downloadBtn.addEventListener('click', function () {
+                    var invoice = document.querySelector('.invoice-container');
+                    if (invoice) {
+                        html2canvas(invoice, { 
+                            backgroundColor: '#fff',
+                            scale: 2,
+                            useCORS: true
+                        }).then(function(canvas) {
+                            var link = document.createElement('a');
+                            link.download = 'Invoice.png';
+                            link.href = canvas.toDataURL('image/png');
+                            link.click();
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+        position: relative;
+        z-index: 15;
+        opacity: 1 !important;
     }
     
     .invoice-logo {
@@ -369,6 +483,53 @@
         margin: 30px 0 20px 0;
     }
     
+    .footer-text {
+        text-shadow: none !important;
+        -webkit-text-stroke: none !important;
+        color: #333 !important;
+        font-weight: normal !important;
+    }
+    
+    .footer-text strong {
+        text-shadow: none !important;
+        -webkit-text-stroke: none !important;
+        font-weight: bold !important;
+        color: #333 !important;
+    }
+    
+    /* 3-Color Footer Bar - Full Width */
+    .footer-color-bar-full {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        width: 100%;
+        height: 20px;
+        margin: 0;
+        padding: 0;
+        border-radius: 0;
+        overflow: hidden;
+        z-index: 9999;
+    }
+    
+    .color-segment {
+        flex: 1;
+        height: 100%;
+    }
+    
+    .blue-segment {
+        background: linear-gradient(135deg, #5B9BD5 0%, #5B9BD5 100%);
+    }
+    
+    .red-segment {
+        background: linear-gradient(135deg, #ED1F23 0%, #ED1F23 100%);
+    }
+    
+    .green-segment {
+        background: linear-gradient(135deg, #00A54F 0%, #00A54F 100%);
+    }
+    
     .text-primary {
         color:rgb(0, 0, 0) !important;
     }
@@ -381,93 +542,6 @@
         font-size: 0.875rem;
     }
     
-    @@media print {
-        .invoice-container {
-            font-size: 12px;
-            padding: 20px;
-            max-width: none;
-            margin: 0;
-        }
-        
-        .btn {
-            display: none !important;
-        }
-        
-        .modal-header,
-        .modal-footer {
-            display: none !important;
-        }
-        
-        .modal-body {
-            padding: 0 !important;
-        }
-        
-        .invoice-logo {
-            height: 50px;
-        }
-        
-        .invoice-title {
-            font-size: 1.5rem;
-        }
-        
-        .invoice-table {
-            border: 1px solid #000 !important;
-            width: 100% !important;
-            table-layout: fixed;
-        }
-        
-        .invoice-table thead th {
-            background-color: #f8f9fa !important;
-            -webkit-print-color-adjust: exact;
-            border: 1px solid #000 !important;
-            border-bottom: 2px solidrgb(0, 0, 0) !important;
-        }
-        
-        .invoice-table tbody td {
-            border: 1px solid #000 !important;
-        }
-        
-        .invoice-table th:nth-child(1),
-        .invoice-table td:nth-child(1) {
-            width: 15% !important;
-        }
-        
-        .invoice-table th:nth-child(2),
-        .invoice-table td:nth-child(2) {
-            width: 50% !important;
-            text-align: justify;
-        }
-        
-        .invoice-table th:nth-child(3),
-        .invoice-table td:nth-child(3) {
-            width: 10% !important;
-            text-align: center;
-        }
-        
-        .invoice-table th:nth-child(4),
-        .invoice-table td:nth-child(4) {
-            width: 15% !important;
-            text-align: center;
-        }
-        
-        .invoice-table th:nth-child(5),
-        .invoice-table td:nth-child(5) {
-            width: 10% !important;
-            text-align: right;
-        }
-        
-        .totals-table {
-            border: 1px solid #000 !important;
-        }
-        
-        .totals-table td {
-            border: 1px solid #000 !important;
-        }
-        
-        .balance-due {
-            background-color: #f8f9fa !important;
-            -webkit-print-color-adjust: exact;
-            border-top: 2px solidrgb(0, 0, 0) !important;
-        }
-    }
+
+
 </style>
