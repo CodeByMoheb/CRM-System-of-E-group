@@ -49,6 +49,9 @@
         </div>
         <div class="col-6 text-end">
             <h5 class="text-dark mb-3 fw-bold">Payment Information:</h5>
+            <div class="col-6 text-start">
+            
+        </div>
             <div class="payment-info">
                 <p class="mb-1 small"><strong>Method:</strong> @Model.PaymentMethod</p>
                 <p class="mb-1 small"><strong>Status:</strong> 
@@ -89,9 +92,24 @@
                     
                     @if (item.TravelAllowance.HasValue && item.TravelAllowance > 0)
                     {
+                        // Determine location description based on travel allowance amount
+                        var locationDescription = "";
+                        if (item.TravelAllowance.Value == 55m)
+                        {
+                            locationDescription = "Outside Dhaka";
+                        }
+                        else if (item.TravelAllowance.Value == 40m)
+                        {
+                            locationDescription = "Inside Dhaka";
+                        }
+                        else
+                        {
+                            locationDescription = !string.IsNullOrEmpty(item.Location) ? item.Location : "Location not specified";
+                        }
+                        
                         <tr>
                             <td class="text-primary fw-bold">Travel Allowance</td>
-                            <td class="text-muted">-</td>
+                            <td class="text-muted">@locationDescription</td>
                             <td class="text-end">$@item.TravelAllowance.Value.ToString("N2")</td>
                             <td class="text-center">1</td>
                             <td class="text-end fw-bold">$@item.TravelAllowance.Value.ToString("N2")</td>
@@ -104,10 +122,41 @@
 
     <!-- Totals -->
     <div class="row">
-        <div class="col-8">
-            <p class="text-muted mb-0 mt-3">Thanks for your business!</p>
+        <div class="col-6 text-start">
+            <div class="bank-account-box mt-4" style="border: 1.5px solid #007bff; border-radius: 8px; background: #f8fcff; padding: 24px 18px;">
+                <h6 class="text-dark mb-3" style="text-align:center;">Bank Account Details</h6>
+                <table class="table table-borderless mb-0" style="max-width: 420px;">
+                    <tbody>
+                        <tr>
+                            <td class="text-muted ps-0 pe-2 text-end" style="width: 175px;">Bank Name</td>
+                            <td class="text-dark ps-2 text-center" style="width: 20px;">|</td>
+                            <td class="text-dark ps-2">Prime Bank Ltd.</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted ps-0 pe-2 text-end">Account Name</td>
+                            <td class="text-dark ps-2 text-center" style="width: 20px;">|</td>
+                            <td class="text-dark ps-2 fw-bold">E-Group Ltd.</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted ps-0 pe-2 text-end">Account No</td>
+                            <td class="text-dark ps-2 text-center" style="width: 20px;">|</td>
+                            <td class="text-dark ps-2 fw-bold">1907101000001</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted ps-0 pe-2 text-end">Branch</td>
+                            <td class="text-dark ps-2 text-center" style="width: 20px;">|</td>
+                            <td class="text-dark ps-2">Uttara Branch</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted ps-0 pe-2 text-end">Routing Number</td>
+                            <td class="text-dark ps-2 text-center" style="width: 20px;">|</td>
+                            <td class="text-dark ps-2 fw-bold">170261957</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div class="col-4">
+        <div class="col-6">
             <table class="table table-sm totals-table">
                 @{
                     // Use the correct server-side calculations from BookingItem
@@ -153,16 +202,7 @@
         </div>
     }
 
-    <!-- Notes -->
-    @if (!string.IsNullOrEmpty(Model.Notes))
-    {
-        <div class="row mt-4">
-            <div class="col-12">
-                <h6 class="text-dark">Notes:</h6>
-                <p class="text-muted">@Model.Notes</p>
-            </div>
-        </div>
-    }
+
 
     <!-- Footer -->
     <div class="row mt-5">
@@ -213,40 +253,108 @@
     }
     
     .invoice-table {
-        border: none;
+        border: 1px solid #dee2e6;
         margin-bottom: 0;
+        width: 100%;
+        table-layout: fixed;
     }
     
     .invoice-table thead th {
         background-color: #f8f9fa;
         color: #333;
-        border: none;
-        border-bottom: 2px solid #dee2e6;
+        border: 1px solid #dee2e6;
+        border-bottom: 2px solid #007bff;
         font-weight: 600;
         padding: 12px 8px;
         font-size: 0.9rem;
+        text-align: center;
+    }
+    
+    .invoice-table thead th:first-child {
+        border-left: none;
+    }
+    
+    .invoice-table thead th:last-child {
+        border-right: none;
     }
     
     .invoice-table tbody td {
-        border: none;
-        border-bottom: 1px solid #dee2e6;
+        border: 1px solid #dee2e6;
         padding: 12px 8px;
         vertical-align: middle;
+        font-size: 0.9rem;
+    }
+    
+    .invoice-table tbody tr td:first-child {
+        border-left: none;
+    }
+    
+    .invoice-table tbody tr td:last-child {
+        border-right: none;
     }
     
     .invoice-table tbody tr:last-child td {
-        border-bottom: none;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .invoice-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .invoice-table th:nth-child(1),
+    .invoice-table td:nth-child(1) {
+        width: 15%;
+    }
+    
+    .invoice-table th:nth-child(2),
+    .invoice-table td:nth-child(2) {
+        width: 50%;
+    }
+    
+    .invoice-table th:nth-child(3),
+    .invoice-table td:nth-child(3) {
+        width: 10%;
+        text-align: center;
+    }
+    
+    .invoice-table th:nth-child(4),
+    .invoice-table td:nth-child(4) {
+        width: 15%;
+        text-align: center;
+    }
+    
+    .invoice-table th:nth-child(5),
+    .invoice-table td:nth-child(5) {
+        width: 10%;
+        text-align: right;
     }
     
     .totals-table {
-        border: none;
+        border: 1px solid #dee2e6;
         margin-top: 20px;
+        width: 100%;
     }
     
     .totals-table td {
-        border: none;
-        padding: 8px 0;
+        border: 1px solid #dee2e6;
+        padding: 8px 12px;
         font-size: 0.9rem;
+    }
+    
+    .totals-table tr:first-child td {
+        border-top: none;
+    }
+    
+    .totals-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .totals-table td:first-child {
+        border-left: none;
+    }
+    
+    .totals-table td:last-child {
+        border-right: none;
     }
     
     .balance-due {
@@ -305,14 +413,64 @@
             font-size: 1.5rem;
         }
         
+        .invoice-table {
+            border: 1px solid #000 !important;
+            width: 100% !important;
+            table-layout: fixed;
+        }
+        
         .invoice-table thead th {
             background-color: #f8f9fa !important;
             -webkit-print-color-adjust: exact;
+            border: 1px solid #000 !important;
+            border-bottom: 2px solid #007bff !important;
+        }
+        
+        .invoice-table tbody td {
+            border: 1px solid #000 !important;
+        }
+        
+        .invoice-table th:nth-child(1),
+        .invoice-table td:nth-child(1) {
+            width: 15% !important;
+        }
+        
+        .invoice-table th:nth-child(2),
+        .invoice-table td:nth-child(2) {
+            width: 50% !important;
+            text-align: justify;
+        }
+        
+        .invoice-table th:nth-child(3),
+        .invoice-table td:nth-child(3) {
+            width: 10% !important;
+            text-align: center;
+        }
+        
+        .invoice-table th:nth-child(4),
+        .invoice-table td:nth-child(4) {
+            width: 15% !important;
+            text-align: center;
+        }
+        
+        .invoice-table th:nth-child(5),
+        .invoice-table td:nth-child(5) {
+            width: 10% !important;
+            text-align: right;
+        }
+        
+        .totals-table {
+            border: 1px solid #000 !important;
+        }
+        
+        .totals-table td {
+            border: 1px solid #000 !important;
         }
         
         .balance-due {
             background-color: #f8f9fa !important;
             -webkit-print-color-adjust: exact;
+            border-top: 2px solid #007bff !important;
         }
     }
 </style>
