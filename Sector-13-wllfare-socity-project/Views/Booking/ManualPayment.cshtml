@@ -1,0 +1,154 @@
+@model Sector_13_Welfare_Society___Digital_Management_System.Models.Booking
+@{
+    ViewData["Title"] = "Manual Payment - " + Model.BookingNumber;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Booking Summary -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-receipt me-2"></i>Booking Summary
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-primary">Booking Details</h6>
+                            <p><strong>Booking Number:</strong> @Model.BookingNumber</p>
+                            <p><strong>Date:</strong> @Model.BookingDate.ToString("MMMM dd, yyyy")</p>
+                            <p><strong>Customer:</strong> @Model.CustomerName</p>
+                            <p><strong>Email:</strong> @Model.CustomerEmail</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-primary">Service Details</h6>
+                            @foreach (var item in Model.BookingItems)
+                            {
+                                <p><strong>Service:</strong> @item.ServiceName</p>
+                                <p><strong>Type:</strong> @item.ServiceType</p>
+                                @if (item.WorkforceSize.HasValue)
+                                {
+                                    <p><strong>Workforce Size:</strong> @item.WorkforceSize workers</p>
+                                }
+                                @if (item.ManDaysRequired.HasValue)
+                                {
+                                    <p><strong>Man-Days:</strong> @item.ManDaysRequired man-days</p>
+                                }
+                            }
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="text-center">
+                        <h3 class="text-primary">
+                            <strong>Total Amount: @Model.Currency @Model.TotalAmount.ToString("N2")</strong>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bank Transfer Instructions -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-university me-2"></i>Bank Transfer Instructions
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-primary">Bank Details</h6>
+                            <div class="alert alert-info">
+                                <strong>Bank Name:</strong> Dutch-Bangla Bank Limited<br>
+                                <strong>Account Name:</strong> E-Group Services<br>
+                                <strong>Account Number:</strong> 1234567890123456<br>
+                                <strong>Branch:</strong> Dhanmondi Branch, Dhaka<br>
+                                <strong>SWIFT Code:</strong> DBBLBDDH
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-primary">Payment Amount</h6>
+                            <div class="alert alert-success">
+                                <strong>Amount to Transfer:</strong><br>
+                                <span class="h4 text-primary">@Model.Currency @Model.TotalAmount.ToString("N2")</span><br>
+                                <small>Please include booking number: <strong>@Model.BookingNumber</strong> in the transfer reference</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Form -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-upload me-2"></i>Submit Payment Proof
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="@Url.Action("ManualPayment", "Booking")" enctype="multipart/form-data">
+                        <input type="hidden" name="bookingId" value="@Model.Id" />
+                        
+                        <div class="mb-3">
+                            <label for="transactionId" class="form-label">Transaction ID / Reference Number *</label>
+                            <input type="text" class="form-control" id="transactionId" name="transactionId" required>
+                            <div class="form-text">Enter the transaction ID from your bank transfer</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="paymentReceipt" class="form-label">Upload Payment Receipt *</label>
+                            <input type="file" class="form-control" id="paymentReceipt" name="paymentReceipt" accept=".jpg,.jpeg,.png,.pdf" required>
+                            <div class="form-text">Upload a clear photo or PDF of your payment receipt</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="paymentNotes" class="form-label">Additional Notes (Optional)</label>
+                            <textarea class="form-control" id="paymentNotes" name="paymentNotes" rows="3" placeholder="Any additional information about your payment..."></textarea>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="@Url.Action("ProcessPayment", "Booking", new { id = Model.Id })" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Payment Options
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-check me-2"></i>Submit Payment Proof
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Auto-focus on transaction ID field
+            $('#transactionId').focus();
+            
+            // Form validation
+            $('form').on('submit', function(e) {
+                var transactionId = $('#transactionId').val().trim();
+                var paymentReceipt = $('#paymentReceipt')[0].files[0];
+                
+                if (!transactionId) {
+                    e.preventDefault();
+                    alert('Please enter a transaction ID');
+                    $('#transactionId').focus();
+                    return false;
+                }
+                
+                if (!paymentReceipt) {
+                    e.preventDefault();
+                    alert('Please upload a payment receipt');
+                    $('#paymentReceipt').focus();
+                    return false;
+                }
+            });
+        });
+    </script>
+}
+
