@@ -1874,6 +1874,7 @@
         
         .programs-section {
             padding: 40px 0;
+            background:#ededed
         }
         
         .partnerships-section {
@@ -2214,52 +2215,31 @@
     }
 </style>
 
-<section id="home" class="split-hero">
-    <div class="split-slider">
-        <div class="split-panel image-panel">
-            <div class="image-slide active" style="background-image:url('https://res.cloudinary.com/dzlfgx5d7/image/upload/v1759166231/gallery/itteam_yb8ajg.jpg')"></div>
-            <div class="image-slide" style="background-image:url('https://res.cloudinary.com/dzlfgx5d7/image/upload/v1759241570/gallery/f3_qrgqfp.jpg')"></div>
-            <div class="image-slide" style="background-image:url('https://res.cloudinary.com/dzlfgx5d7/image/upload/v1759241876/gallery/f7_xbteh4.jpg')"></div>
-             </div>
-        <div class="split-panel text-panel">
-            <div class="text-slide active">
-                <div class="slide-content">
-                    <div class="pill-badge"><i class="fas fa-star text-warning"></i> Connect with Top Business Consultant</div>
-                    <div class="hero-heading"><span class="muted">E-Group Bangladesh -  </span><br> <span class="accent">Audit Company</span></div>
-                    <p class="hero-subtext">Certification, software development, and business consulting in Bangladesh.</p>
-                    <a href="@Url.Action("ContactUs", "Home")" class="btn cta-button">Schedule a Call</a>
-                </div>
-            </div>
-            <div class="text-slide">
-                <div class="slide-content">
-                    <div class="pill-badge"><i class="fas fa-microchip"></i> Best Certification Providers</div>
-                    <div class="hero-heading"><span class="muted">Digital Transformation </span><br><span class="muted">Services in Bangladesh</span></div>
-                    <p class="hero-subtext">E-Tex solutions, Epic Pharma software, Paradise Interior design, and custom software development for businesses across Bangladesh.</p>
-                    <a href="@Url.Action("Register", "Account")" class="btn cta-button">Explore Services</a>
-                </div>
-            </div>
-            <div class="text-slide">
-                <div class="slide-content">
-                    <div class="pill-badge"><i class="fas fa-people-arrows"></i> Flexible Engagement</div>
-                    <div class="hero-heading">Staff Augmentation<br><span class="muted">or</span> Managed Services</div>
-                    <p class="hero-subtext">Ready to transform your business? Contact our expert team in Uttara, Dhaka. Call +880 1400055289 or visit our office.</p>
-                    <a href="@Url.Action("ContactUs", "Home")" class="btn cta-button">Talk to Us</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="split-controls">
-        <button class="prev-btn"><i class="fas fa-chevron-left"></i></button>
-        <div class="split-dots">
-            <span class="dot active" data-slide="0"></span>
-            <span class="dot" data-slide="1"></span>
-            <span class="dot" data-slide="2"></span>
-        </div>
-        <button class="next-btn"><i class="fas fa-chevron-right"></i></button>
+<style>
+    .hero-simple { position: relative; width: 100%; min-height: 72vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .hero-simple .hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center; transform: scale(1.05); transition: transform 8s ease; }
+    .hero-simple .hero-overlay { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.55); }
+    .hero-simple .hero-content { position: relative; z-index: 1; text-align: center; color: #fff; padding: 0 1rem; max-width: 900px; animation: fadeInUpHero 700ms ease forwards; }
+    .hero-simple h1 { font-family: 'Poppins', sans-serif; font-weight: 800; letter-spacing: 0.3px; font-size: clamp(1.8rem, 4.5vw, 3.25rem); margin-bottom: 0.75rem; }
+    .hero-simple p { font-size: clamp(1rem, 2.2vw, 1.25rem); opacity: 0.95; margin-bottom: 1.25rem; }
+    .hero-simple .hero-cta { display: inline-block; background: #4f46e5; color: #fff; text-decoration: none; padding: 12px 22px; border-radius: 10px; font-weight: 600; letter-spacing: .2px; box-shadow: 0 10px 24px rgba(79,70,229,.35); transform: translateZ(0); transition: transform .2s ease, box-shadow .2s ease, background .2s ease; }
+    .hero-simple .hero-cta:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 16px 36px rgba(79,70,229,.45); }
+    .hero-simple .hero-cta:active { transform: translateY(0) scale(.98); box-shadow: 0 8px 18px rgba(79,70,229,.35); }
+    @@media (max-width: 480px) { .hero-simple { min-height: 64vh; } }
+    @@keyframes fadeInUpHero { from { opacity: 0; transform: translateY(18px);} to { opacity: 1; transform: translateY(0);} }
+</style>
+
+<section class="hero-simple" aria-label="Hero">
+    <div class="hero-bg" style="background-image:url('https://res.cloudinary.com/dzlfgx5d7/image/upload/v1759241570/gallery/f3_qrgqfp.jpg')"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1>Empowering Businesses in Bangladesh</h1>
+        <p>Audit, Certification, and Digital Consulting You Can Trust</p>
+        <a href="@Url.Action("ContactUs", "Home")" class="hero-cta" aria-label="Schedule a Call">📞 Schedule a Call</a>
     </div>
 </section>
 
-<section class="stats-section">
+<!-- <section class="stats-section">
     <div class="container">
         <div class="row text-center mb-5">
             <div class="col-12">
@@ -2298,15 +2278,15 @@
             </div>
         </div>
     </div>
-</section>
+</section> -->
 
-<section class="about-section" id="about-us-section" style="background:#ffffff;">
+<section class="about-section" id="about-us-section" style="background:#ededed;">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-12">
-                <h3 class="display-6 fw-bold mb-2" style="color: #490B3D;"> E-Group Bangladesh - Your Trusted certification</h3>
-                <p class="lead mb-2" style="color: #666666;">Founded in 2020, E-Group Bangladesh has emerged as a leading Certification provider in Uttara, Dhaka, specializing in digital transformation, software development, and business consulting. Our expert team combines local market knowledge with global technology standards to deliver innovative solutions that drive business growth and success across Bangladesh.</p>
-                <p class="mb-3" style="color: #BD1E51;">Based in Sector 13, Uttara, Dhaka, we serve clients throughout Bangladesh with comprehensive digital services including E-Tex solutions for the textile industry, Epic Pharma software for pharmaceutical companies, Paradise Interior design software, and custom software development tailored for Bangladeshi businesses.</p>
+                <h3 class="display-6 fw-bold mb-2 text align-center" style="color: #490B3D;"> E-Group Bangladesh - Your Trusted certification Provider</h3>
+                <p class="lead mb-2" style="color: #666666; text-align: justify;">Founded in 2020, E-Group Bangladesh has emerged as a leading Certification provider in Uttara, Dhaka, specializing in digital transformation, software development, and business consulting. Our expert team combines local market knowledge with global technology standards to deliver innovative solutions that drive business growth and success across Bangladesh.</p>
+                <p class="mb-3" style="color: #BD1E51; text-align: justify;">Based in Sector 13, Uttara, Dhaka, we serve clients throughout Bangladesh with comprehensive digital services including E-Tex solutions for the textile industry, Epic Pharma software for pharmaceutical companies, Paradise Interior design software, and custom software development tailored for Bangladeshi businesses.</p>
                 <div class="text-center mb-5">
                     <div class="about-image-container position-relative d-inline-block">
                         <div class="image-wrapper" data-bs-toggle="modal" data-bs-target="#imageModal" style="cursor: pointer;">
@@ -3250,8 +3230,11 @@
     document.addEventListener('DOMContentLoaded', function() {
         console.log('DOM fully loaded, initializing components');
         
-        // Initialize slider first
-        window.splitSlider = new SplitSlider();
+        // Initialize slider only if old split markup exists
+        const hasSplitSlider = document.querySelector('.split-slider');
+        if (hasSplitSlider) {
+            window.splitSlider = new SplitSlider();
+        }
         
         // Initialize other components
         new Navigation();
