@@ -1281,6 +1281,16 @@
             box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
         }
         
+        /* Ensure mobile auth container is visible on index page */
+        .mobile-auth-container {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            align-items: center;
+            gap: 5px;
+            order: 4;
+        }
+        
         /* Add gap between logo and hamburger menu */
         .navbar .navbar-brand {
             margin-right: 20px;
@@ -1400,6 +1410,16 @@
         
         .navbar .navbar-brand {
             margin-right: 12px;
+        }
+        
+        /* Ensure mobile auth container is visible on index page for small screens */
+        .mobile-auth-container {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            align-items: center;
+            gap: 3px;
+            order: 4;
         }
         
         .nav-menu {
@@ -2197,10 +2217,10 @@
 <section id="home" class="split-hero">
     <div class="split-slider">
         <div class="split-panel image-panel">
-            <div class="image-slide active" style="background-image:url('https://res.cloudinary.com/dzlfgx5d7/image/upload/v1759148157/befldyfpefbn9b8esitp.jpg')"></div>
-            <div class="image-slide" style="background-image:url('https://res.cloudinary.com/dmnpdzcvd/image/upload/v1757835211/WhatsApp_Image_2025-09-14_at_12.18.12_PM_fbksbr.jpg')"></div>
-            <div class="image-slide" style="background-image:url('https://res.cloudinary.com/dmnpdzcvd/image/upload/v1757835211/WhatsApp_Image_2025-09-14_at_12.18.12_PM_1_qi6dwc.jpg')"></div>
-        </div>
+            <div class="image-slide active" style="background-image:url('https://res.cloudinary.com/dzlfgx5d7/image/upload/v1759166231/gallery/itteam_yb8ajg.jpg')"></div>
+            <div class="image-slide" style="background-image:url('https://res.cloudinary.com/dzlfgx5d7/image/upload/v1759241570/gallery/f3_qrgqfp.jpg')"></div>
+            <div class="image-slide" style="background-image:url('https://res.cloudinary.com/dzlfgx5d7/image/upload/v1759241876/gallery/f7_xbteh4.jpg')"></div>
+             </div>
         <div class="split-panel text-panel">
             <div class="text-slide active">
                 <div class="slide-content">
@@ -2290,7 +2310,7 @@
                 <div class="text-center mb-5">
                     <div class="about-image-container position-relative d-inline-block">
                         <div class="image-wrapper" data-bs-toggle="modal" data-bs-target="#imageModal" style="cursor: pointer;">
-                            <img src="https://res.cloudinary.com/dmnpdzcvd/image/upload/v1753969225/WhatsApp_Image_2025-07-29_at_1.32.03_AM_hy5cgk.jpg"
+                            <img src="https://res.cloudinary.com/dzlfgx5d7/image/upload/v1759166231/gallery/itteam_yb8ajg.jpg"
                                  alt="About Us - E-Group Bangladesh"
                                  class="about-image img-fluid rounded-4 shadow-lg"
                                  id="aboutImage">
@@ -2323,7 +2343,7 @@
                             </div>
                             <div class="modal-body p-0">
                                 <div class="position-relative">
-                                    <img src="https://res.cloudinary.com/dmnpdzcvd/image/upload/v1753969225/WhatsApp_Image_2025-07-29_at_1.32.03_AM_hy5cgk.jpg"
+                                    <img src="https://res.cloudinary.com/dzlfgx5d7/image/upload/v1759241570/gallery/f3_qrgqfp.jpg"
                                          alt="About Us - E-Group Bangladesh"
                                          class="img-fluid w-100 rounded-3"
                                          style="max-height: 70vh; object-fit: contain;">
