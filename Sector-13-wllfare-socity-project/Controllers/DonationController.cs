@@ -175,7 +175,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                 ["store_id"] = storeId,
                 ["store_passwd"] = storePassword,
                 ["total_amount"] = donor.Amount.ToString("F2"),
-                ["currency"] = "BDT",
+                ["currency"] = "USD",
                 ["tran_id"] = tranId,
                 ["product_category"] = "Donation",
                 ["product_name"] = $"Donation - {donor.DonationType ?? "General"}",
@@ -685,7 +685,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                 // SMS
                 if (!string.IsNullOrWhiteSpace(donor.Phone))
                 {
-                    var sms = $"Thank you, {donor.Name}, for your generous donation of BDT {donor.Amount:F2}. Receipt: {donor.ReceiptNumber}. - Sector 13 Welfare Society";
+                    var sms = $"Thank you, {donor.Name}, for your generous donation of ${donor.Amount:F2}. Receipt: {donor.ReceiptNumber}. - Sector 13 Welfare Society";
                     await _smsSender.SendAsync(donor.Phone, sms);
                     System.Diagnostics.Debug.WriteLine($"NotifyDonorAsync: SMS sent to {donor.Phone}");
                 }
@@ -695,7 +695,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                 {
                     var subject = $"Receipt for your donation - {donor.ReceiptNumber}";
                     var bodyIntro = $@"<p>Dear {donor.Name},</p>
-<p>Thank you for your generous donation of <strong>BDT {donor.Amount:F2}</strong>.</p>
+<p>Thank you for your generous donation of <strong>${donor.Amount:F2}</strong>.</p>
 <p>Your official receipt is attached.</p>
 <p>With gratitude,<br/>Sector 13 Welfare Society</p>";
 

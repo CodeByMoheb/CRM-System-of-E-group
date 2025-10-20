@@ -1617,7 +1617,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                 ["store_id"] = storeId,
                 ["store_passwd"] = storePassword,
                 ["total_amount"] = booking.TotalAmount.ToString("F2"),
-                ["currency"] = "BDT",
+                ["currency"] = "USD",
                 ["tran_id"] = tranId,
                 ["product_category"] = "Services",
                 ["product_name"] = $"Service Booking - {booking.BookingNumber}",

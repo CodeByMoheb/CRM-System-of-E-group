@@ -125,10 +125,10 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-2">
                                             <label asp-for="Amount" class="form-label small">
-                                                <i class="fas fa-rupee-sign me-1"></i>Donation Amount (BDT) *
+                                                <i class="fas fa-dollar-sign me-1"></i>Donation Amount (USD) *
                                             </label>
                                             <div class="input-group input-group-sm">
-                                                <span class="input-group-text">৳</span>
+                                                <span class="input-group-text">$</span>
                                                 <input asp-for="Amount" type="number" step="0.01" min="10" class="form-control" placeholder="1000" required />
                                             </div>
                                             <span asp-validation-for="Amount" class="text-danger small"></span>
@@ -710,7 +710,7 @@ async function loadRecentDonations() {
                     </div>
                 </td>
                 <td>
-                    <span class="badge bg-success fs-6">৳${parseFloat(donor.amount).toLocaleString()}</span>
+                    <span class="badge bg-success fs-6">$${parseFloat(donor.amount).toLocaleString()}</span>
                 </td>
                 <td>
                     <span class="badge bg-primary">${donor.donationType || 'General'}</span>
@@ -741,7 +741,7 @@ async function loadRecentDonations() {
                     </div>
                 </div>
                 <div class="donation-details">
-                    <span class="amount-badge bg-success">৳${parseFloat(donor.amount).toLocaleString()}</span>
+                    <span class="amount-badge bg-success">$${parseFloat(donor.amount).toLocaleString()}</span>
                     <span class="type-badge bg-primary">${donor.donationType || 'General'}</span>
                     <div class="date-text">
                         ${new Date(donor.donationDate).toLocaleDateString('en-US', {

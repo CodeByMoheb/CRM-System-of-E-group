@@ -129,11 +129,11 @@
                         <i class="fas fa-money-bill-wave"></i>
                     </div>
                     <div class="stat-card-content">
-                        <h3 class="stat-card-value">৳@Model.TotalAmount.ToString("N0")</h3>
+                        <h3 class="stat-card-value">$@Model.TotalAmount.ToString("N0")</h3>
                         <p class="stat-card-label">Total Received</p>
                         <div class="stat-card-details">
                             <span class="badge bg-white bg-opacity-25">@Model.TotalCount donations</span>
-                            <span class="badge bg-white bg-opacity-25">Avg ৳@Model.AveragePerDonation.ToString("N0")</span>
+                            <span class="badge bg-white bg-opacity-25">Avg $@Model.AveragePerDonation.ToString("N0")</span>
                         </div>
                     </div>
                 </div>
@@ -146,7 +146,7 @@
                         <i class="fas fa-calendar-day"></i>
                     </div>
                     <div class="stat-card-content">
-                        <h3 class="stat-card-value">৳@Model.TodayAmount.ToString("N0")</h3>
+                        <h3 class="stat-card-value">$@Model.TodayAmount.ToString("N0")</h3>
                         <p class="stat-card-label">Today's Donations</p>
                         <div class="stat-card-details">
                             <span class="badge bg-white bg-opacity-25">Today</span>
@@ -162,7 +162,7 @@
                         <i class="fas fa-calendar-week"></i>
                     </div>
                     <div class="stat-card-content">
-                        <h3 class="stat-card-value">৳@Model.ThisWeekAmount.ToString("N0")</h3>
+                        <h3 class="stat-card-value">$@Model.ThisWeekAmount.ToString("N0")</h3>
                         <p class="stat-card-label">This Week</p>
                         <div class="stat-card-details">
                             <span class="badge bg-white bg-opacity-25">7 days</span>
@@ -178,7 +178,7 @@
                         <i class="fas fa-calendar-alt"></i>
                     </div>
                     <div class="stat-card-content">
-                        <h3 class="stat-card-value">৳@Model.ThisMonthAmount.ToString("N0")</h3>
+                        <h3 class="stat-card-value">$@Model.ThisMonthAmount.ToString("N0")</h3>
                         <p class="stat-card-label">This Month</p>
                         <div class="stat-card-details">
                             <span class="badge bg-white bg-opacity-25">30 days</span>
@@ -220,7 +220,7 @@
                                         </p>
                                     </div>
                                     <div class="donor-stats">
-                                        <div class="donor-amount">৳@donor.TotalAmount.ToString("N0")</div>
+                                        <div class="donor-amount">$@donor.TotalAmount.ToString("N0")</div>
                                         <div class="donor-count">@donor.Donations donation(s)</div>
                                     </div>
                                 </div>
@@ -282,7 +282,7 @@
                                             <span class="donation-type-badge">@(item.DonationType ?? "General")</span>
                                         </td>
                                         <td class="text-end">
-                                            <div class="donation-amount">৳@item.Amount.ToString("N0")</div>
+                                            <div class="donation-amount">$@item.Amount.ToString("N0")</div>
                                         </td>
                                         <td>
                                             @if (item.PaymentStatus == "Completed")
