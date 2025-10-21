@@ -5,8 +5,8 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Models
     public class SalarySheetViewModel
     {
         public int EmployeeId { get; set; }
-        public string Name { get; set; }
-        public string Role { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Role { get; set; } = string.Empty;
         public DateTime JoiningDate { get; set; }
         public decimal BaseSalary { get; set; }
         public decimal DailyWage { get; set; }
