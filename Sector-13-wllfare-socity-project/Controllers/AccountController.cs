@@ -52,7 +52,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
             if (ModelState.IsValid)
             {
                  // First, check if this is an Employee ID login (format: EMP0001, EMP0002, etc.)
-                 if (model.Email.StartsWith("EMP", StringComparison.OrdinalIgnoreCase))
+                 if (!string.IsNullOrEmpty(model.Email) && model.Email.StartsWith("EMP", StringComparison.OrdinalIgnoreCase))
                  {
                      var employee = await _context.Employees
                          .FirstOrDefaultAsync(e => e.EmployeeId == model.Email && e.IsActive);
@@ -128,7 +128,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                     try
                     {
                         System.Diagnostics.Debug.WriteLine($"[Login] Attempting to find user by email: {model.Email}");
-                        user = await _userManager.FindByEmailAsync(model.Email);
+                        user = await _userManager.FindByEmailAsync(model.Email ?? string.Empty);
                         System.Diagnostics.Debug.WriteLine($"[Login] Found user by email: {user?.UserName ?? "null"}");
                     }
                     catch (InvalidOperationException ex)
@@ -138,7 +138,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                         // Multiple users with same email - find by username instead
                         try
                         {
-                            user = await _userManager.FindByNameAsync(model.Email);
+                            user = await _userManager.FindByNameAsync(model.Email ?? string.Empty);
                             System.Diagnostics.Debug.WriteLine($"[Login] Found user by username: {user?.UserName ?? "null"}");
                         }
                         catch (Exception usernameEx)
@@ -165,7 +165,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                         System.Diagnostics.Debug.WriteLine($"[Login] No user found, trying username lookup for: {model.Email}");
                         try
                 {
-                    user = await _userManager.FindByNameAsync(model.Email);
+                    user = await _userManager.FindByNameAsync(model.Email ?? string.Empty);
                             System.Diagnostics.Debug.WriteLine($"[Login] Username lookup result: {user?.UserName ?? "null"}");
                         }
                         catch (Exception ex)
@@ -650,7 +650,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public IActionResult ExternalLogin(string provider, string returnUrl = null)
+    public IActionResult ExternalLogin(string provider, string? returnUrl = null)
         {
             // Request a redirect to the external login provider.
             var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { returnUrl });
@@ -660,7 +660,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
+    public async Task<IActionResult> ExternalLoginCallback(string? returnUrl = null, string? remoteError = null)
         {
             returnUrl = returnUrl ?? Url.Content("~/");
             if (remoteError != null)
@@ -709,7 +709,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl = null)
+    public async Task<IActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string? returnUrl = null)
         {
             returnUrl = returnUrl ?? Url.Content("~/");
             if (ModelState.IsValid)
@@ -789,7 +789,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
         }
 
         // Password verification helper method
-        private bool VerifyPassword(string password, string storedHash, string storedSalt)
+        private bool VerifyPassword(string password, string? storedHash, string? storedSalt)
         {
             if (string.IsNullOrEmpty(storedHash) || string.IsNullOrEmpty(storedSalt))
                 return false;
