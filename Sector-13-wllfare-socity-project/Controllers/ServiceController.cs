@@ -190,7 +190,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
         public async Task<IActionResult> Categories()
         {
             var categories = await _context.ServiceCategories
-                .Include(c => c.Services.Where(s => s.IsActive))
+                .Include(c => c.Services!.Where(s => s.IsActive))
                 .Where(c => c.IsActive)
                 .OrderBy(c => c.DisplayOrder)
                 .ToListAsync();
@@ -288,7 +288,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
             {
                 // Check if category has active services
                 var hasActiveServices = await _context.Services
-                    .AnyAsync(s =>s.IsActive);
+                    .AnyAsync(s => s.IsActive && s.ServiceCategoryId == id);
                 
                 if (hasActiveServices)
                 {
