@@ -9,13 +9,13 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Models
         public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required, StringLength(100)]
-        public string Country { get; set; }
+        public string Country { get; set; } = string.Empty;
 
         [Required, StringLength(200)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Required, StringLength(300)]
-        public string Address { get; set; }
+        public string Address { get; set; } = string.Empty;
 
         [StringLength(150)]
         public string? ContactPerson { get; set; }
