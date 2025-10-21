@@ -47,13 +47,13 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
             "E-Studio"
         };
 
-        private void PopulateRoleList(string selected = null)
+        private void PopulateRoleList(string? selected = null)
         {
             var roles = StaticRoles;
             ViewBag.RoleList = roles.Select(r => new SelectListItem { Text = r, Value = r, Selected = (selected != null && selected == r) }).ToList();
         }
 
-        private void PopulateDepartmentList(string selected = null)
+        private void PopulateDepartmentList(string? selected = null)
         {
             var departments = StaticDepartments;
             ViewBag.DepartmentList = departments.Select(c => new SelectListItem { Text = c, Value = c, Selected = (selected != null && selected == c) }).ToList();
