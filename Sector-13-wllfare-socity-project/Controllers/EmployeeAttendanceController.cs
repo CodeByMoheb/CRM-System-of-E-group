@@ -544,7 +544,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
         }
 
         // Verify Employee table password
-        private bool VerifyPassword(string password, string storedHash, string storedSalt)
+        private bool VerifyPassword(string password, string? storedHash, string? storedSalt)
         {
             if (string.IsNullOrEmpty(storedHash) || string.IsNullOrEmpty(storedSalt))
                 return false;
