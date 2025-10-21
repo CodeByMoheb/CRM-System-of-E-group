@@ -186,9 +186,9 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
 
     public class ContactFormModel
     {
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string Subject { get; set; }
-        public string Message { get; set; }
+        public required string Name { get; set; }
+        public required string Email { get; set; }
+        public required string Subject { get; set; }
+        public required string Message { get; set; }
     }
 } 
