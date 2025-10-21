@@ -863,12 +863,12 @@
                 <li><a href="@Url.Action("ClientsServicesList", "ClientsServices")" class="nav-link">SERVICES</a></li>
                 <li><a href="@Url.Action("SelectService", "Booking")" class="uws-donate-btn">BOOK US</a></li>
 
-                @if (User.Identity.IsAuthenticated)
+                @if (User?.Identity != null && User.Identity.IsAuthenticated)
                 {
                     <div class="auth-buttons">
                         @{
-                            var userRoles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
-                            string dashboardUrl = "";
+                            var userRoles = (User?.Claims ?? Enumerable.Empty<System.Security.Claims.Claim>()).Where(c => c.Type == System.Security.Claims.ClaimTypes.Role).Select(c => c.Value).ToList();
+                            string dashboardUrl = Url.Action("Index", "Dashboard");
                             
                             if (userRoles.Contains("Admin"))
                                 dashboardUrl = Url.Action("Admin", "Dashboard");
@@ -881,7 +881,7 @@
                             else if (userRoles.Contains("Member"))
                             {
                                 // Check if this is an EMP user or regular member
-                                var userName = User.Identity.Name;
+                                var userName = User?.Identity?.Name;
                                 if (userName != null && userName.StartsWith("EMP", StringComparison.OrdinalIgnoreCase))
                                     dashboardUrl = Url.Action("Member", "Dashboard"); // Employee Dashboard
                                 else
@@ -908,7 +908,7 @@
             <!-- Mobile Auth Container - Only visible on mobile -->
             <div class="mobile-auth-container">
                 <a href="@Url.Action("SelectService", "Booking")" class="uws-donate-btn">BOOK US</a>
-                @if (User.Identity.IsAuthenticated)
+                @if (User?.Identity != null && User.Identity.IsAuthenticated)
                 {
                     @if (User.IsInRole("Admin"))
                     {
