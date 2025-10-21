@@ -12,9 +12,9 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Models
         public decimal? Discount { get; set; }
         public int? InvoiceId { get; set; }
         
-        public string? PaymentStatus { get; set; } = "UnPaid";
-        public string? Status { get; set; } = "Pending Payment";  // Booking workflow status
-        public new bool IsApproved { get; set; } = false;
+    public string? PaymentStatus { get; set; } = "UnPaid";
+    public string? Status { get; set; } = "Pending Payment";  // Booking workflow status
+    public bool IsApproved { get; set; } = false;
         public int? ServiceId { get; set; }   // Instead of FormType int
 
         // Navigation 
