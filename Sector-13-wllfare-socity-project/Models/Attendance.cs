@@ -12,7 +12,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Models
         [Required]
         [ForeignKey("Employee")]
         public int EmployeeId { get; set; }
-        public Employee Employee { get; set; }
+        public Employee Employee { get; set; } = null!; // set by EF
 
         [Required]
         public DateTime Date { get; set; }
