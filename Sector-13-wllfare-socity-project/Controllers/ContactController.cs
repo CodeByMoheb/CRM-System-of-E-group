@@ -33,7 +33,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
             ";
 
             // Get AdminEmail from configuration
-            var toEmail = _configuration["EmailSettings:AdminEmail"];
+            var toEmail = _configuration["EmailSettings:AdminEmail"] ?? "estudioteam.ltd@gmail.com";
 
             try
             {
