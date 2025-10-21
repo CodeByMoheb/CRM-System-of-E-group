@@ -18,9 +18,9 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Models
         
         // Approval workflow fields
         public bool RequiresApproval { get; set; } = false; // True for manual bank transfers
-        public string? ApprovalStatus { get; set; } = "Pending"; // "Pending", "Approved", "Rejected"
-        public string? ApprovedBy { get; set; }
-        public DateTime? ApprovedAt { get; set; }
+    public string? ApprovalStatus { get; set; } = "Pending"; // "Pending", "Approved", "Rejected"
+    public new string? ApprovedBy { get; set; }
+    public new DateTime? ApprovedAt { get; set; }
         public string? RejectionReason { get; set; }
         public string? RejectedBy { get; set; }
         public DateTime? RejectedAt { get; set; }
