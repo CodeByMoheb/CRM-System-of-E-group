@@ -12,11 +12,11 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Models
         [Required]
         [ForeignKey("Employee")]
         public int EmployeeId { get; set; }
-        public Employee Employee { get; set; }
+        public Employee Employee { get; set; } = null!; // set by EF
 
         [Required]
         [StringLength(50)]
-        public string LeaveType { get; set; } // Casual, Sick, Paid, Unpaid
+        public string LeaveType { get; set; } = string.Empty; // Casual, Sick, Paid, Unpaid
 
         [Required]
         public DateTime StartDate { get; set; }
@@ -29,7 +29,7 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Models
 
         [Required]
         [StringLength(500)]
-        public string Reason { get; set; }
+        public string Reason { get; set; } = string.Empty;
 
         [Required]
         public DateTime RequestDate { get; set; } = DateTime.UtcNow;
