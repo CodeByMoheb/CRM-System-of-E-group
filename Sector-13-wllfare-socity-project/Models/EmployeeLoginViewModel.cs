@@ -6,12 +6,12 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Models
     {
         [Required]
         [Display(Name = "Employee ID")]
-        public string EmployeeId { get; set; }
+        public string EmployeeId { get; set; } = string.Empty;
 
         [Required]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
 
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
