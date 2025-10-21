@@ -123,8 +123,8 @@ builder.Services.AddMemoryCache();
 builder.Services.AddAuthentication()
     .AddGoogle(options =>
     {
-        options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+        options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? string.Empty;
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? string.Empty;
     });
 
 
@@ -158,7 +158,21 @@ app.UseStaticFiles(new StaticFileOptions
 });
 // Add localization middleware before UseRouting
 var locOptions = app.Services.GetService<IOptions<RequestLocalizationOptions>>();
-app.UseRequestLocalization(locOptions.Value);
+if (locOptions?.Value != null)
+{
+    app.UseRequestLocalization(locOptions.Value);
+}
+else
+{
+    // Fallback to default culture if options not configured
+    var fallback = new RequestLocalizationOptions
+    {
+        DefaultRequestCulture = new RequestCulture("en")
+    };
+    fallback.SupportedCultures = new[] { new CultureInfo("en"), new CultureInfo("bn") };
+    fallback.SupportedUICultures = fallback.SupportedCultures;
+    app.UseRequestLocalization(fallback);
+}
 app.UseRouting();
 app.UseSession();
 app.UseAuthentication();
