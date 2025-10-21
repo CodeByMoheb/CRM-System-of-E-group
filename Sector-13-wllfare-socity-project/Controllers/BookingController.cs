@@ -27,8 +27,20 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
         }
 
 
+        // GET: Booking/SelectService - Service selection page
+        public IActionResult SelectService()
+        {
+            var services = _context.Services
+                .Where(s => s.IsActive)
+                .OrderBy(s => s.DisplayOrder)
+                .ThenBy(s => s.Name)
+                .ToList();
+
+            return View(services);
+        }
+
         // GET: Booking - Single page booking form
-        public IActionResult Index()
+        public IActionResult Index(int? serviceId = null)
         {
             var vm = new CompanyCalViewModel
             {
@@ -38,6 +50,15 @@ namespace Sector_13_Welfare_Society___Digital_Management_System.Controllers
                 Customers = _context.Customers.ToList(),
                 Invoices = _context.Invoices.ToList()
             };
+
+            // Pre-select service if serviceId is provided
+            if (serviceId.HasValue)
+            {
+                vm.CompanyCal = new CompanyCal
+                {
+                    ServiceId = serviceId.Value
+                };
+            }
 
             // Pre-populate customer information for logged-in users
             if (User.Identity?.IsAuthenticated == true)
