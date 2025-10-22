@@ -14,7 +14,7 @@
         @foreach (var item in Model ?? Enumerable.Empty<ClientsServices>())
         {
             <div class="col-12 col-md-6 col-lg-4">
-                <div class="card h-100 service-card text-center border-0 rounded-3 shadow-sm">
+                <div class="card service-card text-center border-0 rounded-3 shadow-sm">
                     <div class="card-top-border"></div>
                     <div class="card-body d-flex flex-column">
                         <img src="@(string.IsNullOrEmpty(item.ExistingImageUrl) ? "/photos/default.png" : item.ExistingImageUrl)"
@@ -24,10 +24,187 @@
 
                         <h5 class="card-title fw-bold">@item.Title</h5>
 
-                        <p class="card-text text-muted flex-fill" style="font-size:0.9rem;">
-                            @(item.Description != null && item.Description.Length > 100
-                                ? item.Description.Substring(0, 100) + "..."
-                                : item.Description ?? "")
+                        <p class="card-text text-muted flex-fill" style="font-size:0.9rem; text-align:justify;">
+                            @{
+                                var desc = item.Description ?? "";
+                                var isLong = desc.Length > 100;
+                                var shortText = isLong ? desc.Substring(0, 100) + " " : desc;
+                                var contentId = "popup-content-" + Guid.NewGuid().ToString("N");
+                                var btnId = "btn-" + Guid.NewGuid().ToString("N");
+                                // encode and preserve newlines for popup content
+                                var encodedFull = System.Net.WebUtility.HtmlEncode(desc ?? "")
+                                    .Replace("\r\n", "<br/>")
+                                    .Replace("\n", "<br/>");
+                            }
+                            @Html.Raw(System.Net.WebUtility.HtmlEncode(shortText))
+
+                            @if (isLong)
+                            {
+                                // Hidden full-description source used by the shared popup
+                                <div id="@contentId" class="cs-popup-source" style="display:none;">@Html.Raw(encodedFull)</div>
+
+                                <button type="button" id="@btnId" class="btn btn-sm btn-link p-0 ms-2 cs-see-more" aria-expanded="false" data-target="@contentId" style="text-decoration:none;">
+                                    See more
+                                </button>
+
+                                <style>
+                                    /* Popup overlay & modal (kept lightweight) */
+                                    .cs-popup-overlay {
+                                        position: fixed;
+                                        inset: 0;
+                                        background: rgba(0,0,0,0.55);
+                                        display: none;
+                                        align-items: center;
+                                        justify-content: center;
+                                        z-index: 1080;
+                                    }
+                                    .cs-popup-overlay.cs-open { display:flex; }
+                                    .cs-popup-modal {
+                                        background: #fff;
+                                        max-width: 640px;
+                                        width: 90%;
+                                        max-height: 80vh;
+                                        overflow:auto;
+                                        border-radius: 8px;
+                                        padding: 1.25rem;
+                                        box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+                                        transform-origin: center top;
+                                    }
+                                    .cs-popup-close {
+                                        position: absolute;
+                                        top: 10px;
+                                        right: 14px;
+                                        background: transparent;
+                                        border: none;
+                                        font-size: 1.25rem;
+                                        color: #444;
+                                        cursor: pointer;
+                                    }
+                                    .cs-popup-header {
+                                        display:flex;
+                                        align-items:center;
+                                        justify-content:space-between;
+                                        margin-bottom:.5rem;
+                                    }
+                                    .cs-popup-body { color: #333; font-size: .95rem; text-align:justify; white-space:normal; }
+                                </style>
+
+                                <script>
+                                    (function () {
+                                        // Shared overlay/modal creation and animation using Web Animations API (with CSS fallback).
+                                        function ensureOverlay() {
+                                            var overlay = document.getElementById('cs-popup-overlay');
+                                            if (overlay) return overlay;
+
+                                            overlay = document.createElement('div');
+                                            overlay.id = 'cs-popup-overlay';
+                                            overlay.className = 'cs-popup-overlay';
+                                            overlay.innerHTML =
+                                                '<div class="cs-popup-modal" role="dialog" aria-modal="true">' +
+                                                    '<div class="cs-popup-header"><strong>Details</strong><button type="button" class="cs-popup-close" aria-label="Close">&times;</button></div>' +
+                                                    '<div class="cs-popup-body"></div>' +
+                                                '</div>';
+                                            document.body.appendChild(overlay);
+
+                                            // Close when clicking outside modal
+                                            overlay.addEventListener('click', function (e) {
+                                                if (e.target === overlay) hideOverlay();
+                                            });
+
+                                            // Close button
+                                            overlay.querySelector('.cs-popup-close').addEventListener('click', hideOverlay);
+
+                                            // Escape key
+                                            document.addEventListener('keydown', function (e) {
+                                                if (e.key === 'Escape') hideOverlay();
+                                            });
+
+                                            return overlay;
+                                        }
+
+                                        function showOverlay(html, openerId) {
+                                            var overlay = ensureOverlay();
+                                            var modal = overlay.querySelector('.cs-popup-modal');
+                                            var body = overlay.querySelector('.cs-popup-body');
+                                            body.innerHTML = html;
+                                            overlay.dataset.openBy = openerId || '';
+                                            overlay.classList.add('cs-open');
+
+                                            // JS animation (if supported) to give a smooth pop-up
+                                            if (modal.animate) {
+                                                // from slightly down & small to normal
+                                                modal.animate([
+                                                    { transform: 'translateY(12px) scale(0.98)', opacity: 0 },
+                                                    { transform: 'translateY(0) scale(1)', opacity: 1 }
+                                                ], {
+                                                    duration: 220,
+                                                    easing: 'cubic-bezier(.2,.9,.3,1)',
+                                                    fill: 'forwards'
+                                                });
+                                            } else {
+                                                // fallback relies on CSS/display
+                                            }
+
+                                            // mark opener button expanded for accessibility
+                                            if (openerId) {
+                                                var opener = document.getElementById(openerId);
+                                                if (opener) opener.setAttribute('aria-expanded', 'true');
+                                            }
+                                        }
+
+                                        function hideOverlay() {
+                                            var overlay = document.getElementById('cs-popup-overlay');
+                                            if (!overlay) return;
+                                            var modal = overlay.querySelector('.cs-popup-modal');
+
+                                            // If Web Animations API available, play reverse animation then remove
+                                            if (modal && modal.animate) {
+                                                var anim = modal.animate([
+                                                    { transform: 'translateY(0) scale(1)', opacity: 1 },
+                                                    { transform: 'translateY(12px) scale(0.98)', opacity: 0 }
+                                                ], {
+                                                    duration: 180,
+                                                    easing: 'cubic-bezier(.2,.9,.3,1)',
+                                                    fill: 'forwards'
+                                                });
+                                                anim.onfinish = function () {
+                                                    finalizeHide();
+                                                };
+                                            } else {
+                                                finalizeHide();
+                                            }
+
+                                            function finalizeHide() {
+                                                // Reset state
+                                                var openerId = overlay.dataset.openBy;
+                                                overlay.classList.remove('cs-open');
+                                                // small timeout to clear content after potential CSS transition
+                                                setTimeout(function () {
+                                                    var body = overlay.querySelector('.cs-popup-body');
+                                                    if (body) body.innerHTML = '';
+                                                    overlay.dataset.openBy = '';
+                                                }, 220);
+
+                                                if (openerId) {
+                                                    var opener = document.getElementById(openerId);
+                                                    if (opener) opener.setAttribute('aria-expanded', 'false');
+                                                }
+                                            }
+                                        }
+
+                                        // Wire up the button for this card instance
+                                        var btn = document.getElementById('@btnId');
+                                        if (!btn) return;
+                                        btn.addEventListener('click', function () {
+                                            var targetId = btn.getAttribute('data-target');
+                                            var src = document.getElementById(targetId);
+                                            if (!src) return;
+                                            // Use full description from the hidden source so the popup shows all text
+                                            showOverlay(src.innerHTML, btn.id);
+                                        });
+                                    })();
+                                </script>
+                            }
                         </p>
                     </div>
                 </div>
@@ -39,7 +216,7 @@
 <style>
     /* Modern Title Styling */
     .services-title-wrapper {
-        margin-top: 100px; /* Space from navbar */
+        margin-top: 30px; /* Space from navbar */
     }
 
     .services-title {
@@ -61,6 +238,7 @@
     .service-card {
         position: relative;
         transition: transform 0.3s, box-shadow 0.3s;
+        align-self: flex-start; /* prevent the row's flex layout from stretching all cards to the same height */
     }
 
     .service-card .card-top-border {
