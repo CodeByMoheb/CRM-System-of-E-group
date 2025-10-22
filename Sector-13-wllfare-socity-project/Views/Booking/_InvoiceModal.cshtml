@@ -69,11 +69,11 @@
         <table class="table invoice-table">
             <thead>
                 <tr>
-                    <th class="text-start">Item</th>
-                    <th class="text-start">Description</th>
-                    <th class="text-end">Unit Cost</th>
+                    <th class="text-center">Item</th>
+                    <th class="text-center">Description</th>
+                    <th class="text-center">Unit Cost</th>
                     <th class="text-center">Quantity</th>
-                    <th class="text-end">Line Total</th>
+                    <th class="text-center">Line Total</th>
                 </tr>
             </thead>
             <tbody>
@@ -339,7 +339,7 @@
     }
     
     .invoice-logo {
-        height: 40px;
+        height: 25px;
         width: auto;
         object-fit: contain;
     }
@@ -407,7 +407,7 @@
     .invoice-table tbody tr:last-child td {
         border-bottom: 1px solid #dee2e6;
     }
-    
+
     .invoice-table tbody tr:hover {
         background-color: #f8f9fa;
     }
@@ -545,3 +545,134 @@
 
 
 </style>
+
+<!-- Print-only styles to ensure A4 one-page output and stable logo size -->
+<style>
+@@page {
+    size: A4 portrait;
+    margin: 10mm;
+}
+
+    @@media print {
+        /* Pseudocode:
+           -  Keep existing print layout rules.
+           - Force 100% opacity and pure black text for all elements to avoid faded look.
+           - Remove text-shadow and strokes to improve print clarity.
+           - Enforce solid black borders on all tables, th, td for better visibility.
+           - Fix balance row top border to solid black.
+           - Ensure links are black without decoration to avoid grayish prints.
+        */
+        /* Hide everything except the invoice to print only the modal content */
+        body * {
+            visibility: hidden;
+        }
+
+        .invoice-container, .invoice-container * {
+            visibility: visible;
+        }
+        /* Fit the invoice into the A4 printable area */
+        .invoice-container {
+            position: static !important;
+            width: 190mm !important; /* A4 width minus margins */
+            max-width: 190mm !important;
+            margin: 0 auto !important;
+            padding: 6mm !important; /* modest padding inside printable area */
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            overflow: visible !important;
+            page-break-inside: avoid !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+            /* Show watermark in print without affecting layout; use content image for reliable print */
+            .invoice-container::before {
+                content: url('/E-Group.png') !important;
+                position: absolute !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                width: 110mm !important;
+                height: auto !important;
+                opacity: 0.10 !important;
+                z-index: 1 !important; /* behind text */
+                pointer-events: none !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                background: none !important; /* ensure only the image content is used */
+            }
+        /* Keep logo slightly larger in print for better readability on A4 */
+        .invoice-logo {
+            height: 50px !important;
+            max-height: 50px !important;
+            width: auto !important;
+            max-width: 300px !important;
+        }
+        /* Avoid page breaks inside important sections */
+        .table-responsive,
+        .invoice-table,
+        .totals-table,
+        .bank-account-box,
+        .row,
+        .col-6,
+        .col-12 {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+        }
+        /* Keep footer color bar at bottom without pushing content */
+        .footer-color-bar-full {
+            position: fixed !important;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 12px !important;
+            z-index: 1000;
+        }
+        /* Ensure white background and solid black text base */
+        html, body, .modal, .invoice-container {
+            background: #fff !important;
+            color: #000 !important;
+        }
+            /* Force 100% opacity and solid black text for all elements */
+            .invoice-container, .invoice-container * {
+                opacity: 1 !important;
+                color: #000 !important;
+                text-shadow: none !important;
+                -webkit-text-stroke: 0 !important;
+                filter: none !important;
+            }
+        /* Strengthen all table borders for print */
+        .invoice-table,
+        .invoice-table thead th,
+        .invoice-table tbody td,
+        .totals-table,
+        .totals-table th,
+        .totals-table td{
+            border-color: #000 !important;
+            border-width: 1px !important;
+            border-style: solid !important;
+        }
+        /* Fix balance row top border to solid black */
+        .balance-due {
+            border-top: 1px solid #000 !important;
+            background-color: #fff !important; /* boost contrast if needed */
+        }
+        /* Ensure anchor text prints as black without underlines */
+        a, a:visited {
+            color: #000 !important;
+            text-decoration: none !important;
+        }
+</style>
+
+<script>
+// Ensure print styles apply regardless of how print is triggered (dedicated button or Ctrl+P)
+(function() {
+    function before() {
+        document.body.classList.add('printing');
+    }
+    function after() {
+        document.body.classList.remove('printing');
+    }
+    window.addEventListener('beforeprint', before);
+    window.addEventListener('afterprint', after);
+})();
+</script>
