@@ -213,9 +213,18 @@
                                         <option value="">-- Choose a Service --</option>
                                         @foreach (var service in Model.Services)
                                         {
-                                            <option value="@service.Id" data-fee="@service.Registration_fees">
-                                                @service.Name
-                                            </option>
+                                            @if (Model.CompanyCal?.ServiceId == service.Id)
+                                            {
+                                                <option value="@service.Id" data-fee="@service.Registration_fees" selected="selected">
+                                                    @service.Name
+                                                </option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@service.Id" data-fee="@service.Registration_fees">
+                                                    @service.Name
+                                                </option>
+                                            }
                                         }
                                     </select>
                                 </div>
@@ -535,6 +544,15 @@
                     }
                 });
             });
+            
+            // Trigger service change on page load if service is pre-selected
+            // This must be at the end after all event handlers are bound
+            const preSelectedServiceId = $('#CompanyCal_ServiceId').val();
+            if (preSelectedServiceId) {
+                console.log('Pre-selected service detected:', preSelectedServiceId);
+                // Trigger change event to populate manpower dropdown and calculate fees
+                $('#CompanyCal_ServiceId').trigger('change');
+            }
         });
     </script>
 }
