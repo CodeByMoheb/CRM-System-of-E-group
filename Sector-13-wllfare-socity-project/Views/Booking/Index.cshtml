@@ -36,30 +36,30 @@
             }
 
     .form-card {
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 20px;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: linear-gradient(180deg, #ffffff 0%, #f7f9ff 100%);
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(31, 38, 135, 0.15);
+        border: 1px solid #eef2f7;
         backdrop-filter: blur(10px);
-        transition: all 0.3s ease;
-        margin-bottom: 20px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        margin-bottom: 24px;
     }
 
         .form-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            transform: translateY(-6px);
+            box-shadow: 0 24px 48px rgba(31, 38, 135, 0.2);
         }
 
     .card-header-custom {
-        background: linear-gradient(135deg, #3B3B98 0%, #4A4AA8 100%);
-        color: white;
-        border-radius: 20px 20px 0 0;
-        padding: 20px;
+        background: linear-gradient(135deg, #4b50bf 0%, #5a67d8 100%);
+        color: #fff;
+        border-radius: 16px 16px 0 0;
+        padding: 18px 22px;
         text-align: center;
-        font-size: 22px;
-        font-weight: 600;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+        font-size: 20px;
+        font-weight: 700;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+        border-bottom: 2px solid rgba(255, 255, 255, 0.15);
     }
 
     .card-body-custom {
@@ -67,23 +67,28 @@
     }
 
     .form-control {
-        border-radius: 10px;
-        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
         padding: 12px 15px;
         transition: all 0.3s ease;
-        background: rgba(255, 255, 255, 0.9);
+        background: #ffffff;
     }
 
         .form-control:focus {
-            border-color: #3B3B98;
-            box-shadow: 0 0 0 0.2rem rgba(59, 59, 152, 0.25);
+            border-color: #5a67d8;
+            box-shadow: 0 0 0 0.2rem rgba(90, 103, 216, 0.25);
             transform: translateY(-2px);
         }
 
         .form-control[readonly] {
-            background: #f8f9fa;
-            border-color: #dee2e6;
+            background: #f8fafc;
+            border-color: #e2e8f0;
         }
+
+    .form-control::placeholder {
+        color: #9aa0a6;
+        opacity: 1;
+    }
 
     .form-label {
         font-weight: 600;
@@ -93,20 +98,20 @@
     }
 
     .summary-card {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        border-radius: 15px;
-        padding: 20px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: linear-gradient(180deg, #ffffff 0%, #f3f6ff 100%);
+        border-radius: 16px;
+        padding: 22px;
+        box-shadow: 0 12px 28px rgba(31, 38, 135, 0.12);
+        border: 1px solid #eef2f7;
     }
 
     .summary-row {
-        background: white;
-        border-radius: 10px;
+        background: #ffffff;
+        border-radius: 12px;
         padding: 15px;
-        margin-bottom: 10px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        border-left: 4px solid #3B3B98;
+        margin-bottom: 12px;
+        box-shadow: 0 4px 16px rgba(31, 38, 135, 0.10);
+        border-left: 4px solid #5a67d8;
     }
 
     .btn-custom {
@@ -140,6 +145,25 @@
         margin-top: 5px;
         font-weight: 500;
     }
+
+    /* Unified form styling */
+    .mega-form-card {
+        max-width: 1100px;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+    .section-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 14px;
+    }
+    .soft-divider {
+        height: 1px;
+        background: linear-gradient(90deg, rgba(90,103,216,.15), rgba(90,103,216,.45), rgba(90,103,216,.15));
+        border-radius: 1px;
+        margin: 6px 0 22px;
+    }
 </style>
 
 <div class="form-container">
@@ -148,66 +172,61 @@
         <form id="CustomerForm" enctype="multipart/form-data">
             @Html.AntiForgeryToken()
             <div class="row">
-                <!-- Left: Customer Info -->
-                <div class="col-lg-6">
-                    <div class="form-card">
+                <div class="col-12">
+                    <div class="form-card mega-form-card">
                         <div class="card-header-custom">
-                            <i class="bi bi-person-plus-fill me-2"></i>
-                            @(Model.Customer?.Id == 0 ? "Enter Your  Information" : "Edit Your Information")
+                            <i class="bi bi-journal-check me-2"></i> Complete Your Booking
                         </div>
                         <div class="card-body-custom">
                             <input type="hidden" asp-for="Customer.Id" />
+
+                            <div class="section-title">Your Information</div>
+                            <div class="soft-divider"></div>
+
                             <div class="row">
-                                <div class="col-md-6 mb-3">
+                                <div class="col-lg-4 col-md-6 mb-3">
                                     <label class="form-label" asp-for="Customer.Name"><i class="bi bi-person me-1"></i>Full Name</label>
                                     <input asp-for="Customer.Name" class="form-control" placeholder="Enter full name" />
                                     <span asp-validation-for="Customer.Name" class="validation-error"></span>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-lg-4 col-md-6 mb-3">
                                     <label class="form-label" asp-for="Customer.Email"><i class="bi bi-envelope me-1"></i>Email Address</label>
                                     <input asp-for="Customer.Email" class="form-control" placeholder="Enter email address" />
                                     <span asp-validation-for="Customer.Email" class="validation-error"></span>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-lg-4 col-md-6 mb-3">
                                     <label class="form-label" asp-for="Customer.Phone"><i class="bi bi-telephone me-1"></i>Phone Number</label>
                                     <input asp-for="Customer.Phone" class="form-control" placeholder="Enter phone number" />
                                     <span asp-validation-for="Customer.Phone" class="validation-error"></span>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-lg-4 col-md-6 mb-3">
                                     <label class="form-label" asp-for="Customer.CompanyName"><i class="bi bi-building me-1"></i>Company Name</label>
                                     <input asp-for="Customer.CompanyName" class="form-control" placeholder="Enter company name" />
                                     <span asp-validation-for="Customer.CompanyName" class="validation-error"></span>
                                 </div>
-                                <div class="col-md-4 mb-3">
+                                <div class="col-lg-4 col-md-6 mb-3">
                                     <label class="form-label" asp-for="Customer.HouseNo"><i class="bi bi-house me-1"></i>House No</label>
                                     <input asp-for="Customer.HouseNo" class="form-control" placeholder="House number" />
                                 </div>
-                                <div class="col-md-4 mb-3">
+                                <div class="col-lg-4 col-md-6 mb-3">
                                     <label class="form-label" asp-for="Customer.Street"><i class="bi bi-geo-alt me-1"></i>Street</label>
                                     <input asp-for="Customer.Street" class="form-control" placeholder="Street name" />
                                 </div>
-                                <div class="col-md-4 mb-3">
+                                <div class="col-lg-4 col-md-12 mb-3">
                                     <label class="form-label" asp-for="Customer.City"><i class="bi bi-building me-1"></i>City</label>
                                     <input asp-for="Customer.City" class="form-control" placeholder="City name" />
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Right: Charges -->
-                <div class="col-lg-6">
-                    <div class="form-card">
-                        <div class="card-header-custom">
-                            <i class="bi bi-calculator me-2"></i> Charges & Calculation Summary
-                        </div>
-                        <div class="card-body-custom">
-                            <div class="mb-4">
-                                <label class="form-label" asp-for="Invoice.InvoiceId"><i class="bi bi-receipt me-1"></i>Invoice Number</label>
-                                <input asp-for="Invoice.InvoiceId" id="InvoiceId" class="form-control" value="@DateTime.Now.ToString("yyMMddHHmmss")" readonly />
-                            </div>
+                            <div class="section-title mt-2">Charges & Selection</div>
+                            <div class="soft-divider"></div>
+
                             <div class="row">
-                                <div class="col-md-6 mb-3">
+                                <div class="col-lg-4 col-md-6 mb-3">
+                                    <label class="form-label" asp-for="Invoice.InvoiceId"><i class="bi bi-receipt me-1"></i>Invoice Number</label>
+                                    <input asp-for="Invoice.InvoiceId" id="InvoiceId" class="form-control" value="@DateTime.Now.ToString("yyMMddHHmmss")" readonly />
+                                </div>
+                                <div class="col-lg-4 col-md-6 mb-3">
                                     <label asp-for="CompanyCal.ServiceId" class="form-label">Select Service *</label>
                                     <select asp-for="CompanyCal.ServiceId" class="form-control" id="CompanyCal_ServiceId" name="CompanyCal.ServiceId">
                                         <option value="">-- Choose a Service --</option>
@@ -215,50 +234,22 @@
                                         {
                                             @if (Model.CompanyCal?.ServiceId == service.Id)
                                             {
-                                                <option value="@service.Id" data-fee="@service.Registration_fees" selected="selected">
-                                                    @service.Name
-                                                </option>
+                                                <option value="@service.Id" data-fee="@service.Registration_fees" selected="selected">@service.Name</option>
                                             }
                                             else
                                             {
-                                                <option value="@service.Id" data-fee="@service.Registration_fees">
-                                                    @service.Name
-                                                </option>
+                                                <option value="@service.Id" data-fee="@service.Registration_fees">@service.Name</option>
                                             }
                                         }
                                     </select>
                                 </div>
-
-                                <div class="col-md-6 mb-3">
+                                <div class="col-lg-4 col-md-6 mb-3">
                                     <label class="form-label" asp-for="CompanyCal.Service.Registration_fees"><i class="bi bi-building me-1"></i>Registration Fees</label>
                                     <input asp-for="CompanyCal.Service.Registration_fees" id="Reg_fees" class="form-control" value="0" readonly />
                                 </div>
                             </div>
-                            
-                            <!-- Location -->
-                            <div class="row mb-4">
-                                <div class="col-md-6">
-                                    <label class="form-label"><i class="bi bi-geo me-1"></i>Location Charge</label>
-                                    <select class="form-control" asp-for="CompanyCal.LocationChargeId" id="locationChargeSelect" name="CompanyCal.LocationChargeId">
-                                        <option value="">Select Location Charge</option>
-                                        @foreach (var item in Model.LocationCharges)
-                                        {
-                                            <option value="@item.Id" data-charge="@(item.LChargeValue ?? 0)">
-                                                @item.LChargeType
-                                            </option>
-                                        }
-                                    </select>
-
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label"><i class="bi bi-currency-dollar me-1"></i>Amount</label>
-                                    <input type="text" class="form-control" id="LChargeValue" readonly />
-                                </div>
-                            </div>
-
-                            <!-- ManPower -->
-                            <div class="row mb-4">
-                                <div class="col-md-4">
+                            <div class="row mb-2">
+                                <div class="col-lg-4 col-md-6">
                                     <label class="form-label"><i class="bi bi-people me-1"></i>ManPower</label>
                                     <select class="form-control" asp-for="CompanyCal.ManPowerId" id="manPowerSelect" name="CompanyCal.ManPowerId">
                                         <option value="">Select ManPower</option>
@@ -267,64 +258,75 @@
                                 <select id="allManPowers" style="display:none;">
                                     @foreach (var item in Model.ManPowers)
                                     {
-                                        <option value="@item.Id"
-                                                data-day="@(item.ManPowerDay ?? 0)"
-                                                data-price="@(item.ManPowerPrice ?? 0)"
-                                                data-service-id="@(item.ServiceId ?? 0)">
-                                            @item.ManPowerType
-                                        </option>
+                                        <option value="@item.Id" data-day="@(item.ManPowerDay ?? 0)" data-price="@(item.ManPowerPrice ?? 0)" data-service-id="@(item.ServiceId ?? 0)">@item.ManPowerType</option>
                                     }
                                 </select>
-
-                                <div class="col-md-4">
+                                <div class="col-lg-4 col-md-6">
                                     <label class="form-label"><i class="bi bi-calendar me-1"></i>Days</label>
                                     <input type="text" class="form-control" id="ManPowerDay" readonly />
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-lg-4 col-md-6">
                                     <label class="form-label"><i class="bi bi-cash me-1"></i>Price</label>
                                     <input type="text" class="form-control" id="ManPowerPrice" readonly />
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- Summary -->
-                    <div class="summary-card">
-                        <h5 class="text-center mb-4" style="color: #3B3B98; font-weight: 600;">
-                            <i class="bi bi-receipt-cutoff me-2"></i>Final Calculation
-                        </h5>
-                        <div class="summary-row">
-                            <div class="row align-items-center">
-                                <div class="col-md-4"><strong>SubTotal:</strong></div>
-                                <div class="col-md-8"><input type="text" class="form-control" id="Subtotal" readonly /></div>
+                            <div class="row mb-4">
+                                <div class="col-lg-4 col-md-6">
+                                    <label class="form-label"><i class="bi bi-geo me-1"></i>Location Charge</label>
+                                    <select class="form-control" asp-for="CompanyCal.LocationChargeId" id="locationChargeSelect" name="CompanyCal.LocationChargeId">
+                                        <option value="">Select Location Charge</option>
+                                        @foreach (var item in Model.LocationCharges)
+                                        {
+                                            <option value="@item.Id" data-charge="@(item.LChargeValue ?? 0)">@item.LChargeType</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-lg-4 col-md-6">
+                                    <label class="form-label"><i class="bi bi-currency-dollar me-1"></i>Amount</label>
+                                    <input type="text" class="form-control" id="LChargeValue" readonly />
+                                </div>
+                                <div class="col-lg-4 d-none d-lg-block"></div>
                             </div>
-                        </div>
-                        <div class="summary-row">
-                            <div class="row align-items-center">
-                                <div class="col-md-4"><strong>VAT (15%):</strong></div>
-                                <div class="col-md-8"><input type="text" class="form-control" id="VAT" readonly /></div>
-                            </div>
-                        </div>
-                        <div class="summary-row" style="background: linear-gradient(135deg, #3B3B98 0%, #4A4AA8 100%); color: white;">
-                            <div class="row align-items-center">
-                                <div class="col-md-4"><strong>Total Amount:</strong></div>
-                                <div class="col-md-8">
-                                    <input asp-for="CompanyCal.Total" type="hidden" id="CompanyCal_Total" />
-                                    <input asp-for="CompanyCal.VAT" type="hidden" id="CompanyCal_VAT" />
-                                    <input type="text" class="form-control" id="Total" readonly style="background: rgba(255,255,255,0.9); border: none; font-weight: 600; color: #3B3B98;" />
+
+                            
+
+                            <div class="section-title mt-3">Final Calculation</div>
+                            <div class="soft-divider"></div>
+                            <div class="summary-card">
+                                <div class="summary-row">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-4"><strong>SubTotal:</strong></div>
+                                        <div class="col-md-8"><input type="text" class="form-control" id="Subtotal" readonly /></div>
+                                    </div>
+                                </div>
+                                <div class="summary-row">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-4"><strong>VAT (15%):</strong></div>
+                                        <div class="col-md-8"><input type="text" class="form-control" id="VAT" readonly /></div>
+                                    </div>
+                                </div>
+                                <div class="summary-row" style="background: linear-gradient(135deg, #3B3B98 0%, #4A4AA8 100%); color: white;">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-4"><strong>Total Amount:</strong></div>
+                                        <div class="col-md-8">
+                                            <input asp-for="CompanyCal.Total" type="hidden" id="CompanyCal_Total" />
+                                            <input asp-for="CompanyCal.VAT" type="hidden" id="CompanyCal_VAT" />
+                                            <input type="text" class="form-control" id="Total" readonly style="background: rgba(255,255,255,0.9); border: none; font-weight: 600; color: #3B3B98;" />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- Buttons -->
-                    <div class="text-center mt-4">
-                        <button type="submit" class="btn btn-success btn-custom me-3">
-                            <i class="bi bi-check-circle me-2"></i> @(Model.Customer?.Id == 0 ? "Submit Application" : "Update Information")
-                        </button>
-                        <a asp-action="Index" class="btn btn-secondary btn-custom">
-                            <i class="bi bi-arrow-clockwise me-2"></i> Clear Form
-                        </a>
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-success btn-custom me-3">
+                                    <i class="bi bi-check-circle me-2"></i> @(Model.Customer?.Id == 0 ? "Submit Application" : "Update Information")
+                                </button>
+                                <a asp-action="Index" class="btn btn-secondary btn-custom">
+                                    <i class="bi bi-arrow-clockwise me-2"></i> Clear Form
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

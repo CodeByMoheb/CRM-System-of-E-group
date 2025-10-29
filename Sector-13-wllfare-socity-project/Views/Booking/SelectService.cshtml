@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container py-5">
+<div class="container py-5 select-scope">
     <div class="services-title-wrapper text-center mb-5">
         <h2 class="services-title">Our Services List</h2>
         <div class="services-title-underline mx-auto mt-2"></div>
@@ -46,6 +46,14 @@
         </div>
 
 <style>
+    .select-scope {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 18px;
+        padding-top: 28px;
+        padding-bottom: 28px;
+        box-shadow: 0 12px 32px rgba(31,38,135,0.15);
+    }
+
     /* Modern Title Styling */
     .services-title-wrapper {
         margin-top: 30px; /* Space from navbar */
@@ -70,6 +78,10 @@
     .service-card {
         position: relative;
         transition: transform 0.3s, box-shadow 0.3s;
+        background: linear-gradient(180deg, #ffffff 0%, #f7f9ff 100%);
+        border: 1px solid #eef2f7;
+        border-radius: 16px !important;
+        box-shadow: 0 10px 30px rgba(31,38,135,0.12);
     }
 
     .service-card .card-top-border {
@@ -85,14 +97,13 @@
     }
 
     .service-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 25px rgba(0,0,0,0.15);
+        transform: translateY(-6px);
+        box-shadow: 0 24px 48px rgba(31,38,135,0.2);
     }
 
     .service-card:hover .card-top-border {
         background-color: #d32f2f; /* Red like your screenshot */
     }
-
 
     /* Service Type Badge */
     .service-type-badge {
@@ -106,25 +117,24 @@
         border: 1px solid rgba(59, 59, 152, 0.1);
     }
 
-
     /* Select Service Button */
     .select-service-btn {
-        background: linear-gradient(135deg, #3B3B98 0%, #4A4AA8 100%);
+        background: linear-gradient(135deg, #4b50bf 0%, #5a67d8 100%);
         border: none;
-        border-radius: 20px;
+        border-radius: 22px;
         padding: 10px 20px;
-        font-weight: 600;
+        font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         font-size: 0.9rem;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(59, 59, 152, 0.3);
+        box-shadow: 0 6px 18px rgba(90,103,216, 0.35);
     }
 
     .select-service-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(59, 59, 152, 0.4);
-        background: linear-gradient(135deg, #4A4AA8 0%, #3B3B98 100%);
+        box-shadow: 0 10px 24px rgba(90,103,216, 0.45);
+        background: linear-gradient(135deg, #5a67d8 0%, #4b50bf 100%);
     }
 
     /* Ensure spacing for mobile */

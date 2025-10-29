@@ -7,7 +7,59 @@
     var currency = ViewBag.Currency as string ?? "USD";
 }
 
-<div class="container-fluid">
+<style>
+    .checkout-scope {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding-bottom: 30px;
+    }
+    .checkout-scope .page-title-box {
+        background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.08));
+        border-radius: 14px;
+        padding: 16px 20px;
+        margin-top: 24px;
+        box-shadow: 0 12px 32px rgba(31,38,135,0.15);
+        color: #fff;
+    }
+    .checkout-scope .page-title { margin: 0; font-weight: 700; }
+    .checkout-scope .card { 
+        background: linear-gradient(180deg, #ffffff 0%, #f7f9ff 100%);
+        border-radius: 16px; 
+        border: 1px solid #eef2f7; 
+        box-shadow: 0 10px 30px rgba(31,38,135,0.15);
+        overflow: hidden;
+    }
+    .checkout-scope .card-header { 
+        background: linear-gradient(135deg, #4b50bf 0%, #5a67d8 100%); 
+        color: #fff; 
+        font-weight: 700; 
+        border-bottom: 0; 
+        padding: 16px 20px; 
+    }
+    .checkout-scope .card-body { padding: 22px; }
+    .checkout-scope .form-label { font-weight: 600; color: #374151; }
+    .checkout-scope .form-control { 
+        border-radius: 12px; 
+        border: 1px solid #e5e7eb; 
+        background: #fff;
+        padding: 12px 14px;
+        transition: all .2s ease;
+    }
+    .checkout-scope .form-control:focus { 
+        border-color: #5a67d8; 
+        box-shadow: 0 0 0 .2rem rgba(90,103,216,.25); 
+    }
+    .checkout-scope .order-item { background: #fff; border-radius: 12px; padding: 12px; }
+    .checkout-scope .btn-primary.btn-lg { 
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none; border-radius: 26px; padding: 12px 18px; font-weight: 700; 
+        box-shadow: 0 8px 20px rgba(32,201,151,.35);
+    }
+    .checkout-scope .btn-outline-secondary { border-radius: 26px; }
+    .checkout-scope small.text-muted { color: #6b7280 !important; }
+</style>
+
+<div class="container-fluid checkout-scope">
     <div class="row">
         <div class="col-12">
             <div class="page-title-box">
@@ -31,56 +83,67 @@
                         <h5 class="card-title mb-0">Customer Information</h5>
                     </div>
                     <div class="card-body">
+                        <!-- Row 1: Name, Email, Phone -->
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-lg-4 col-md-6">
                                 <div class="mb-3">
                                     <label asp-for="CustomerName" class="form-label">Full Name *</label>
                                     <input asp-for="CustomerName" class="form-control" required placeholder="Enter your full name">
                                     <span asp-validation-for="CustomerName" class="text-danger"></span>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-lg-4 col-md-6">
                                 <div class="mb-3">
                                     <label asp-for="CustomerEmail" class="form-label">Email Address *</label>
                                     <input asp-for="CustomerEmail" type="email" class="form-control" required placeholder="Enter your email">
                                     <span asp-validation-for="CustomerEmail" class="text-danger"></span>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-lg-4 col-md-6">
                                 <div class="mb-3">
                                     <label asp-for="CustomerPhone" class="form-label">Phone Number *</label>
                                     <input asp-for="CustomerPhone" class="form-control" required placeholder="Enter your phone number">
                                     <span asp-validation-for="CustomerPhone" class="text-danger"></span>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                        </div>
+
+                        <!-- Row 2: Company, Service Date, spacer -->
+                        <div class="row">
+                            <div class="col-lg-4 col-md-6">
                                 <div class="mb-3">
                                     <label asp-for="CompanyName" class="form-label">Company Name</label>
                                     <input asp-for="CompanyName" class="form-control" placeholder="Enter your company name">
                                     <span asp-validation-for="CompanyName" class="text-danger"></span>
                                 </div>
                             </div>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="ServiceDate" class="form-label">Preferred Service Date</label>
+                                    <input asp-for="ServiceDate" type="date" class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")">
+                                    <span asp-validation-for="ServiceDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 d-none d-lg-block"></div>
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="CustomerAddress" class="form-label">Address</label>
-                            <textarea asp-for="CustomerAddress" class="form-control" rows="3" placeholder="Enter your address"></textarea>
-                            <span asp-validation-for="CustomerAddress" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="SpecialRequirements" class="form-label">Special Requirements</label>
-                            <textarea asp-for="SpecialRequirements" class="form-control" rows="3" placeholder="Any special requirements or notes"></textarea>
-                            <span asp-validation-for="SpecialRequirements" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="ServiceDate" class="form-label">Preferred Service Date</label>
-                            <input asp-for="ServiceDate" type="date" class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")">
-                            <span asp-validation-for="ServiceDate" class="text-danger"></span>
+                        <!-- Row 3: Address, Special Requirements, spacer -->
+                        <div class="row">
+                            <div class="col-lg-4 col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="CustomerAddress" class="form-label">Address</label>
+                                    <textarea asp-for="CustomerAddress" class="form-control" rows="3" placeholder="Enter your address"></textarea>
+                                    <span asp-validation-for="CustomerAddress" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="SpecialRequirements" class="form-label">Special Requirements</label>
+                                    <textarea asp-for="SpecialRequirements" class="form-control" rows="3" placeholder="Any special requirements or notes"></textarea>
+                                    <span asp-validation-for="SpecialRequirements" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 d-none d-lg-block"></div>
                         </div>
                     </div>
                 </div>
