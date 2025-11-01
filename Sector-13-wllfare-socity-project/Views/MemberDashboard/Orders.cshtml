@@ -37,8 +37,8 @@
                                         <th>Booking Date</th>
                                         <th>Receipt No</th>
                                         <th>Amount</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
+                                        @* <th>Status</th>
+                                        <th>Actions</th> *@
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -73,12 +73,12 @@
                                             <td>
                                                 <strong class="text-success">$@booking.TotalAmount.ToString("F2")</strong>
                                             </td>
-                                            <td>
+                                            @* <td>
                                                 <span class="badge badge-@(booking.PaymentStatus == "Pending" ? "warning" : booking.PaymentStatus == "Completed" ? "info" : booking.BookingStatus == "Processing" ? "primary" : booking.BookingStatus == "Completed" ? "success" : booking.BookingStatus == "Cancelled" ? "danger" : "secondary")">
                                                     @(booking.PaymentStatus == "Pending" ? "Pending Payment" : booking.PaymentStatus == "Completed" ? "Paid" : booking.BookingStatus ?? "Pending")
                                                 </span>
-                                            </td>
-                                            <td>
+                                            </td> *@
+                                            @* <td>
                                                 <div class="btn-group">
                                                     @if (booking.PaymentStatus == "Pending")
                                                     {
@@ -106,7 +106,7 @@
                                                         <i class="fas fa-eye"></i>
                                                     </a>
                                                 </div>
-                                            </td>
+                                            </td> *@
                                         </tr>
                                     }
                                 </tbody>

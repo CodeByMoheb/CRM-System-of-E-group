@@ -6,8 +6,9 @@
 }
 
 <style>
+    /* Increased base size for this page only */
     html, body {
-        font-size: 12px !important;
+        font-size: 14px !important; /* increased from 12px */
         color: #23272f !important;
         background: #f9fbfd;
     }
@@ -20,7 +21,7 @@
         transition: all 0.3s ease;
         border: 1px solid #e9ecef;
         height: 100%;
-        font-size: 0.92rem !important;
+        font-size: 1rem !important; /* slightly larger */
         color: #23272f !important;
     }
     
@@ -39,10 +40,10 @@
     .invoice-header {
         background: linear-gradient(135deg, #23272f 0%, #445ae3 100%);
         color: #fff;
-        padding: 18px 24px;
+        padding: 20px 26px; /* a little more padding */
         position: relative;
         overflow: hidden;
-        font-size: 1rem;
+        font-size: 1.03rem;
     }
     
     .invoice-header::before {
@@ -57,7 +58,7 @@
     }
     
     .invoice-title {
-        font-size: 1.13rem !important;
+        font-size: 1.18rem !important; /* slightly bigger */
         font-weight: bold;
         margin-bottom: 6px;
         color: #fff !important;
@@ -66,7 +67,7 @@
     }
     
     .invoice-subtitle {
-        font-size: 0.84rem !important;
+        font-size: 0.9rem !important;
         opacity: 0.92;
         color: #e3e3e3 !important;
         position: relative;
@@ -74,17 +75,17 @@
     }
     
     .invoice-body {
-        padding: 18px;
-        font-size: 0.97rem !important;
+        padding: 20px;
+        font-size: 1.02rem !important; /* increased */
         color: #23272f !important;
     }
     
     .invoice-details {
         background: #f4f6fa;
-        padding: 10px;
+        padding: 12px;
         border-radius: 8px;
         margin-bottom: 14px;
-        font-size: 0.90rem !important;
+        font-size: 0.98rem !important;
         color: #222 !important;
     }
     
@@ -92,9 +93,9 @@
         display: flex;
         justify-content: space-between;
         margin-bottom: 8px;
-        padding: 6px 0;
+        padding: 8px 0;
         border-bottom: 1px solid #e3e4e8;
-        font-size: 0.90rem !important;
+        font-size: 0.97rem !important;
     }
     
     .detail-row:last-child {
@@ -105,20 +106,20 @@
     .detail-label {
         font-weight: 600;
         color: #21212b !important;
-        font-size: 0.87rem !important;
+        font-size: 0.95rem !important;
     }
     
     .detail-value {
         color: #071125 !important;
         font-weight: 500;
-        font-size: 0.87rem !important;
+        font-size: 0.95rem !important;
     }
     
     .status-badge {
-        padding: 4px 12px !important;
+        padding: 6px 14px !important; /* slightly larger badge */
         border-radius: 18px;
         font-weight: 700;
-        font-size: 0.78rem !important;
+        font-size: 0.86rem !important;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         color: #fff !important;
@@ -137,7 +138,7 @@
     }
     
     .amount-display {
-        font-size: 1.07rem !important;
+        font-size: 1.15rem !important; /* increased */
         font-weight: bold;
         color: #23272f !important;
         letter-spacing: 0.02em;
@@ -145,24 +146,24 @@
     
     .action-buttons {
         display: flex;
-        gap: 8px;
+        gap: 10px;
         flex-wrap: wrap;
-        font-size: 0.93rem !important;
+        font-size: 1rem !important;
     }
     
     .btn-premium {
         background: linear-gradient(135deg, #23272f, #6174db);
         border: none;
         color: #fff !important;
-        padding: 7px 14px;
+        padding: 9px 16px; /* larger buttons */
         border-radius: 22px;
         font-weight: 700;
-        font-size: 0.93rem !important;
+        font-size: 1rem !important;
         transition: all 0.3s ease;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
     }
     
     .btn-premium:hover {
@@ -177,15 +178,15 @@
         border: 2px solid #23272f;
         color: #23272f !important;
         background: transparent;
-        padding: 7px 15px;
+        padding: 9px 16px;
         border-radius: 22px;
-        font-size: 0.92rem !important;
+        font-size: 0.98rem !important;
         font-weight: 700;
         transition: all 0.3s ease;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
     }
     
     .btn-outline-premium:hover {
@@ -198,13 +199,13 @@
     .summary-card {
         background: linear-gradient(135deg, #f7f8fa, #e9ecef);
         border-radius: 14px;
-        padding: 17px;
+        padding: 20px;
         margin-bottom: 24px;
         border: 1px solid #d1d6db;
     }
     
     .summary-title {
-        font-size: 0.97rem !important;
+        font-size: 1.02rem !important;
         font-weight: bold;
         color: #21386b !important;
         margin-bottom: 15px;
@@ -214,29 +215,29 @@
     
     .summary-stats {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 13px;
-        font-size: 0.93rem !important;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 14px;
+        font-size: 1rem !important;
     }
     
     .stat-item {
         text-align: center;
-        padding: 9px;
+        padding: 11px;
         background: #fff;
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(34,39,47,0.035);
-        font-size: 0.96rem !important;
+        font-size: 1rem !important;
     }
     
     .stat-number {
-        font-size: 1.2rem !important;
+        font-size: 1.4rem !important; /* increased */
         font-weight: bold;
         color: #23272f !important;
         margin-bottom: 1px;
     }
     
     .stat-label {
-        font-size: 0.80rem !important;
+        font-size: 0.9rem !important; /* increased */
         color: #495c6c !important;
         font-weight: 600;
         text-transform: uppercase;
@@ -245,14 +246,14 @@
     
     .no-invoices {
         text-align: center;
-        padding: 35px 10px;
+        padding: 38px 12px;
         background: linear-gradient(135deg, #f8f9fa, #e9ecef);
         border-radius: 12px;
         margin: 24px 0;
     }
     
     .no-invoices-icon {
-        font-size: 2.6rem;
+        font-size: 2.8rem;
         color: #bbc2ca;
         margin-bottom: 10px;
     }
@@ -261,13 +262,13 @@
         color: #3b4152 !important;
         margin-bottom: 7px;
         font-weight: bold;
-        font-size: 1.1rem;
+        font-size: 1.15rem;
     }
     
     .no-invoices p {
         color: #647184 !important;
         margin-bottom: 13px;
-        font-size: 0.93rem;
+        font-size: 1rem;
     }
     
     @@keyframes float {
@@ -286,7 +287,7 @@
         list-style: none;
         padding: 0;
         margin: 0;
-        gap: 3px;
+        gap: 6px;
     }
     
     .page-item {
@@ -295,15 +296,15 @@
     
     .page-link {
         display: block;
-        padding: 6px 11px;
+        padding: 8px 12px;
         text-decoration: none;
         color: #23272f !important;
         background: #fff;
         border: 1px solid #c3c3d4;
-        border-radius: 7px;
+        border-radius: 8px;
         transition: all 0.25s;
-        font-weight: 600;
-        font-size: 0.91rem !important;
+        font-weight: 700;
+        font-size: 0.98rem !important;
     }
     
     .page-link:hover {
@@ -330,7 +331,7 @@
         text-align: center;
         margin-top: 9px;
         color: #495c6c !important;
-        font-size: 0.82rem;
+        font-size: 0.9rem;
     }
     
     @@media (max-width: 1200px) {
@@ -345,7 +346,7 @@
         }
         
         .invoice-body {
-            padding: 12px;
+            padding: 14px;
         }
         
         .action-buttons {
@@ -362,7 +363,7 @@
         }
         
         .stat-item {
-            padding: 7px;
+            padding: 9px;
         }
         
         .stat-number {
@@ -504,14 +505,14 @@
                             
                             @if (invoice.Status == "Pending")
                             {
-                                <a href="@Url.Action("Index", "Payment", new { orderId = invoice.Id })" class="btn-outline-premium">
+                                @* <a href="@Url.Action("Index", "Payment", new { orderId = invoice.Id })" class="btn-outline-premium">
                                     <i class="fas fa-credit-card"></i> Pay Now
-                                </a>
+                                </a> *@
                             }
                             
-                            <button onclick="window.print()" class="btn-outline-premium">
+                            @* <button onclick="window.print()" class="btn-outline-premium">
                                 <i class="fas fa-print"></i> Print Invoice
-                            </button>
+                            </button> *@
                         </div>
                     </div>
                 </div>

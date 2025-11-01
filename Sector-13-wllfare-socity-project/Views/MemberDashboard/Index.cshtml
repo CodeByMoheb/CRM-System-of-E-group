@@ -307,24 +307,59 @@
                 <h2 class="h4 fw-bold mb-2">
                     Welcome back, <span class="text-warning">@Model.User.Name!</span>
                 </h2>
+               </\div>
                 <p class="mb-3">
                     Manage your bookings, track payments, and stay updated with your service requests.
                 </p>
-                <div class="d-flex flex-wrap gap-2">
-                    <a href="@Url.Action("Index", "Booking")" class="btn btn-light premium-btn pulse">
-                        <i class="fas fa-plus me-1"></i> New Booking
-                    </a>
-                    <a href="@Url.Action("Orders", "MemberDashboard")" class="btn btn-outline-light premium-btn">
-                        <i class="fas fa-shopping-bag me-1"></i> My Orders
-                    </a>
-                </div>
+                
             </div>
             <div class="col-lg-4 text-center">
                 <i class="fas fa-user-circle" style="font-size: 4rem; opacity: 0.3;"></i>
             </div>
         </div>
     </div>
-
+    <!-- Quick Actions -->
+    <div class="row mb-3">
+        <div class="col-12 mb-2">
+            <h3 class="h5 fw-bold text-dark">
+                <i class="fas fa-bolt me-2" style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"></i>
+                Quick Actions
+            </h3>
+                </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <a href="@Url.Action("Index", "Booking")" class="quick-action-btn d-block text-decoration-none">
+                <i class="fas fa-plus"></i>
+                <h6 class="fw-bold mb-1">Create New Booking</h6>
+                <small class="text-muted">Book a new service</small>
+                            </a>
+                        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <a href="@Url.Action("Orders", "MemberDashboard")" class="quick-action-btn d-block text-decoration-none">
+                <i class="fas fa-shopping-bag"></i>
+                <h6 class="fw-bold mb-1">View My Orders</h6>
+                <small class="text-muted">Track your bookings</small>
+                            </a>
+                        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <a href="@Url.Action("PaymentHistory", "MemberDashboard")" class="quick-action-btn d-block text-decoration-none">
+                <i class="fas fa-history"></i>
+                <h6 class="fw-bold mb-1">Payment History</h6>
+                <small class="text-muted">View payment records</small>
+                            </a>
+                        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <a href="@Url.Action("Invoices", "MemberDashboard")" class="quick-action-btn d-block text-decoration-none">
+                <i class="fas fa-file-invoice"></i>
+                <h6 class="fw-bold mb-1">My Invoices</h6>
+                <small class="text-muted">Download invoices</small>
+            </a>
+        </div>
+    </div>
+</div>
     <!-- Booking Success Alert -->
     @if (TempData["BookingSuccess"] != null)
     {
@@ -422,8 +457,8 @@
                                     
                                     @if (booking.PaymentStatus == "Pending")
                                     {
-                                        <a href="@Url.Action("ProcessPayment", "Booking", new { id = booking.Id })" class="btn btn-success btn-sm premium-btn">
-                                            <i class="fas fa-credit-card me-1"></i>Pay Now
+                                        @* <a href="@Url.Action("ProcessPayment", "Booking", new { id = booking.Id })" class="btn btn-success btn-sm premium-btn"> *@
+                                           <a> <i class="fas fa-credit-card me-1"></i>Upcomming !!
                                         </a>
                                     }
                                     else if (booking.PaymentStatus == "Completed")
@@ -543,48 +578,7 @@
         </div>
     </div>
 
-    <!-- Quick Actions -->
-    <div class="row mb-3">
-        <div class="col-12 mb-2">
-            <h3 class="h5 fw-bold text-dark">
-                <i class="fas fa-bolt me-2" style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"></i>
-                Quick Actions
-            </h3>
-                </div>
-        
-        <div class="col-lg-3 col-md-6 mb-3">
-            <a href="@Url.Action("Index", "Booking")" class="quick-action-btn d-block text-decoration-none">
-                <i class="fas fa-plus"></i>
-                <h6 class="fw-bold mb-1">Create New Booking</h6>
-                <small class="text-muted">Book a new service</small>
-                            </a>
-                        </div>
-        
-        <div class="col-lg-3 col-md-6 mb-3">
-            <a href="@Url.Action("Orders", "MemberDashboard")" class="quick-action-btn d-block text-decoration-none">
-                <i class="fas fa-shopping-bag"></i>
-                <h6 class="fw-bold mb-1">View My Orders</h6>
-                <small class="text-muted">Track your bookings</small>
-                            </a>
-                        </div>
-        
-        <div class="col-lg-3 col-md-6 mb-3">
-            <a href="@Url.Action("PaymentHistory", "MemberDashboard")" class="quick-action-btn d-block text-decoration-none">
-                <i class="fas fa-history"></i>
-                <h6 class="fw-bold mb-1">Payment History</h6>
-                <small class="text-muted">View payment records</small>
-                            </a>
-                        </div>
-        
-        <div class="col-lg-3 col-md-6 mb-3">
-            <a href="@Url.Action("Invoices", "MemberDashboard")" class="quick-action-btn d-block text-decoration-none">
-                <i class="fas fa-file-invoice"></i>
-                <h6 class="fw-bold mb-1">My Invoices</h6>
-                <small class="text-muted">Download invoices</small>
-            </a>
-        </div>
-    </div>
-</div>
+
 
 @section Scripts {
     <script>
